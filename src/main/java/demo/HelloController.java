@@ -20,6 +20,6 @@ public class HelloController {
 		method = {RequestMethod.GET},
 		produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message hello () {
-		return new Message("Hello World! (" + this.random.nextInt(100)+ ")");
+		return new Message("Hello World! (" + this.random.nextInt(100)+ ")!");
 	}
 }
