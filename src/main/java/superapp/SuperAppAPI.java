@@ -38,7 +38,7 @@ public class SuperAppAPI {
 		Location location = new Location(10.10, 11.11);
 		CreatedBy createdBy = new CreatedBy(new UserId(superapp, "e-mail@demo.com"));
 		Map<String, Object> objectDetails = new HashMap<String, Object>();
-		objectDetails.put("name", "dean");
+		objectDetails.put("name", "liri");
 		objectDetails.put("phone", "0525511");
 		CustomObject customObject = new CustomObject(objectId, type, alias, active, creationTimestamp, location, createdBy, objectDetails);
 		return customObject;
