@@ -36,7 +36,7 @@ public class SuperAppAPI {
 		Date creationTimestamp = new Date();
 		boolean active = true;
 		Location location = new Location(10.10, 11.11);
-		CreatedBy createdBy = new CreatedBy(new UserId(superapp, "mail@demo.com"));
+		CreatedBy createdBy = new CreatedBy(new UserId(superapp, "e-mail@demo.com"));
 		Map<String, Object> objectDetails = new HashMap<String, Object>();
 		objectDetails.put("name", "dean");
 		objectDetails.put("phone", "0525511");
