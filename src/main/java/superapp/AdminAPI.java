@@ -24,7 +24,7 @@ public class AdminAPI {
 			String superapp = "wedding";   
 			String email = "test@mail.com";
 			for (int i = 0; i < 3; i++) {
-				String role = "HUSABND";
+				String role = "HUSABND ";
 				String username = "Lebron James";
 				String avatar = "LOVE";
 				UserId userId = new UserId(superapp, email);
