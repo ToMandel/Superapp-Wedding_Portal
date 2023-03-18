@@ -6,11 +6,12 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import boundries.User;
 import boundries.UserId;
-
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 public class UsersAPI {
@@ -30,7 +31,20 @@ public class UsersAPI {
 		
 		User u = new User(userId, role, username, avatar);
 		return u;
-		
-		
 	}
+	
+	@RequestMapping(
+			path = {"/superapp/users"},
+			method = {RequestMethod.POST},
+			produces = {MediaType.APPLICATION_JSON_VALUE},
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
+		public User CreateNewUser (@RequestBody User newUser) {
+			String role = newUser.getRole();
+			String username = newUser.getUsername();
+			String avatar = newUser.getAvatar();
+			UserId userId = newUser.getUserId();
+			
+			User u = new User(userId, role, username, avatar);
+			return u;
+		}
 }
