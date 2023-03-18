@@ -34,7 +34,7 @@ public class AdminAPI {
 		public ArrayList<User> GetAllUsers () {
 			ArrayList<User> list = new ArrayList<User>();
 			String superapp = "wedding";   
-			String email = "test@mail.com";
+			String email = "test@mail.com ";
 			for (int i = 0; i < 3; i++) {
 				String role = "HUSABND ";
 				String username = "Lebron James";
