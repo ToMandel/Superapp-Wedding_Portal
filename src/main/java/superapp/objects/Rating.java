@@ -1,9 +1,8 @@
 package superapp.objects;
 
-import superapp.boundries.CustomObject;
 import superapp.boundries.ObjectId;
 
-public class Rating extends CustomObject{
+public class Rating{
 	
 	private ObjectId customerId;
 	private ObjectId supplierId;

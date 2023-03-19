@@ -2,9 +2,8 @@ package superapp.objects;
 
 import java.util.ArrayList;
 
-import superapp.boundries.CustomObject;
 
-public class Supplier extends CustomObject{
+public class Supplier{
 	
 	public enum eServiceType{
 		FLOWERS, PHOTOGRAPHER, DJ
