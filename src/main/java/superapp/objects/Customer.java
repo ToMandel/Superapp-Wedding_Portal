@@ -3,7 +3,7 @@ package superapp.objects;
 import superapp.boundries.ObjectId;
 
 public class Customer {
-	
+	//comment
 	private ObjectId objectId;
 	private String name;
 	private String mail;
