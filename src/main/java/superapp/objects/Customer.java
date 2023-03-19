@@ -1,10 +1,8 @@
 package superapp.objects;
 
-import superapp.boundries.ObjectId;
 
 public class Customer {
-//my branch
-	private ObjectId objectId;
+
 	private String name;
 	private String mail;
 	private String phone;
@@ -16,28 +14,13 @@ public class Customer {
 	}
 
 
-	public Customer(ObjectId objectId, String name, String mail, String phone, int budget) {
+	public Customer(String name, String mail, String phone, int budget) {
 		super();
-		this.objectId = objectId;
 		this.name = name;
 		this.mail = mail;
 		this.phone = phone;
 		this.budget = budget;
 	}
-
-
-
-	public ObjectId getObjectId() {
-		return objectId;
-	}
-
-
-
-	public void setObjectId(ObjectId objectId) {
-		this.objectId = objectId;
-	}
-
-
 
 	public String getName() {
 		return name;

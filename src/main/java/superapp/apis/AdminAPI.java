@@ -58,7 +58,7 @@ public class AdminAPI {
 				String superapp = "WedPortal";
 				CommandId commandId = new CommandId(superapp, "minapp" + i, Integer.toString(i));
 				String command = "foo" + i;
-				TargetObject targetObject = new TargetObject(new ObjectId(superapp, Integer.toString(i*10)));
+				TargetObject targetObject = new TargetObject(new ObjectId(superapp));
 				Date invocationTimestamp = new Date();
 				InvokedBy invokedBy = new InvokedBy(new UserId(superapp, "mail@gmail.com"));
 				Map<String, Object> commandArrtibutes = new HashMap<String, Object>();
@@ -81,7 +81,7 @@ public class AdminAPI {
 			String superapp = "WedPortal";
 			CommandId commandId = new CommandId(superapp, MiniAppName, Integer.toString(i));
 			String command = "foo" + i;
-			TargetObject targetObject = new TargetObject(new ObjectId(superapp, Integer.toString(i*10)));
+			TargetObject targetObject = new TargetObject(new ObjectId(superapp));
 			Date invocationTimestamp = new Date();
 			InvokedBy invokedBy = new InvokedBy(new UserId(superapp, "mail@gmail.com"));
 			Map<String, Object> commandArrtibutes = new HashMap<String, Object>();
