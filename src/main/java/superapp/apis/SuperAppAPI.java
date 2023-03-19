@@ -1,4 +1,4 @@
-package superapp;
+package superapp.apis;
 
 
 
@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundries.CreatedBy;
-import boundries.CustomObject;
-import boundries.Location;
-import boundries.ObjectId;
-import boundries.UserId;
+import superapp.boundries.CreatedBy;
+import superapp.boundries.CustomObject;
+import superapp.boundries.Location;
+import superapp.boundries.ObjectId;
+import superapp.boundries.UserId;
 
 import org.springframework.web.bind.annotation.PathVariable;
 

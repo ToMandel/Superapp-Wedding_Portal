@@ -1,6 +1,6 @@
-package classes;
+package superapp.objects;
 
-import boundries.ObjectId;
+import superapp.boundries.ObjectId;
 
 public class Customer {
 	

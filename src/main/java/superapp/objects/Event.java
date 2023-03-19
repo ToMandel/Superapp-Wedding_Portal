@@ -1,4 +1,4 @@
-package classes;
+package superapp.objects;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,8 +1,8 @@
-package classes;
+package superapp.objects;
 
 import java.util.ArrayList;
 
-import boundries.CustomObject;
+import superapp.boundries.CustomObject;
 
 public class Supplier extends CustomObject{
 	

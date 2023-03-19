@@ -1,7 +1,7 @@
-package classes;
+package superapp.objects;
 
-import boundries.CustomObject;
-import boundries.ObjectId;
+import superapp.boundries.CustomObject;
+import superapp.boundries.ObjectId;
 
 public class Rating extends CustomObject{
 	

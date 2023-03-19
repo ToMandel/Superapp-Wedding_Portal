@@ -1,4 +1,4 @@
-package boundries;
+package superapp.boundries;
 
 public class Location {
 	

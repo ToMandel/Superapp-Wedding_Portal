@@ -1,4 +1,4 @@
-package superapp;
+package superapp.apis;
 
 import java.util.ArrayList;
 
@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundries.CommandId;
-import boundries.InvokedBy;
-import boundries.MiniAppCommandObject;
-import boundries.ObjectId;
-import boundries.TargetObject;
-import boundries.User;
-import boundries.UserId;
+import superapp.boundries.CommandId;
+import superapp.boundries.InvokedBy;
+import superapp.boundries.MiniAppCommandObject;
+import superapp.boundries.ObjectId;
+import superapp.boundries.TargetObject;
+import superapp.boundries.User;
+import superapp.boundries.UserId;
 
 import java.util.Date;
 import java.util.HashMap;
