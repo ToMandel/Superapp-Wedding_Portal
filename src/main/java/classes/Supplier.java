@@ -2,35 +2,35 @@ package classes;
 
 import java.util.ArrayList;
 
-public class Supplier {
+import boundries.CustomObject;
+
+public class Supplier extends CustomObject{
 	
-	public enum eType{
+	public enum eServiceType{
 		FLOWERS, PHOTOGRAPHER, DJ
 	}
 	
 	
 	private String supplierID;
 	private String name;
-	private eType type;
+	private eServiceType serviceType;
 	
 	
 	public Supplier() {
 		
 	}
 
-
-	public Supplier(String supplierID, String name, eType type) {
+	public Supplier(String supplierID, String name, eServiceType serviceType) {
 		super();
 		this.supplierID = supplierID;
 		this.name = name;
-		this.type = type;
+		this.serviceType = serviceType;
 	}
 
 
 	public String getSupplierID() {
 		return supplierID;
 	}
-
 
 	public void setSupplierID(String supplierID) {
 		this.supplierID = supplierID;
@@ -47,17 +47,13 @@ public class Supplier {
 	}
 
 
-	public eType getType() {
-		return type;
+	public eServiceType getServiceType() {
+		return serviceType;
 	}
 
 
-	public void setType(eType type) {
-		this.type = type;
+	public void setServiceType(eServiceType serviceType) {
+		this.serviceType = serviceType;
 	}
-	
-	
-	
-	
 	
 }
