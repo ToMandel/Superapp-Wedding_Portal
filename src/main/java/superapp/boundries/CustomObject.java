@@ -8,7 +8,7 @@ public class CustomObject {
 	private ObjectId objectId;
 	private String type;
 	private String alias;
-	private boolean active;
+	private Boolean active;
 	private Date creationTimestamp;
 	private Location location;
 	private CreatedBy createdBy;
@@ -20,7 +20,7 @@ public class CustomObject {
 	}
 
 
-	public CustomObject(ObjectId objectId, String type, String alias, boolean active, Date creationTimestamp,
+	public CustomObject(ObjectId objectId, String type, String alias, Boolean active, Date creationTimestamp,
 			Location location, CreatedBy createdBy, Map<String, Object> objectDetails) {
 		super();
 		this.objectId = objectId;
@@ -64,12 +64,12 @@ public class CustomObject {
 	}
 
 
-	public boolean isActive() {
+	public Boolean GetActive() {
 		return active;
 	}
 
 
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 
