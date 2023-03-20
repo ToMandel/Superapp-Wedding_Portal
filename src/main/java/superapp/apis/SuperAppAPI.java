@@ -90,14 +90,14 @@ public class SuperAppAPI {
 			produces = {MediaType.APPLICATION_JSON_VALUE},
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 		public CustomObject CreateNewObject (@RequestBody CustomObject newObject) {
-		ObjectId objectId = newObject.getObjectId();
-		String type= newObject.getType();
-		String alias=newObject.getAlias();
-		boolean active=newObject.isActive();
-	    Date creationTimestamp=newObject.getCreationTimestamp();
-	    Location location=newObject.getLocation();
-	    CreatedBy createdBy=newObject.getCreatedBy();
-	    Map<String, Object> objectDetails=newObject.getObjectDetails();
+		ObjectId objectId = new ObjectId();
+		String type = newObject.getType();
+		String alias = newObject.getAlias();
+		Boolean active= newObject.GetActive();
+	    Date creationTimestamp = new Date();
+	    Location location = newObject.getLocation();
+	    CreatedBy createdBy = newObject.getCreatedBy();
+	    Map<String, Object> objectDetails = newObject.getObjectDetails();
 			
 		 CustomObject o = new CustomObject( objectId,  type,  alias, active,  creationTimestamp,
 					 location,  createdBy,objectDetails);
