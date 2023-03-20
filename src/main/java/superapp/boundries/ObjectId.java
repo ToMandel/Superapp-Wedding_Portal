@@ -11,6 +11,9 @@ public class ObjectId {
 	
 	public ObjectId() {
 		super();
+		String internalId = Integer.toString(id);
+		id++;
+		this.internalObjectId = internalId;
 	}
 	
 	public ObjectId(String superapp) {

@@ -7,32 +7,23 @@ public class Supplier{
 	
 	public enum eServiceType{
 		FLOWERS, PHOTOGRAPHER, DJ
+		//TODO: add types
 	}
 	
-	
-	private String supplierID;
+
 	private String name;
 	private eServiceType serviceType;
+	//TODO: manage the occupied dates somehow
 	
 	
 	public Supplier() {
 		
 	}
 
-	public Supplier(String supplierID, String name, eServiceType serviceType) {
+	public Supplier(String name, eServiceType serviceType) {
 		super();
-		this.supplierID = supplierID;
 		this.name = name;
 		this.serviceType = serviceType;
-	}
-
-
-	public String getSupplierID() {
-		return supplierID;
-	}
-
-	public void setSupplierID(String supplierID) {
-		this.supplierID = supplierID;
 	}
 
 

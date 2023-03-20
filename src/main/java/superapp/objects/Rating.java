@@ -1,11 +1,10 @@
 package superapp.objects;
 
-import superapp.boundries.ObjectId;
 
 public class Rating{
 	
-	private ObjectId customerId;
-	private ObjectId supplierId;
+	private String customerId;
+	private String supplierId;
 	private double professionalityRate;
 	private double availabilityRate;
 	private double serviceRate;
@@ -19,7 +18,7 @@ public class Rating{
 	
 	
 	
-	public Rating(ObjectId customerId, ObjectId supplierId, double professionalityRate, double availabilityRate,
+	public Rating(String customerId, String supplierId, double professionalityRate, double availabilityRate,
 			double serviceRate, double valueForMoneyRate) {
 		super();
 		this.customerId = customerId;
@@ -33,16 +32,16 @@ public class Rating{
 
 
 
-	public ObjectId getCustomerId() {
+	public String getCustomerId() {
 		return customerId;
 	}
-	public void setCustomerId(ObjectId customerId) {
+	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
-	public ObjectId getSupplierId() {
+	public String getSupplierId() {
 		return supplierId;
 	}
-	public void setSupplierId(ObjectId supplierId) {
+	public void setSupplierId(String supplierId) {
 		this.supplierId = supplierId;
 	}
 	public double getProfessionalityRate() {

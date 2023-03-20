@@ -6,79 +6,77 @@ import java.util.Date;
 
 public class Event {
 
-		private String eventId;
+		//private String eventId;
 		private Date date;
-		private ArrayList<Supplier> suppliers;
-		private Customer customer;
+		private ArrayList<String> suppliersIds;
+		private String customerId;
 		private int numOfGuests;
 		private int numOfTables;
 		
+
 		public Event() {
 			super();
 		}
-		
-		public Event(String eventId, Date date, ArrayList<Supplier> suppliers, Customer customer, int numOfGuests,
-				int numOfTables) {
+
+
+		public Event(Date date, ArrayList<String> suppliersIds, String customerId, int numOfGuests, int numOfTables) {
 			super();
-			this.eventId = eventId;
 			this.date = date;
-			this.suppliers = suppliers;
-			this.customer = customer;
+			this.suppliersIds = suppliersIds;
+			this.customerId = customerId;
 			this.numOfGuests = numOfGuests;
 			this.numOfTables = numOfTables;
 		}
 
-		public String getEventId() {
-			return eventId;
-		}
-
-		public void setEventId(String eventId) {
-			this.eventId = eventId;
-		}
 
 		public Date getDate() {
 			return date;
 		}
 
+
 		public void setDate(Date date) {
 			this.date = date;
 		}
 
-		public ArrayList<Supplier> getSuppliers() {
-			return suppliers;
+
+		public ArrayList<String> getSuppliersIds() {
+			return suppliersIds;
 		}
 
-		public void setSuppliers(ArrayList<Supplier> suppliers) {
-			this.suppliers = suppliers;
+
+		public void setSuppliersIds(ArrayList<String> suppliersIds) {
+			this.suppliersIds = suppliersIds;
 		}
 
-		public Customer getCustomer() {
-			return customer;
+
+		public String getCustomerId() {
+			return customerId;
 		}
 
-		public void setCustomer(Customer customer) {
-			this.customer = customer;
+
+		public void setCustomerId(String customerId) {
+			this.customerId = customerId;
 		}
+
 
 		public int getNumOfGuests() {
 			return numOfGuests;
 		}
 
+
 		public void setNumOfGuests(int numOfGuests) {
 			this.numOfGuests = numOfGuests;
 		}
+
 
 		public int getNumOfTables() {
 			return numOfTables;
 		}
 
+
 		public void setNumOfTables(int numOfTables) {
 			this.numOfTables = numOfTables;
 		}
-		
-		
-		
-		
 		
 		
 }
