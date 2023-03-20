@@ -11,9 +11,11 @@ import superapp.boundries.CreatedBy;
 import superapp.boundries.CustomObject;
 import superapp.boundries.Location;
 import superapp.boundries.ObjectId;
+import superapp.boundries.User;
 import superapp.boundries.UserId;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,4 +73,35 @@ public class SuperAppAPI {
 			return list;
 		
 		}
+	@RequestMapping(
+			path = {"/superapp/objects/{superapp}/{internalObjectId}"},
+			method = {RequestMethod.PUT},
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public void updateSpecificObject (
+			@PathVariable("internalObjectId") String internalObjectId,
+			@PathVariable("superapp") String superapp,
+			@RequestBody ObjectId update) {
+		System.err.println("internalObjectId: " + internalObjectId);
+		System.err.println("update: " + update);
+	}
+	@RequestMapping(
+			path = {"/superapp/objects"},
+			method = {RequestMethod.POST},
+			produces = {MediaType.APPLICATION_JSON_VALUE},
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
+		public CustomObject CreateNewObject (@RequestBody CustomObject newObject) {
+		ObjectId objectId = newObject.getObjectId();
+		String type= newObject.getType();
+		String alias=newObject.getAlias();
+		boolean active=newObject.isActive();
+	    Date creationTimestamp=newObject.getCreationTimestamp();
+	    Location location=newObject.getLocation();
+	    CreatedBy createdBy=newObject.getCreatedBy();
+	    Map<String, Object> objectDetails=newObject.getObjectDetails();
+			
+		 CustomObject o = new CustomObject( objectId,  type,  alias, active,  creationTimestamp,
+					 location,  createdBy,objectDetails);
+			return o;
+		}
+	
 }

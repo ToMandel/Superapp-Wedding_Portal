@@ -1,7 +1,7 @@
 package superapp.boundries;
 
 public class User {
-	
+
 	private UserId userId;
 	private String role;
 	private String username;
@@ -52,5 +52,9 @@ public class User {
 		this.avatar = avatar;
 	}
 	
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", role=" + role + ", username=" + username + ", avatar=" + avatar + "]";
+	}
 
 }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
+//import demo.Message;
 import superapp.boundries.User;
 import superapp.boundries.UserId;
 
@@ -47,4 +49,21 @@ public class UsersAPI {
 			User u = new User(userId, role, username, avatar);
 			return u;
 		}
+	
+	
+	@RequestMapping(
+			path = {"/superapp/users/{superapp}/{userEmail}"},
+			method = {RequestMethod.PUT},
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public void updateSpecificUser (
+			@PathVariable("userEmail") String userEmail,
+			@PathVariable("superapp") String superapp,
+			@RequestBody User update) {
+		System.err.println("userEmail: " + userEmail);
+		System.err.println("update: " + update);
+	}
+			
+	
 }
+
+
