@@ -93,6 +93,26 @@ public class AdminAPI {
 			
 		}
 	
+	@RequestMapping(
+			path = "/superapp/admin/users",
+			method = {RequestMethod.DELETE})
+	public void deleteAllUsers() {
+		// do nothing
+	}
+	@RequestMapping(
+			path = "/superapp/admin/objects",
+			method = {RequestMethod.DELETE})
+	public void deleteAllObjects() {
+		// do nothing
+	}
+	@RequestMapping(
+			path = "/superapp/admin/miniapp",
+			method = {RequestMethod.DELETE})
+	public void deleteAllCommandsHistory() {
+		// do nothing
+	}
+	
+	
 	
 	
 

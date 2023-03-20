@@ -2,6 +2,8 @@ package superapp.boundries;
 
 public class ObjectId {
 	
+	
+
 	private String superapp;
 	private String internalObjectId;
 	private static int id;
@@ -41,7 +43,10 @@ public class ObjectId {
 		this.internalObjectId = internalObjectId;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "ObjectId [superapp=" + superapp + ", internalObjectId=" + internalObjectId + "]";
+	}
 	
 
 }
