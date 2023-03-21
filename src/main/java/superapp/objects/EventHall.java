@@ -2,6 +2,7 @@ package superapp.objects;
 
 import java.util.ArrayList;
 
+//TODO: decide if we need this object
 
 public class EventHall {
 	

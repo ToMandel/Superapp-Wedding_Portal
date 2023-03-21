@@ -13,6 +13,8 @@ public class Supplier{
 
 	private String name;
 	private eServiceType serviceType;
+	private ArrayList<String> eventIds;
+	private Rating rating;
 	//TODO: manage the occupied dates somehow
 	
 	
@@ -24,6 +26,8 @@ public class Supplier{
 		super();
 		this.name = name;
 		this.serviceType = serviceType;
+		this.eventIds = new ArrayList<String>();
+		this.rating = new Rating();
 	}
 
 
@@ -45,5 +49,22 @@ public class Supplier{
 	public void setServiceType(eServiceType serviceType) {
 		this.serviceType = serviceType;
 	}
+
+	public ArrayList<String> getEventIds() {
+		return eventIds;
+	}
+
+	public void setEventIds(ArrayList<String> eventIds) {
+		this.eventIds = eventIds;
+	}
+
+	public Rating getRating() {
+		return rating;
+	}
+
+	public void setRating(Rating rating) {
+		this.rating = rating;
+	}
+
 	
 }

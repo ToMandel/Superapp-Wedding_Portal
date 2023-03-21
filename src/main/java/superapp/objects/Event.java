@@ -12,6 +12,7 @@ public class Event {
 		private String customerId;
 		private int numOfGuests;
 		private int numOfTables;
+		private ArrayList<Guest> allGuests;
 		
 
 		public Event() {
@@ -19,13 +20,14 @@ public class Event {
 		}
 
 
-		public Event(Date date, ArrayList<String> suppliersIds, String customerId, int numOfGuests, int numOfTables) {
+		public Event(Date date, ArrayList<String> suppliersIds, String customerId) {
 			super();
 			this.date = date;
 			this.suppliersIds = suppliersIds;
 			this.customerId = customerId;
-			this.numOfGuests = numOfGuests;
-			this.numOfTables = numOfTables;
+			this.numOfGuests = 0;
+			this.numOfTables = 0;
+			this.allGuests = new ArrayList<Guest>();
 		}
 
 
@@ -77,6 +79,16 @@ public class Event {
 		public void setNumOfTables(int numOfTables) {
 			this.numOfTables = numOfTables;
 		}
+
+
+		public ArrayList<Guest> getAllGuests() {
+			return allGuests;
+		}
+
+
+		public void setAllGuests(ArrayList<Guest> allGuests) {
+			this.allGuests = allGuests;
+		}
 		
-		
+
 }
