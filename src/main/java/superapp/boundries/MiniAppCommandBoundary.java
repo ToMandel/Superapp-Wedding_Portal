@@ -3,7 +3,7 @@ package superapp.boundries;
 import java.util.Date;
 import java.util.Map;
 
-public class MiniAppCommandObject {
+public class MiniAppCommandBoundary {
 	
 	private CommandId commandId;
 	private String command;
@@ -12,12 +12,12 @@ public class MiniAppCommandObject {
 	private InvokedBy invokedBy;
 	private Map<String, Object> commandAttributes;
 	
-	public MiniAppCommandObject() {
+	public MiniAppCommandBoundary() {
 		super();
 	}
 	
-	public MiniAppCommandObject(CommandId commandId, String command, TargetObject targetObject,
-			Date invocationTimestamp, InvokedBy invokedBy, Map<String, Object> commandAttributes) {
+	public MiniAppCommandBoundary(CommandId commandId, String command, TargetObject targetObject,
+								  Date invocationTimestamp, InvokedBy invokedBy, Map<String, Object> commandAttributes) {
 		super();
 		this.commandId = commandId;
 		this.command = command;

@@ -1,6 +1,6 @@
 package superapp.boundries;
 
-public class User {
+public class UserBoundary {
 
 	private UserId userId;
 	private String role;
@@ -8,11 +8,11 @@ public class User {
 	private String avatar;
 	
 	
-	public User() {
+	public UserBoundary() {
 		super();
 	}
 
-	public User(UserId userId, String role, String username, String avatar) {
+	public UserBoundary(UserId userId, String role, String username, String avatar) {
 		super();
 		this.userId = userId;
 		this.role = role;

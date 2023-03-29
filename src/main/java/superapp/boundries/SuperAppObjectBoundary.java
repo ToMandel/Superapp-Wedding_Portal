@@ -3,7 +3,7 @@ package superapp.boundries;
 import java.util.Date;
 import java.util.Map;
 
-public class CustomObject {
+public class SuperAppObjectBoundary {
 	
 	private ObjectId objectId;
 	private String type;
@@ -15,13 +15,13 @@ public class CustomObject {
 	private Map<String, Object> objectDetails;
 	
 	
-	public CustomObject() {
+	public SuperAppObjectBoundary() {
 		super();
 	}
 
 
-	public CustomObject(ObjectId objectId, String type, String alias, Boolean active, Date creationTimestamp,
-			Location location, CreatedBy createdBy, Map<String, Object> objectDetails) {
+	public SuperAppObjectBoundary(ObjectId objectId, String type, String alias, Boolean active, Date creationTimestamp,
+								  Location location, CreatedBy createdBy, Map<String, Object> objectDetails) {
 		super();
 		this.objectId = objectId;
 		this.type = type;
