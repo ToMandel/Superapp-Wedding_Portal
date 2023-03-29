@@ -27,7 +27,7 @@ public class UsersAPI {
 		produces = {MediaType.APPLICATION_JSON_VALUE})
 	public User GetUser (@PathVariable("superapp")String superapp, @PathVariable("email")String email) {
 		String role = "HUSABND";
-		String username = "Lebron Liri";
+		String username = "Lebron James";
 		String avatar = "LOVE";
 		UserId userId = new UserId(superapp, email);
 		
