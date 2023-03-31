@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import superapp.Converter;
+import superapp.boundries.NewUserBoundary;
 import superapp.boundries.UserBoundary;
+import superapp.boundries.UserId;
 import superapp.dal.UserCrud;
 import superapp.data.UserEntity;
 
@@ -29,12 +31,18 @@ public class UserServiceDB implements UsersService{
 
     @Transactional
     @Override
-    public UserBoundary createUser(UserBoundary user) {
-        user.setUserId(user.getUserId());
+    public UserBoundary createUser(NewUserBoundary newUser) {
+        UserBoundary user = new UserBoundary();
+        //TODO: change superapp name (?)
+        //TODO: for some reason the supername is "wed" - find where this assign
+        UserId userId = new UserId("wed portal", newUser.getEmail());
+        user.setUserId(userId);
+        user.setRole(newUser.getRole());
+        user.setUsername(newUser.getUsername());
+        user.setAvatar(newUser.getAvatar());
         UserEntity entity =  this.converter.userToEntity(user);
         entity = this.userCrud.save(entity);
-        UserBoundary rv = this.converter.userToBoundary(entity);
-        return rv;
+        return this.converter.userToBoundary(entity);
     }
 
     @Override

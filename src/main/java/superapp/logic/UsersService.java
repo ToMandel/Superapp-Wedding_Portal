@@ -1,12 +1,13 @@
 package superapp.logic;
 
+import superapp.boundries.NewUserBoundary;
 import superapp.boundries.UserBoundary;
 
 import java.util.List;
 
 public interface UsersService {
 
-    public UserBoundary createUser (UserBoundary user);
+    public UserBoundary createUser (NewUserBoundary user);
 
     public UserBoundary login (String userSuperApp, String userEmail);
 

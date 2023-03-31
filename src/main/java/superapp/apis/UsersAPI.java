@@ -4,6 +4,7 @@ package superapp.apis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import superapp.boundries.NewUserBoundary;
 import superapp.boundries.UserBoundary;
 import superapp.logic.UsersService;
 
@@ -39,7 +40,7 @@ public class UsersAPI {
 			method = {RequestMethod.POST},
 			produces = {MediaType.APPLICATION_JSON_VALUE},
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public UserBoundary creatUser (@RequestBody UserBoundary newUser) {
+	public UserBoundary creatUser (@RequestBody NewUserBoundary newUser) {
 			/*String role = newUser.getRole();
 			String username = newUser.getUsername();
 			String avatar = newUser.getAvatar();
