@@ -1,19 +1,10 @@
 package superapp.apis;
 
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-
+import org.springframework.web.bind.annotation.*;
 import superapp.boundries.UserBoundary;
-import superapp.boundries.UserId;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import superapp.logic.UsersService;
 
 @RestController
@@ -48,7 +39,7 @@ public class UsersAPI {
 			method = {RequestMethod.POST},
 			produces = {MediaType.APPLICATION_JSON_VALUE},
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public UserBoundary CreatUser (@RequestBody UserBoundary newUser) {
+	public UserBoundary creatUser (@RequestBody UserBoundary newUser) {
 			/*String role = newUser.getRole();
 			String username = newUser.getUsername();
 			String avatar = newUser.getAvatar();

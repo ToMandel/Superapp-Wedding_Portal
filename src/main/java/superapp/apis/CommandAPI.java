@@ -1,7 +1,5 @@
 package superapp.apis;
 
-import java.util.Date;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +24,7 @@ public class CommandAPI {
 			method = {RequestMethod.POST},
 			produces = {MediaType.APPLICATION_JSON_VALUE},
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public Object InvokeCommand (@PathVariable("MiniAppName")String MiniAppName, @RequestBody MiniAppCommandBoundary miniAppCommandBoundary) {
+	public Object invokeCommand (@PathVariable("MiniAppName")String MiniAppName, @RequestBody MiniAppCommandBoundary miniAppCommandBoundary) {
 			//miniAppCommandObject.setInvocationTimestamp(new Date());
 			//return miniAppCommandObject;
 		return commands.invokeCommand(miniAppCommandBoundary);

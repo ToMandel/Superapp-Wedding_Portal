@@ -64,7 +64,7 @@ public class SuperAppObjectBoundary {
 	}
 
 
-	public Boolean GetActive() {
+	public Boolean getActive() {
 		return active;
 	}
 

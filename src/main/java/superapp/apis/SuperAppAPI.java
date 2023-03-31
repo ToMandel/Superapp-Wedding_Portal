@@ -22,7 +22,7 @@ public class SuperAppAPI {
 		path = {"/superapp/objects/{superapp}/{internalObjectId}"},
 		method = {RequestMethod.GET},
 		produces = {MediaType.APPLICATION_JSON_VALUE})
-	public SuperAppObjectBoundary GetSpecificObject (@PathVariable("superapp")String superapp, @PathVariable("internalObjectId")String internalObjectId) {
+	public SuperAppObjectBoundary getSpecificObject (@PathVariable("superapp")String superapp, @PathVariable("internalObjectId")String internalObjectId) {
 		/*ObjectId objectId = new ObjectId(superapp, internalObjectId);
 		String type = "Customer";
 		String alias = "demo customer"; 
@@ -44,7 +44,7 @@ public class SuperAppAPI {
 			path = {"/superapp/objects"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<SuperAppObjectBoundary> GetAllObjects () {
+	public List<SuperAppObjectBoundary> getAllObjects () {
 		/*String superapp = "wedding";
 		ArrayList<SuperAppObjectBoundary> list = new ArrayList<SuperAppObjectBoundary>();
 		for (int i = 0; i < 3; i++) {
@@ -81,7 +81,7 @@ public class SuperAppAPI {
 			method = {RequestMethod.POST},
 			produces = {MediaType.APPLICATION_JSON_VALUE},
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public SuperAppObjectBoundary CreateObject (@RequestBody SuperAppObjectBoundary newObject) {
+	public SuperAppObjectBoundary createObject (@RequestBody SuperAppObjectBoundary newObject) {
 		/*ObjectId objectId = new ObjectId();
 		String type = newObject.getType();
 		String alias = newObject.getAlias();

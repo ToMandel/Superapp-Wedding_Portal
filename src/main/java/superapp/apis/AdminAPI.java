@@ -45,7 +45,7 @@ public class AdminAPI {
 			path = {"/superapp/admin/users"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<UserBoundary> GetAllUsers () {
+	public List<UserBoundary> getAllUsers () {
 			/*ArrayList<UserBoundary> list = new ArrayList<UserBoundary>();
 			String superapp = "wedding";   
 			String email = "test@mail.com";
@@ -67,7 +67,7 @@ public class AdminAPI {
 			path = {"/superapp/admin/miniapp"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<MiniAppCommandBoundary> GetAllMiniAppCommands () {
+	public List<MiniAppCommandBoundary> getAllMiniAppCommands () {
 			/*ArrayList<MiniAppCommandBoundary> list = new ArrayList<MiniAppCommandBoundary>();
 			for (int i = 0; i < 3; i++) {
 				String superapp = "WedPortal";
@@ -91,7 +91,7 @@ public class AdminAPI {
 			path = {"/superapp/admin/miniapp/{MiniAppName}"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<MiniAppCommandBoundary> GetMiniAppCommands (@PathVariable("MiniAppName")String MiniAppName) {
+	public List<MiniAppCommandBoundary> getMiniAppCommands (@PathVariable("MiniAppName")String MiniAppName) {
 		/*ArrayList<MiniAppCommandBoundary> list = new ArrayList<MiniAppCommandBoundary>();
 		for (int i = 0; i < 3; i++) {
 			String superapp = "WedPortal";
