@@ -1,33 +1,60 @@
 package superapp.data;
 
-import superapp.boundries.UserBoundary;
-import superapp.logic.UsersService;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import superapp.boundries.UserId;
 
-import java.util.List;
+@Entity
+@Table(name = "USERS")
+public class UserEntity  {
 
-public class UserEntity implements UsersService {
-    @Override
-    public UserBoundary createUser(UserBoundary user) {
-        return null;
+    //TODO: change id to userId
+    @Id
+    private String userId;
+    private String role;
+    private String username;
+    private String avatar;
+
+    public UserEntity() {
     }
 
-    @Override
-    public UserBoundary login(String userSuperApp, String userEmail) {
-        return null;
+    public UserEntity(String userId, String role, String username, String avatar) {
+        this.userId = userId;
+        this.role = role;
+        this.username = username;
+        this.avatar = avatar;
     }
 
-    @Override
-    public UserBoundary updateUser(String userSuperApp, String userEmail, UserBoundary update) {
-        return null;
+    public String getUserId() {
+        return userId;
     }
 
-    @Override
-    public List<UserBoundary> getAllUsers() {
-        return null;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    @Override
-    public void deleteAllUsers() {
+    public String getRole() {
+        return role;
+    }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

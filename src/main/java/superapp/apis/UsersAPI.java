@@ -2,13 +2,13 @@ package superapp.apis;
 
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 
-//import demo.Message;
 import superapp.boundries.UserBoundary;
 import superapp.boundries.UserId;
 
@@ -20,8 +20,10 @@ import superapp.logic.UsersService;
 public class UsersAPI {
 
 	private UsersService users;
-
-	//TODO: define autowired function
+	@Autowired
+	public void setUsers(UsersService users) {
+		this.users = users;
+	}
 	
 	public UsersAPI() {
 	}
