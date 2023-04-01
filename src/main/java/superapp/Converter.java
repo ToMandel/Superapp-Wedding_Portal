@@ -27,4 +27,20 @@ public class Converter {
         boundary.setAvatar(entity.getAvatar());
         return boundary;
     }
+    /*public MiniAppCommandEntity miniAppToEntity(MiniAppCommandBoundary boundary)
+    {
+    	MiniAppCommandEntity entity = new MiniAppCommandEntity();
+    	//entity.setCommandId(boundary.getCommandId().get);
+    	entity.setCommand(boundary.getCommand());
+    	entity.setTargetObject(boundary.getTargetObject());
+    	entity.setInvocationTimestamp(boundary.getInvocationTimestamp());
+    	entity.setInvokedBy(boundary.getInvokedBy());
+    	entity.setCommandAttributes(boundary.getCommandAttributes());
+    	return entity;
+    	
+    	
+    }*/
+    
+    
 }
+

@@ -3,7 +3,7 @@ package superapp.data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import superapp.boundries.UserId;
+//import superapp.boundries.UserId;
 
 @Entity
 @Table(name = "USERS")
