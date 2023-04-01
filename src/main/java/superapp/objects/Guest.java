@@ -58,7 +58,7 @@ public class Guest {
 	}
 
 
-	public boolean GetAttending() {
+	public boolean getAttending() {
 		return attending;
 	}
 
