@@ -1,5 +1,6 @@
 package superapp.apis;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +21,11 @@ public class AdminAPI {
 	private MiniAppCommandService commands;
 	private UsersService users;
 
-	//TODO: define autowired functions
-	/*
+	@Autowired
+	public void setUsers(UsersService users) {
+		this.users = users;
+	}
+
 	@Autowired
 	public void setObjects(ObjectsService objects) {
 		this.objects = objects;
@@ -32,10 +36,6 @@ public class AdminAPI {
 		this.commands = commands;
 	}
 
-	@Autowired
-	public void setUsers(UsersService users) {
-		this.users = users;
-	}*/
 	
 	public AdminAPI() {
 	}

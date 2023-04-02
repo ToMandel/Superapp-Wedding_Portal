@@ -25,13 +25,6 @@ public class UsersAPI {
 		method = {RequestMethod.GET},
 		produces = {MediaType.APPLICATION_JSON_VALUE})
 	public UserBoundary login (@PathVariable("superapp")String superapp, @PathVariable("email")String email) {
-		/*String role = "HUSABND";
-		String username = "Lebron James 1";
-		String avatar = "LOVE";
-		UserId userId = new UserId(superapp, email);
-		
-		UserBoundary u = new UserBoundary(userId, role, username, avatar);
-		return u;*/
 		return users.login(superapp, email);
 	}
 	
@@ -41,13 +34,6 @@ public class UsersAPI {
 			produces = {MediaType.APPLICATION_JSON_VALUE},
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public UserBoundary creatUser (@RequestBody NewUserBoundary newUser) {
-			/*String role = newUser.getRole();
-			String username = newUser.getUsername();
-			String avatar = newUser.getAvatar();
-			UserId userId = newUser.getUserId();
-			
-			UserBoundary u = new UserBoundary(userId, role, username, avatar);
-			return u;*/
 			return users.createUser(newUser);
 		}
 	
@@ -60,9 +46,6 @@ public class UsersAPI {
 									@PathVariable("superapp") String superapp,
 									@RequestBody UserBoundary update) {
 		users.updateUser(superapp, userEmail, update);
-
-		//System.err.println("userEmail: " + userEmail);
-		//System.err.println("update: " + update);
 	}
 			
 	

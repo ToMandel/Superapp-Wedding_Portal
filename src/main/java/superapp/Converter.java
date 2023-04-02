@@ -15,12 +15,28 @@ public class Converter {
     public UserEntity userToEntity (UserBoundary boundary){
 
         UserEntity entity = new UserEntity();
-        entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
-        entity.setRole(boundary.getRole());
-        entity.setAvatar(boundary.getAvatar());
-        entity.setUsername(boundary.getUsername());
+        System.out.println(boundary.getUserId().getEmail());
+        if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail() == "") {
+            entity.setUserId(boundary.getUserId().getSuperapp() + "#" + " ");
+        }
+        else
+            entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
+        if (boundary.getUsername() == null)
+            entity.setUsername("");
+        else
+            entity.setUsername(boundary.getUsername());
+        if (boundary.getRole() == null)
+            entity.setRole("");
+        else
+            entity.setRole(boundary.getRole());
+        if (boundary.getAvatar() == null)
+            entity.setAvatar("");
+        else
+            entity.setAvatar(boundary.getAvatar());
+
         return entity;
     }
+
 
     public UserBoundary userToBoundary (UserEntity entity){
         UserBoundary boundary = new UserBoundary();

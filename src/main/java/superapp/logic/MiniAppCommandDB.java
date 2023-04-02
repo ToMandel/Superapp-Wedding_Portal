@@ -1,9 +1,11 @@
 package superapp.logic;
 
+import org.springframework.stereotype.Service;
 import superapp.boundries.MiniAppCommandBoundary;
 
 import java.util.List;
 
+@Service
 public class MiniAppCommandDB implements MiniAppCommandService{
 
 

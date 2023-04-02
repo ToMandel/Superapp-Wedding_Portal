@@ -12,7 +12,9 @@ import superapp.boundries.UserId;
 import superapp.dal.UserCrud;
 import superapp.data.UserEntity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceDB implements UsersService{
@@ -56,19 +58,48 @@ public class UserServiceDB implements UsersService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserBoundary login(String userSuperApp, String userEmail) {
-        return null;
+        //TODO fix bug
+        String userId = userSuperApp + "#" + userEmail;
+        UserEntity existing = this.userCrud.findById(userId).orElseThrow(()->new RuntimeException("could not find user by id: " + userId));
+        return this.converter.userToBoundary(existing);
+        /*Optional<UserEntity> op = this.userCrud.findById(userId);
+        if (op.isPresent()){
+            UserEntity entity = op.get();
+            return this.converter.userToBoundary(entity);
+        }
+        else
+            throw new RuntimeException("Could not find user by id: " + userId);
+        */
+
     }
 
     @Override
-    public UserBoundary updateUser(String userSuperApp, String userEmail, UserBoundary update) {
-        return null;
+    @Transactional
+    public void updateUser(String userSuperApp, String userEmail, UserBoundary update) {
+        //TODO check if this method need to be void or return an object
+        String userId = userSuperApp + "#" + userEmail;
+        UserEntity existing = this.userCrud.findById(userId).orElseThrow(()->new RuntimeException("could not find user by id: " + userId));
+        //superapp and email can not be changed
+        if (update.getRole() != null)
+            existing.setRole(update.getRole());
+        if (update.getUsername() != null)
+            existing.setUsername(update.getUsername());
+        if (update.getAvatar() != null)
+            existing.setAvatar(update.getAvatar());
+
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserBoundary> getAllUsers() {
-        return null;
+        List<UserEntity> entities = this.userCrud.findAll();
+        List<UserBoundary> rv = new ArrayList<UserBoundary>();
+        for (UserEntity e : entities){
+            rv.add(this.converter.userToBoundary(e));
+        }
+        return rv;
     }
 
     @Override
