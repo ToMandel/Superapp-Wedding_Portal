@@ -1,6 +1,8 @@
 package superapp.logic;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import superapp.Converter;
@@ -18,7 +20,17 @@ public class UserServiceDB implements UsersService{
 
     private UserCrud userCrud;
     private Converter converter;
+    private String nameFromSpringConfig;
 
+    @Value("${spring.application.name:defaultName}")
+    public void setNameFromSpringConfig(String nameFromSpringConfig) {
+        this.nameFromSpringConfig = nameFromSpringConfig;
+    }
+
+    @PostConstruct
+    public void init (){
+        System.err.println("**** spring.application.name = " + this.nameFromSpringConfig + " ****");
+    }
     @Autowired
     public void setUserCrud(UserCrud userCrud){
         this.userCrud = userCrud;
@@ -33,9 +45,7 @@ public class UserServiceDB implements UsersService{
     @Override
     public UserBoundary createUser(NewUserBoundary newUser) {
         UserBoundary user = new UserBoundary();
-        //TODO: change superapp name (?)
-        //TODO: for some reason the supername is "wed" - find where this assign
-        UserId userId = new UserId("wed portal", newUser.getEmail());
+        UserId userId = new UserId(this.nameFromSpringConfig, newUser.getEmail());
         user.setUserId(userId);
         user.setRole(newUser.getRole());
         user.setUsername(newUser.getUsername());

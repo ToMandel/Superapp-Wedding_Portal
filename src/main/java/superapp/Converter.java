@@ -11,7 +11,7 @@ public class Converter {
     public UserEntity userToEntity (UserBoundary boundary){
 
         UserEntity entity = new UserEntity();
-        entity.setUserId(boundary.getUserId().getEmail());
+        entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
         entity.setRole(boundary.getRole());
         entity.setAvatar(boundary.getAvatar());
         entity.setUsername(boundary.getUsername());
@@ -20,9 +20,10 @@ public class Converter {
 
     public UserBoundary userToBoundary (UserEntity entity){
         UserBoundary boundary = new UserBoundary();
-        UserId userId = new UserId("wed", entity.getUserId());
-        boundary.setUserId(userId);
-        boundary.setAvatar(entity.getAvatar());
+        String superapp = entity.getUserId().split("#")[0];
+        String email = entity.getUserId().split("#")[1];
+        boundary.setUserId(new UserId(superapp, email));
+        boundary.setUsername(entity.getUsername());
         boundary.setRole(entity.getRole());
         boundary.setAvatar(entity.getAvatar());
         return boundary;
