@@ -66,12 +66,14 @@ public class UserServiceDB implements UsersService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserBoundary> getAllUsers() {
         return null;
     }
 
     @Override
+    @Transactional
     public void deleteAllUsers() {
-
+        this.userCrud.deleteAll();
     }
 }
