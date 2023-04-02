@@ -1,8 +1,12 @@
 package superapp;
 
 import org.springframework.stereotype.Component;
+import superapp.boundries.MiniAppCommandBoundary;
+import superapp.boundries.SuperAppObjectBoundary;
 import superapp.boundries.UserBoundary;
 import superapp.boundries.UserId;
+import superapp.data.MiniAppCommandEntity;
+import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
 
 @Component
@@ -28,19 +32,33 @@ public class Converter {
         boundary.setAvatar(entity.getAvatar());
         return boundary;
     }
-    /*public MiniAppCommandEntity miniAppToEntity(MiniAppCommandBoundary boundary)
+    public MiniAppCommandEntity miniAppCommandToEntity(MiniAppCommandBoundary boundary)
     {
-    	MiniAppCommandEntity entity = new MiniAppCommandEntity();
+        /*MiniAppCommandEntity entity = new MiniAppCommandEntity();
     	//entity.setCommandId(boundary.getCommandId().get);
     	entity.setCommand(boundary.getCommand());
     	entity.setTargetObject(boundary.getTargetObject());
     	entity.setInvocationTimestamp(boundary.getInvocationTimestamp());
     	entity.setInvokedBy(boundary.getInvokedBy());
     	entity.setCommandAttributes(boundary.getCommandAttributes());
-    	return entity;
-    	
-    	
-    }*/
+    	return entity;*/
+        return null;
+
+    }
+
+    public MiniAppCommandBoundary miniAppCommandToBoundary (MiniAppCommandEntity entity){
+        return null;
+    }
+
+    public SuperAppObjectEntity superAppObjectToEntity (SuperAppObjectBoundary boundary){
+        return null;
+    }
+
+    public SuperAppObjectBoundary superAppObjectToBoundary (SuperAppObjectEntity entity){
+        return null;
+    }
+
+
     
     
 }
