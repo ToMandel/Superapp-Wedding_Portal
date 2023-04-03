@@ -9,13 +9,13 @@ import superapp.logic.ObjectsService;
 import java.util.List;
 
 @RestController
-public class SuperAppAPI {
+public class ObjectsAPI {
 
 	private ObjectsService objects;
 
 	//TODO: define autowired function
 	
-	public SuperAppAPI() {
+	public ObjectsAPI() {
 	}
 	
 	@RequestMapping(
