@@ -1,16 +1,27 @@
 package superapp.data;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "SUPER_APP")
 public class SuperAppObjectEntity {
 	@Id
-////TODO: change id to userId
 	private String objectId;
 	private String type;
 	private String alias;
+	private Boolean active;
+	private Double lat;
+	private Double lng;
+	private String createdBy;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationTempStamp;
+
+	@Lob
+	private String objectDetails;
+
+
 	
 	public SuperAppObjectEntity(){
 		
@@ -40,11 +51,51 @@ public class SuperAppObjectEntity {
 		this.alias = alias;
 	}
 
-	@Override
-	public String toString() {
-		return "SuperAppObjectEntity [objectId=" + objectId + ", type=" + type + ", alias=" + alias + "]";
+	public Boolean getActive() {
+		return active;
 	}
-	
 
-	
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public Double getLat() {
+		return lat;
+	}
+
+	public void setLat(Double lat) {
+		this.lat = lat;
+	}
+
+	public Double getLng() {
+		return lng;
+	}
+
+	public void setLng(Double lng) {
+		this.lng = lng;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreationTempStamp() {
+		return creationTempStamp;
+	}
+
+	public void setCreationTempStamp(Date creationTempStamp) {
+		this.creationTempStamp = creationTempStamp;
+	}
+
+	public String getObjectDetails() {
+		return objectDetails;
+	}
+
+	public void setObjectDetails(String objectDetails) {
+		this.objectDetails = objectDetails;
+	}
 }

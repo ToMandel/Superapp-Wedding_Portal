@@ -3,13 +3,11 @@ package superapp.data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-//import superapp.boundries.UserId;
 
 @Entity
 @Table(name = "USERS")
 public class UserEntity  {
 
-    //TODO: change id to userId
     @Id
     private String userId;
     private String role;

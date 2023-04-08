@@ -1,10 +1,7 @@
 package superapp;
 
 import org.springframework.stereotype.Component;
-import superapp.boundries.MiniAppCommandBoundary;
-import superapp.boundries.SuperAppObjectBoundary;
-import superapp.boundries.UserBoundary;
-import superapp.boundries.UserId;
+import superapp.boundries.*;
 import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
@@ -13,11 +10,9 @@ import superapp.data.UserEntity;
 public class Converter {
 
     public UserEntity userToEntity (UserBoundary boundary){
-
         UserEntity entity = new UserEntity();
-        System.out.println(boundary.getUserId().getEmail());
         if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail() == "") {
-            entity.setUserId(boundary.getUserId().getSuperapp() + "#" + " ");
+            entity.setUserId(boundary.getUserId().getSuperapp() + "#" + "");
         }
         else
             entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
@@ -40,8 +35,16 @@ public class Converter {
 
     public UserBoundary userToBoundary (UserEntity entity){
         UserBoundary boundary = new UserBoundary();
-        String superapp = entity.getUserId().split("#")[0];
-        String email = entity.getUserId().split("#")[1];
+        String arr[] = entity.getUserId().split("#");
+        String superapp, email;
+        if (arr.length == 2) {
+            superapp = arr[0];
+            email = arr[1];
+        }
+        else{
+            superapp = arr[0];
+            email = "";
+        }
         boundary.setUserId(new UserId(superapp, email));
         boundary.setUsername(entity.getUsername());
         boundary.setRole(entity.getRole());
@@ -71,7 +74,26 @@ public class Converter {
     }
 
     public SuperAppObjectBoundary superAppObjectToBoundary (SuperAppObjectEntity entity){
-        return null;
+        SuperAppObjectBoundary boundary = new SuperAppObjectBoundary();
+        String arr[] = entity.getObjectId().split("#");
+        String superapp, internalObjectId;
+        if (arr.length == 2) {
+            superapp = arr[0];
+            internalObjectId = arr[1];
+        }
+        else{
+            superapp = arr[0];
+            internalObjectId = "";
+        }
+        boundary.setObjectId(new ObjectId(superapp, internalObjectId));
+        boundary.setType(entity.getType());
+        boundary.setAlias(entity.getAlias());
+        boundary.setActive(entity.getActive());
+        boundary.setCreationTimestamp(entity.getCreationTempStamp());
+        boundary.setLocation(new Location(entity.getLat(), entity.getLng()));
+        String email;
+        //TODO: Add createdBy and objectDetails
+        return boundary;
     }
 
 

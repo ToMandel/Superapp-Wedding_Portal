@@ -2,6 +2,7 @@ package superapp.logic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import superapp.Converter;
 import superapp.boundries.SuperAppObjectBoundary;
 import superapp.dal.SupperAppObjectCrud;
@@ -47,6 +48,7 @@ public class ObjectServiceDB implements ObjectsService{
     }
 
     @Override
+    @Transactional
     public void deleteAllObjects() {
         this.objectCrud.deleteAll();
     }

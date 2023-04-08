@@ -77,7 +77,7 @@ public class UserServiceDB implements UsersService{
 
     @Override
     @Transactional
-    public void updateUser(String userSuperApp, String userEmail, UserBoundary update) {
+    public UserBoundary updateUser(String userSuperApp, String userEmail, UserBoundary update) {
         //TODO check if this method need to be void or return an object
         String userId = userSuperApp + "#" + userEmail;
         UserEntity existing = this.userCrud.findById(userId).orElseThrow(()->new RuntimeException("could not find user by id: " + userId));
@@ -88,6 +88,7 @@ public class UserServiceDB implements UsersService{
             existing.setUsername(update.getUsername());
         if (update.getAvatar() != null)
             existing.setAvatar(update.getAvatar());
+        return this.converter.userToBoundary(existing);
 
     }
 
