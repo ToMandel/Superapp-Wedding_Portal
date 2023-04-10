@@ -1,19 +1,23 @@
 package superapp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import superapp.boundries.*;
 import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
 
+import java.util.Map;
+
 @Component
 public class Converter {
 
+    private ObjectMapper jackson;
+
     public UserEntity userToEntity (UserBoundary boundary){
         UserEntity entity = new UserEntity();
-        if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail() == "") {
+        if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail() == "")
             entity.setUserId(boundary.getUserId().getSuperapp() + "#" + "");
-        }
         else
             entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
         if (boundary.getUsername() == null)
@@ -70,7 +74,31 @@ public class Converter {
     }
 
     public SuperAppObjectEntity superAppObjectToEntity (SuperAppObjectBoundary boundary){
-        return null;
+        SuperAppObjectEntity entity = new SuperAppObjectEntity();
+        entity.setObjectId(boundary.getObjectId().getSuperapp() + "#" + boundary.getObjectId().getInternalObjectId());
+        if (boundary.getType() == null)
+            entity.setType("");
+        else
+            entity.setType(boundary.getType());
+        if (boundary.getActive() == null)
+            entity.setActive(false);
+        else
+            entity.setActive(entity.getActive());
+        if (boundary.getAlias() == null)
+            entity.setAlias("");
+        else
+            entity.setAlias(entity.getAlias());
+        if (boundary.getLocation() == null){
+            entity.setLat(0.0);
+            entity.setLng(0.0);
+        }
+        else {
+            entity.setLat(boundary.getLocation().getLat());
+            entity.setLng(boundary.getLocation().getLng());
+        }
+        entity.setCreationTempStamp(boundary.getCreationTimestamp());
+        //TODO: add createdBy, objectDetails
+        return entity;
     }
 
     public SuperAppObjectBoundary superAppObjectToBoundary (SuperAppObjectEntity entity){
@@ -92,7 +120,20 @@ public class Converter {
         boundary.setCreationTimestamp(entity.getCreationTempStamp());
         boundary.setLocation(new Location(entity.getLat(), entity.getLng()));
         String email;
-        //TODO: Add createdBy and objectDetails
+        arr = entity.getCreatedBy().split("#");
+        if (arr.length == 2)
+            email = arr[1];
+        else
+            email = "";
+        CreatedBy createdBy = new CreatedBy(new UserId(superapp, email));
+        boundary.setCreatedBy(createdBy);
+        try {
+            boundary.setObjectDetails(
+                    this.jackson
+                            .readValue(entity.getObjectDetails(), Map.class));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return boundary;
     }
 
