@@ -1,8 +1,6 @@
 package superapp.boundries;
 
 public class ObjectId {
-	
-	
 
 	private String superapp;
 	private String internalObjectId;
@@ -49,6 +47,19 @@ public class ObjectId {
 	@Override
 	public String toString() {
 		return "ObjectId [superapp=" + superapp + ", internalObjectId=" + internalObjectId + "]";
+	}
+	
+	public static ObjectId fromString(String str) {
+	    if (str == null || str.isEmpty()) {
+	        return null;
+	    }
+	    String[] parts = str.split(", ");
+	    if (parts.length != 2) {
+	        return null;
+	    }
+	    String superapp = parts[0].substring(parts[0].indexOf("=") + 1);
+	    String internalObjectId = parts[1].substring(parts[1].indexOf("=") + 1, parts[1].length() - 1);
+	    return new ObjectId(superapp, internalObjectId);
 	}
 	
 

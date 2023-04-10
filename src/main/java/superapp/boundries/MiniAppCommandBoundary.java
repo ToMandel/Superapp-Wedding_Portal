@@ -2,6 +2,10 @@ package superapp.boundries;
 
 import java.util.Date;
 import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+
 
 public class MiniAppCommandBoundary {
 	
@@ -15,6 +19,7 @@ public class MiniAppCommandBoundary {
 	public MiniAppCommandBoundary() {
 		super();
 	}
+	
 	
 	public MiniAppCommandBoundary(CommandId commandId, String command, TargetObject targetObject,
 								  Date invocationTimestamp, InvokedBy invokedBy, Map<String, Object> commandAttributes) {
@@ -70,6 +75,7 @@ public class MiniAppCommandBoundary {
 	public Map<String, Object> getCommandAttributes() {
 		return commandAttributes;
 	}
+	
 
 	public void setCommandAttributes(Map<String, Object> commandAttributes) {
 		this.commandAttributes = commandAttributes;
@@ -77,7 +83,18 @@ public class MiniAppCommandBoundary {
 	
 	
 	
-	
-	
+	public Date DateParser(String dateString) throws Exception {
+	        //date string in "yyyy-MM-dd HH:mm:ss" format
+	        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        Date date = format.parse(dateString); // parse the string into a Date object
+	        return date; // print the Date object
+	}
 
+
+	@Override
+	public String toString() {
+		return "MiniAppCommandBoundary [commandId=" + commandId + ", command=" + command + ", targetObject="
+				+ targetObject + ", invocationTimestamp=" + invocationTimestamp + ", invokedBy=" + invokedBy
+				+ ", commandAttributes=" + commandAttributes + "]";
+	}
 }

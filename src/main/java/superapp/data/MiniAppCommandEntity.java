@@ -1,8 +1,16 @@
 package superapp.data;
 
+import java.util.Date;
+import java.util.Map;
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import superapp.boundries.CommandId;
+import superapp.boundries.InvokedBy;
+import superapp.boundries.TargetObject;
 
 @Entity
 @Table(name = "MINI_APPS")
@@ -11,12 +19,20 @@ public class MiniAppCommandEntity {
 	////TODO: change id to userId
 	private String commandId;
 	private String command;
-	
-	
+	private String targetObject;
+	private String invocationTimestamp;
+	private String invokedBy;
+	@Lob
+	private String commandAttributes;
+
+
+
 	public MiniAppCommandEntity()
 	{
 		
 	}
+	
+	
 	public String getCommandId() {
 		return commandId;
 	}
@@ -29,17 +45,43 @@ public class MiniAppCommandEntity {
 	public void setCommand(String command) {
 		this.command = command;
 	}
-	@Override
-	public String toString() {
-		return "MiniAppCommandEntity [commandId=" + commandId + ", command=" + command + "]";
+
+
+	public String getInvokedBy() {
+		return invokedBy;
+	}
+	public void setInvokedBy(String invokedBy) {
+		this.invokedBy = invokedBy;
+	}
+	public String getInvocationTimestamp() {
+		return invocationTimestamp;
+	}
+	public void setInvocationTimestamp(String invocationTimestamp) {
+		this.invocationTimestamp = invocationTimestamp;
+	}
+	public String getTargetObject() {
+		return targetObject;
+	}
+	public void setTargetObject(String targetObject) {
+		this.targetObject = targetObject;
 	}
 	
 	
+	public String getCommandAttributes() {
+		return commandAttributes;
+	}
+
+
+	public void setCommandAttributes(String commandAttributes) {
+		this.commandAttributes = commandAttributes;
+	}
 	
-	
-	
-	
-	
+	@Override
+	public String toString() {
+		return "MiniAppCommandEntity [commandId=" + commandId + ", command=" + command + ", targetObject="
+				+ targetObject + ", invocationTimestamp=" + invocationTimestamp + ", invokedBy=" + invokedBy
+				+ ", commandAttributes=" + commandAttributes + "]";
+	}
 
 
 
