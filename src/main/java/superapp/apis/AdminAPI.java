@@ -45,45 +45,20 @@ public class AdminAPI {
 			path = {"/superapp/admin/users"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<UserBoundary> getAllUsers () {
-			/*ArrayList<UserBoundary> list = new ArrayList<UserBoundary>();
-			String superapp = "wedding";   
-			String email = "test@mail.com";
-			for (int i = 0; i < 3; i++) {
-				String role = "HUSABND ";
-				String username = "Lebron James";
-				String avatar = "LOVE";
-				UserId userId = new UserId(superapp, email);
-				
-				UserBoundary u = new UserBoundary(userId, role, username, avatar);
-				list.add(u);
-			}
-			return list;*/
-		return users.getAllUsers();
-			
+	public UserBoundary[] getAllUsers () {
+		List<UserBoundary> rv = this.users.getAllUsers();
+		//return users.getAllUsers();
+		return rv.toArray(new UserBoundary[0]);
 	}
 	
 	@RequestMapping(
 			path = {"/superapp/admin/miniapp"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<MiniAppCommandBoundary> getAllMiniAppCommands () {
-			/*ArrayList<MiniAppCommandBoundary> list = new ArrayList<MiniAppCommandBoundary>();
-			for (int i = 0; i < 3; i++) {
-				String superapp = "WedPortal";
-				CommandId commandId = new CommandId(superapp, "minapp" + i, Integer.toString(i));
-				String command = "foo" + i;
-				TargetObject targetObject = new TargetObject(new ObjectId(superapp));
-				Date invocationTimestamp = new Date();
-				InvokedBy invokedBy = new InvokedBy(new UserId(superapp, "mail@gmail.com"));
-				Map<String, Object> commandArrtibutes = new HashMap<String, Object>();
-				commandArrtibutes.put("key1", "command" + i);
-				list.add(new MiniAppCommandBoundary(commandId, command, targetObject, invocationTimestamp, invokedBy, commandArrtibutes));
-				
-			}
-			return list;*/
-		return commands.getAllCommands();
-			
+	public MiniAppCommandBoundary[] getAllCommands () {
+		List<MiniAppCommandBoundary> rv = this.commands.getAllCommands();
+		//return commands.getAllCommands();
+		return rv.toArray(new MiniAppCommandBoundary[0]);
 	}
 	
 	
@@ -91,22 +66,10 @@ public class AdminAPI {
 			path = {"/superapp/admin/miniapp/{MiniAppName}"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public List<MiniAppCommandBoundary> getMiniAppCommands (@PathVariable("MiniAppName")String MiniAppName) {
-		/*ArrayList<MiniAppCommandBoundary> list = new ArrayList<MiniAppCommandBoundary>();
-		for (int i = 0; i < 3; i++) {
-			String superapp = "WedPortal";
-			CommandId commandId = new CommandId(superapp, MiniAppName, Integer.toString(i));
-			String command = "foo" + i;
-			TargetObject targetObject = new TargetObject(new ObjectId(superapp));
-			Date invocationTimestamp = new Date();
-			InvokedBy invokedBy = new InvokedBy(new UserId(superapp, "mail@gmail.com"));
-			Map<String, Object> commandArrtibutes = new HashMap<String, Object>();
-			commandArrtibutes.put("key1", "command" + i);
-			list.add(new MiniAppCommandBoundary(commandId, command, targetObject, invocationTimestamp, invokedBy, commandArrtibutes));
-			
-		}*/
-		return commands.getAllMiniAppCommands(MiniAppName);
-			
+	public MiniAppCommandBoundary[] getMiniAppCommands (@PathVariable("MiniAppName")String MiniAppName) {
+		List<MiniAppCommandBoundary> rv = commands.getAllMiniAppCommands(MiniAppName);
+		//return commands.getAllMiniAppCommands(MiniAppName);
+		return rv.toArray(new MiniAppCommandBoundary[0]);
 	}
 	
 	@RequestMapping(
@@ -127,9 +90,5 @@ public class AdminAPI {
 	public void deleteAllCommandsHistory() {
 		commands.deleteAllCommands();
 	}
-	
-	
-	
-	
 
 }
