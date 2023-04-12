@@ -110,11 +110,11 @@ public class Converter {
 		if (boundary.getActive() == null)
 			entity.setActive(false);
 		else
-			entity.setActive(entity.getActive());
+			entity.setActive(boundary.getActive());
 		if (boundary.getAlias() == null)
 			entity.setAlias("");
 		else
-			entity.setAlias(entity.getAlias());
+			entity.setAlias(boundary.getAlias());
 		if (boundary.getLocation() == null) {
 			entity.setLat(0.0);
 			entity.setLng(0.0);

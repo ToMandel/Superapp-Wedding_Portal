@@ -48,7 +48,15 @@ public class ObjectServiceDB implements ObjectsService{
     @Transactional
     @Override
     public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
-        object.setObjectId(new ObjectId(nameFromSpringConfig));
+
+        List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
+        String internalObjectId;
+        if (entities.isEmpty())
+            internalObjectId = "1";
+        else
+            internalObjectId = Integer.toString(entities.size() + 1);
+        //object.setObjectId(new ObjectId(nameFromSpringConfig));
+        object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
         object.setCreationTimestamp(new Date());
         if (object.getObjectDetails() == null)
             object.setObjectDetails(new HashMap<>());
