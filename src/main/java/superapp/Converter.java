@@ -169,4 +169,13 @@ public class Converter {
 		return boundary;
 	}
 
+	public String toEntity (Map<String, Object> data) {
+		try {
+			return this.jackson
+					.writeValueAsString(data);
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

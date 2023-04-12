@@ -14,7 +14,6 @@ import superapp.data.UserEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceDB implements UsersService{
@@ -77,6 +76,7 @@ public class UserServiceDB implements UsersService{
             existing.setUsername(update.getUsername());
         if (update.getAvatar() != null)
             existing.setAvatar(update.getAvatar());
+        this.userCrud.save(existing);
         return this.converter.userToBoundary(existing);
 
     }
