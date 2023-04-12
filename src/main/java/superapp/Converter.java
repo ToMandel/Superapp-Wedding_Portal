@@ -124,12 +124,15 @@ public class Converter {
 		}
 
 		entity.setCreationTempStamp(boundary.getCreationTimestamp());
+		if (boundary.getCreatedBy() == null || boundary.getCreatedBy().getUserId() == null)
+			entity.setCreatedBy("");
+		else
+			entity.setCreatedBy(boundary.getCreatedBy().getUserId().getSuperapp() + "#" + boundary.getCreatedBy().getUserId().getEmail());
 		try {
 			entity.setObjectDetails(this.jackson.writeValueAsString(boundary.getObjectDetails()));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		// TODO: add createdBy, objectDetails
 		return entity;
 	}
 
