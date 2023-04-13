@@ -21,8 +21,8 @@ public class ObjectServiceDB implements ObjectsService{
 
     private SupperAppObjectCrud objectCrud;
     private Converter converter;
-
     private String nameFromSpringConfig;
+    
 
     @Value("${spring.application.name:defaultName}")
     public void setNameFromSpringConfig(String nameFromSpringConfig) {
@@ -48,7 +48,6 @@ public class ObjectServiceDB implements ObjectsService{
     @Transactional
     @Override
     public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
-
         List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
         String internalObjectId;
         if (entities.isEmpty())
