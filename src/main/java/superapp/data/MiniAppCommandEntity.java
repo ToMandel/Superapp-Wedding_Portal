@@ -4,10 +4,7 @@ import java.util.Date;
 import java.util.Map;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import superapp.boundries.CommandId;
 import superapp.boundries.InvokedBy;
 import superapp.boundries.TargetObject;
@@ -20,7 +17,8 @@ public class MiniAppCommandEntity {
 	private String commandId;
 	private String command;
 	private String targetObject;
-	private String invocationTimestamp;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date invocationTimestamp;
 	private String invokedBy;
 	@Lob
 	private String commandAttributes;
@@ -53,10 +51,10 @@ public class MiniAppCommandEntity {
 	public void setInvokedBy(String invokedBy) {
 		this.invokedBy = invokedBy;
 	}
-	public String getInvocationTimestamp() {
+	public Date getInvocationTimestamp() {
 		return invocationTimestamp;
 	}
-	public void setInvocationTimestamp(String invocationTimestamp) {
+	public void setInvocationTimestamp(Date invocationTimestamp) {
 		this.invocationTimestamp = invocationTimestamp;
 	}
 	public String getTargetObject() {

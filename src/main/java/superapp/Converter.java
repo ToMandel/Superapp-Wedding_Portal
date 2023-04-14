@@ -7,6 +7,7 @@ import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -60,17 +61,29 @@ public class Converter {
 	}
 
 	public MiniAppCommandEntity miniAppCommandToEntity(MiniAppCommandBoundary boundary) {
+
 		MiniAppCommandEntity entity = new MiniAppCommandEntity();
 		entity.setCommandId(boundary.getCommandId().toString());
+		if (boundary.getCommand() == null)
+			entity.setCommand("");
+		else
+			entity.setCommand(boundary.getCommand());
 		// return "CommandId [superapp=" + superapp + ", miniapp=" + miniapp + ",
 		// internalCommandId=" + internalCommandId+ "]";
-		entity.setCommand(boundary.getCommand());
+		//entity.setCommand(boundary.getCommand());
 		// return string
-		entity.setInvocationTimestamp(boundary.getInvocationTimestamp().toString());
+		entity.setInvocationTimestamp(boundary.getInvocationTimestamp());
+
 		// return "EEE MMM dd HH:mm:ss zzz yyyy";
-		entity.setInvokedBy(boundary.getInvokedBy().toString());
+		if (boundary.getInvokedBy() == null)
+			entity.setInvokedBy("");
+		else
+			entity.setInvokedBy(boundary.getInvokedBy().toString());
 		// return "InvokedBy [userId=" + userId + "]";
-		entity.setTargetObject(boundary.getTargetObject().toString());
+		if (boundary.getTargetObject() == null)
+			entity.setTargetObject("");
+		else
+			entity.setTargetObject(boundary.getTargetObject().toString());
 		// return "TargetObject [objectId=" + objectId + "]";
 		try {
 			entity.setCommandAttributes(this.jackson.writeValueAsString(boundary.getCommandAttributes()));
@@ -84,12 +97,7 @@ public class Converter {
 		MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
 		boundary.setCommandId(CommandId.fromString(entity.getCommandId()));
 		boundary.setCommand(entity.getCommand());
-		try {
-			boundary.setInvocationTimestamp(boundary.DateParser(entity.getInvocationTimestamp()));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			throw new RuntimeException(e);
-		}
+		boundary.setInvocationTimestamp(entity.getInvocationTimestamp());
 		boundary.setInvokedBy(InvokedBy.fromString(entity.getInvokedBy()));
 		boundary.setTargetObject(TargetObject.fromString(entity.getTargetObject()));
 		try {
