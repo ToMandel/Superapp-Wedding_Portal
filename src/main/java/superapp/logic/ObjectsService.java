@@ -10,7 +10,7 @@ public interface ObjectsService {
 
     public SuperAppObjectBoundary updateObject (String objectSuperApp, String internalObjectId, SuperAppObjectBoundary update);
 
-    public SuperAppObjectBoundary getSpecificObject (String objectSuperApp, String internalId);
+    public SuperAppObjectBoundary getSpecificObject (String objectSuperApp, String internalObjectId);
 
     public List<SuperAppObjectBoundary> getAllObjects();
 
