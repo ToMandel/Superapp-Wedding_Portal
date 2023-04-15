@@ -74,12 +74,13 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     @Transactional(readOnly = true)
     @Override
     public List<MiniAppCommandBoundary> getAllMiniAppCommands(String miniAppName) {
-    	List <MiniAppCommandBoundary> commands = getAllCommands();
-    	for (MiniAppCommandBoundary c : commands) {
-    		if (!c.getCommandId().getMiniapp().equals(miniAppName)) 
-    			commands.remove(c);
+    	List <MiniAppCommandBoundary> allCommands = getAllCommands();
+        List<MiniAppCommandBoundary> miniAppCommands = new ArrayList<MiniAppCommandBoundary>();
+    	for (MiniAppCommandBoundary c : allCommands) {
+    		if (c.getCommandId().getMiniapp().equals(miniAppName))
+                miniAppCommands.add(c);
     	}
-    	return commands;
+    	return miniAppCommands;
     }
     
     @Transactional
