@@ -53,8 +53,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
             internalObjectId = "1";
         else
             internalObjectId = Integer.toString(entities.size() + 1);
-        //TODO: check how to get mini-app name
-        command.setCommandId(new CommandId(nameFromSpringConfig, "miniapp", internalObjectId));
+        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalObjectId));
         command.setInvocationTimestamp(new Date());
         MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
         entity = this.miniappCommandCrud.save(entity);
