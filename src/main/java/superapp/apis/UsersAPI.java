@@ -20,6 +20,7 @@ public class UsersAPI {
 	public UsersAPI() {
 	}
 	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 		path = {"/superapp/users/login/{superapp}/{email}"},
 		method = {RequestMethod.GET},
@@ -28,6 +29,7 @@ public class UsersAPI {
 		return users.login(superapp, email);
 	}
 	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/users"},
 			method = {RequestMethod.POST},
@@ -37,7 +39,7 @@ public class UsersAPI {
 			return users.createUser(newUser);
 		}
 	
-	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/users/{superapp}/{userEmail}"},
 			method = {RequestMethod.PUT},
