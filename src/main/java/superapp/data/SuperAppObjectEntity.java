@@ -1,10 +1,12 @@
 package superapp.data;
-import jakarta.persistence.*;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.Map;
 
-@Entity
-@Table(name = "SUPER_APP")
+@Document(collection = "SUPER_APP_OBJECTS")
 public class SuperAppObjectEntity {
 	@Id
 	private String objectId;
@@ -14,12 +16,9 @@ public class SuperAppObjectEntity {
 	private Double lat;
 	private Double lng;
 	private String createdBy;
-
-	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationTempStamp;
 
-	@Lob
-	private String objectDetails;
+	private Map<String, Object> objectDetails;
 
 
 	
@@ -91,11 +90,11 @@ public class SuperAppObjectEntity {
 		this.creationTempStamp = creationTempStamp;
 	}
 
-	public String getObjectDetails() {
+	public Map<String, Object> getObjectDetails() {
 		return objectDetails;
 	}
 
-	public void setObjectDetails(String objectDetails) {
+	public void setObjectDetails(Map<String, Object> objectDetails) {
 		this.objectDetails = objectDetails;
 	}
 }

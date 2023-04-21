@@ -3,30 +3,20 @@ package superapp.data;
 import java.util.Date;
 import java.util.Map;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
-import superapp.boundries.CommandId;
-import superapp.boundries.InvokedBy;
-import superapp.boundries.TargetObject;
-
-@Entity
-@Table(name = "MINI_APPS")
+@Document(collection = "MINI_APP_COMMANDS")
 public class MiniAppCommandEntity {
 	@Id
-	////TODO: change id to userId
 	private String commandId;
 	private String command;
 	private String targetObject;
-	@Temporal(TemporalType.TIMESTAMP)
 	private Date invocationTimestamp;
 	private String invokedBy;
-	@Lob
-	private String commandAttributes;
+	private Map<String, Object> commandAttributes;
 
-
-
-	public MiniAppCommandEntity()
-	{
+	public MiniAppCommandEntity() {
 		
 	}
 	
@@ -65,12 +55,12 @@ public class MiniAppCommandEntity {
 	}
 	
 	
-	public String getCommandAttributes() {
+	public Map<String, Object> getCommandAttributes() {
 		return commandAttributes;
 	}
 
 
-	public void setCommandAttributes(String commandAttributes) {
+	public void setCommandAttributes(Map<String, Object> commandAttributes) {
 		this.commandAttributes = commandAttributes;
 	}
 	

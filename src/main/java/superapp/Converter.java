@@ -6,8 +6,6 @@ import superapp.boundries.*;
 import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
-
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -61,7 +59,7 @@ public class Converter {
 	}
 
 	public MiniAppCommandEntity miniAppCommandToEntity(MiniAppCommandBoundary boundary) {
-
+	//TODO: Fix ID of entity
 		MiniAppCommandEntity entity = new MiniAppCommandEntity();
 		entity.setCommandId(boundary.getCommandId().toString());
 		if (boundary.getCommand() == null)
@@ -85,11 +83,12 @@ public class Converter {
 		else
 			entity.setTargetObject(boundary.getTargetObject().toString());
 		// return "TargetObject [objectId=" + objectId + "]";
-		try {
+		/*try {
 			entity.setCommandAttributes(this.jackson.writeValueAsString(boundary.getCommandAttributes()));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
+		}*/
+		entity.setCommandAttributes(boundary.getCommandAttributes());
 		return entity;
 	}
 
@@ -100,11 +99,12 @@ public class Converter {
 		boundary.setInvocationTimestamp(entity.getInvocationTimestamp());
 		boundary.setInvokedBy(InvokedBy.fromString(entity.getInvokedBy()));
 		boundary.setTargetObject(TargetObject.fromString(entity.getTargetObject()));
-		try {
+		/*try {
 			boundary.setCommandAttributes(this.jackson.readValue(entity.getCommandAttributes(), Map.class));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
+		}*/
+		boundary.setCommandAttributes(entity.getCommandAttributes());
 		return boundary;
 	}
 
@@ -136,11 +136,12 @@ public class Converter {
 			entity.setCreatedBy("");
 		else
 			entity.setCreatedBy(boundary.getCreatedBy().getUserId().getSuperapp() + "#" + boundary.getCreatedBy().getUserId().getEmail());
-		try {
+		/*try {
 			entity.setObjectDetails(this.jackson.writeValueAsString(boundary.getObjectDetails()));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
+		}*/
+		entity.setObjectDetails(boundary.getObjectDetails());
 		return entity;
 	}
 
@@ -169,11 +170,12 @@ public class Converter {
 			email = "";
 		CreatedBy createdBy = new CreatedBy(new UserId(superapp, email));
 		boundary.setCreatedBy(createdBy);
-		try {
+		/*try {
 			boundary.setObjectDetails(this.jackson.readValue(entity.getObjectDetails(), Map.class));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
+		}*/
+		boundary.setObjectDetails(boundary.getObjectDetails());
 		return boundary;
 	}
 

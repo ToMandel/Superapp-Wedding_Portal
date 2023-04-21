@@ -3,8 +3,6 @@ package superapp.logic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.annotation.PostConstruct;
 import superapp.Converter;
 import superapp.boundries.CommandId;
@@ -43,8 +41,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     public void setConverter(Converter converter){
         this.converter = converter;
     }
-    
-    @Transactional
+
     @Override
     public Object invokeCommand(MiniAppCommandBoundary command){
         List<MiniAppCommandEntity> entities = this.miniappCommandCrud.findAll();
@@ -59,8 +56,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
         entity = this.miniappCommandCrud.save(entity);
         return this.converter.miniAppCommandToBoundary(entity);
     }	
-    
-    @Transactional (readOnly = true)
+
     @Override
     public List<MiniAppCommandBoundary> getAllCommands() {
     	List <MiniAppCommandEntity> commands = this.miniappCommandCrud.findAll();
@@ -70,8 +66,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     	}
     	return rv;
     }
-    
-    @Transactional(readOnly = true)
+
     @Override
     public List<MiniAppCommandBoundary> getAllMiniAppCommands(String miniAppName) {
     	List <MiniAppCommandBoundary> allCommands = getAllCommands();
@@ -82,8 +77,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     	}
     	return miniAppCommands;
     }
-    
-    @Transactional
+
     @Override
     public void deleteAllCommands() {
     	this.miniappCommandCrud.deleteAll();

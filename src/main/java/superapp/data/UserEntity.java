@@ -1,13 +1,10 @@
 package superapp.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "USERS")
+@Document(collection = "USERS")
 public class UserEntity  {
-
     @Id
     private String userId;
     private String role;

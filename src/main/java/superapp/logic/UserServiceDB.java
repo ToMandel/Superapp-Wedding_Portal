@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import superapp.Converter;
 import superapp.boundries.NewUserBoundary;
 import superapp.boundries.UserBoundary;
@@ -42,7 +41,6 @@ public class UserServiceDB implements UsersService{
         this.converter = converter;
     }
 
-    @Transactional
     @Override
     public UserBoundary createUser(NewUserBoundary newUser) {
         UserBoundary user = new UserBoundary();
@@ -57,7 +55,6 @@ public class UserServiceDB implements UsersService{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserBoundary login(String userSuperApp, String userEmail) {
         String userId = userSuperApp + "#" + userEmail;
         UserEntity existing = this.userCrud.findById(userId).orElseThrow(()->new RuntimeException("could not find user by id: " + userId));
@@ -65,7 +62,6 @@ public class UserServiceDB implements UsersService{
     }
 
     @Override
-    @Transactional
     public UserBoundary updateUser(String userSuperApp, String userEmail, UserBoundary update) {
         String userId = userSuperApp + "#" + userEmail;
         UserEntity existing = this.userCrud.findById(userId).orElseThrow(()->new RuntimeException("could not find user by id: " + userId));
@@ -82,7 +78,6 @@ public class UserServiceDB implements UsersService{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserBoundary> getAllUsers() {
         List<UserEntity> entities = this.userCrud.findAll();
         List<UserBoundary> rv = new ArrayList<UserBoundary>();
@@ -93,7 +88,6 @@ public class UserServiceDB implements UsersService{
     }
 
     @Override
-    @Transactional
     public void deleteAllUsers() {
         this.userCrud.deleteAll();
     }

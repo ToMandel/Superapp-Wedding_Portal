@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import superapp.Converter;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
@@ -45,7 +44,7 @@ public class ObjectServiceDB implements ObjectsService{
         this.converter = converter;
     }
 
-    @Transactional
+
     @Override
     public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
         List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
@@ -64,7 +63,6 @@ public class ObjectServiceDB implements ObjectsService{
         return this.converter.superAppObjectToBoundary(entity);
     }
 
-    @Transactional
     @Override
     public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId, SuperAppObjectBoundary update) {
         String objectId = objectSuperApp + "#" + internalObjectId;
@@ -80,12 +78,12 @@ public class ObjectServiceDB implements ObjectsService{
             existing.setLat(update.getLocation().getLat());
         }
         if (update.getObjectDetails() != null)
-            existing.setObjectDetails(this.converter.toEntity(update.getObjectDetails()));
+            //existing.setObjectDetails(this.converter.toEntity(update.getObjectDetails()));
+            existing.setObjectDetails(update.getObjectDetails());
         this.objectCrud.save(existing);
         return this.converter.superAppObjectToBoundary(existing);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public SuperAppObjectBoundary getSpecificObject(String objectSuperApp, String internalId) {
         String objectId = objectSuperApp + "#" + internalId;
@@ -93,7 +91,6 @@ public class ObjectServiceDB implements ObjectsService{
         return this.converter.superAppObjectToBoundary(existing);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<SuperAppObjectBoundary> getAllObjects() {
         List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
@@ -106,7 +103,6 @@ public class ObjectServiceDB implements ObjectsService{
 
 
     @Override
-    @Transactional
     public void deleteAllObjects() {
         this.objectCrud.deleteAll();
     }
