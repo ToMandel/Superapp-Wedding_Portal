@@ -7,14 +7,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class UserEntity  {
     @Id
     private String userId;
-    private String role;
+    private UserRole role;
     private String username;
     private String avatar;
 
     public UserEntity() {
     }
 
-    public UserEntity(String userId, String role, String username, String avatar) {
+    public UserEntity(String userId, UserRole role, String username, String avatar) {
         this.userId = userId;
         this.role = role;
         this.username = username;
@@ -29,11 +29,11 @@ public class UserEntity  {
         this.userId = userId;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 

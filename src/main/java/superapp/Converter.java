@@ -27,10 +27,13 @@ public class Converter {
 			entity.setUsername("");
 		else
 			entity.setUsername(boundary.getUsername());
+		
+		//Setting default user role
 		if (boundary.getRole() == null)
-			entity.setRole("");
+			entity.setRole(boundary.getRole().MINIAPP_USER);
 		else
 			entity.setRole(boundary.getRole());
+		
 		if (boundary.getAvatar() == null)
 			entity.setAvatar("");
 		else

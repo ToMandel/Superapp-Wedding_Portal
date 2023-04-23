@@ -1,9 +1,11 @@
 package superapp.boundries;
 
+import superapp.data.UserRole;
+
 public class NewUserBoundary {
 
     private String email;
-    private String role;
+    private UserRole role;
     private String username;
     private String avatar;
 
@@ -11,7 +13,7 @@ public class NewUserBoundary {
     public NewUserBoundary() {
     }
 
-    public NewUserBoundary(String email, String role, String username, String avatar) {
+    public NewUserBoundary(String email, UserRole role, String username, String avatar) {
         this.email = email;
         this.role = role;
         this.username = username;
@@ -26,11 +28,11 @@ public class NewUserBoundary {
         this.email = email;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
