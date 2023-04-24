@@ -2,6 +2,7 @@ package superapp.apis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +41,7 @@ public class AdminAPI {
 	public AdminAPI() {
 	}
 	
-	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/admin/users"},
 			method = {RequestMethod.GET},
@@ -51,6 +52,7 @@ public class AdminAPI {
 		return rv.toArray(new UserBoundary[0]);
 	}
 	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/admin/miniapp"},
 			method = {RequestMethod.GET},
@@ -61,7 +63,7 @@ public class AdminAPI {
 		return rv.toArray(new MiniAppCommandBoundary[0]);
 	}
 	
-	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/admin/miniapp/{MiniAppName}"},
 			method = {RequestMethod.GET},
@@ -72,18 +74,23 @@ public class AdminAPI {
 		return rv.toArray(new MiniAppCommandBoundary[0]);
 	}
 	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = "/superapp/admin/users",
 			method = {RequestMethod.DELETE})
 	public void deleteAllUsers() {
 		users.deleteAllUsers();
 	}
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = "/superapp/admin/objects",
 			method = {RequestMethod.DELETE})
 	public void deleteAllObjects() {
 		objects.deleteAllObjects();
 	}
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = "/superapp/admin/miniapp",
 			method = {RequestMethod.DELETE})
