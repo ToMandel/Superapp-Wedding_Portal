@@ -1,5 +1,7 @@
 package superapp.boundries;
 
+import java.util.regex.Pattern;
+
 import superapp.data.UserRole;
 
 public class NewUserBoundary {
@@ -25,7 +27,11 @@ public class NewUserBoundary {
     }
 
     public void setEmail(String email) {
+    	if (isValid(email))
         this.email = email;
+    	else 
+    	this.email ="";
+    	
     }
 
     public UserRole getRole() {
@@ -51,4 +57,13 @@ public class NewUserBoundary {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+    
+    private boolean isValid(String email) {
+		String emailRegex = "([a-zA-Z0-9_+&.-]+)@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
+
+		Pattern pat = Pattern.compile(emailRegex);
+		if (email == null)
+			return false;
+		return pat.matcher(email).matches();
+	}
 }

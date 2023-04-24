@@ -6,6 +6,9 @@ import superapp.boundries.*;
 import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
+import superapp.logic.BadRequestException;
+import superapp.logic.InternalServerErrorException;
+
 import java.util.Map;
 
 @Component
@@ -20,22 +23,22 @@ public class Converter {
 	public UserEntity userToEntity(UserBoundary boundary) {
 		UserEntity entity = new UserEntity();
 		if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail() == "")
-			entity.setUserId(boundary.getUserId().getSuperapp() + "#" + "");
+			throw new BadRequestException("E-mail is not in a valid format");
 		else
 			entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
 		if (boundary.getUsername() == null)
-			entity.setUsername("");
+			throw new BadRequestException("User Name can't be null");
 		else
 			entity.setUsername(boundary.getUsername());
 		
 		//Setting default user role
 		if (boundary.getRole() == null)
-			entity.setRole(boundary.getRole().MINIAPP_USER);
+			throw new BadRequestException("Role must be MINIAPP_USER or SUPERAPP_USER or ADMIN");
 		else
 			entity.setRole(boundary.getRole());
 		
 		if (boundary.getAvatar() == null)
-			entity.setAvatar("");
+			throw new BadRequestException("Avatar can't be null");
 		else
 			entity.setAvatar(boundary.getAvatar());
 
@@ -66,7 +69,7 @@ public class Converter {
 		MiniAppCommandEntity entity = new MiniAppCommandEntity();
 		entity.setCommandId(boundary.getCommandId().toString());
 		if (boundary.getCommand() == null)
-			entity.setCommand("");
+			throw new BadRequestException("Command can't be null");
 		else
 			entity.setCommand(boundary.getCommand());
 		// return "CommandId [superapp=" + superapp + ", miniapp=" + miniapp + ",
@@ -76,13 +79,18 @@ public class Converter {
 		entity.setInvocationTimestamp(boundary.getInvocationTimestamp());
 
 		// return "EEE MMM dd HH:mm:ss zzz yyyy";
-		if (boundary.getInvokedBy() == null)
-			entity.setInvokedBy("");
+		if (boundary.getInvokedBy().getUserId().getEmail() == null||
+				boundary.getInvokedBy().getUserId().getSuperapp() == null||
+				boundary.getInvokedBy().getUserId() == null)
+			throw new InternalServerErrorException("Creator of command's id is not fully defined");
 		else
 			entity.setInvokedBy(boundary.getInvokedBy().toString());
 		// return "InvokedBy [userId=" + userId + "]";
-		if (boundary.getTargetObject() == null)
-			entity.setTargetObject("");
+		if (boundary.getTargetObject().getObjectId() == null||
+				boundary.getTargetObject().getObjectId().getSuperapp()==null ||
+				boundary.getTargetObject().getObjectId().getInternalObjectId()==null)
+			throw new InternalServerErrorException("Target object id is not fully defined");
+		
 		else
 			entity.setTargetObject(boundary.getTargetObject().toString());
 		// return "TargetObject [objectId=" + objectId + "]";
@@ -115,7 +123,8 @@ public class Converter {
 		SuperAppObjectEntity entity = new SuperAppObjectEntity();
 		entity.setObjectId(boundary.getObjectId().getSuperapp() + "#" + boundary.getObjectId().getInternalObjectId());
 		if (boundary.getType() == null)
-			entity.setType("");
+			throw new BadRequestException("Type can't be null");
+
 		else
 			entity.setType(boundary.getType());
 		if (boundary.getActive() == null)
@@ -123,7 +132,8 @@ public class Converter {
 		else
 			entity.setActive(boundary.getActive());
 		if (boundary.getAlias() == null)
-			entity.setAlias("");
+			throw new BadRequestException("Alias can't be null");
+
 		else
 			entity.setAlias(boundary.getAlias());
 		if (boundary.getLocation() == null) {
