@@ -10,6 +10,7 @@ import superapp.boundries.MiniAppCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
 import superapp.data.MiniAppCommandEntity;
 
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,11 +47,13 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     public Object invokeCommand(MiniAppCommandBoundary command){
         List<MiniAppCommandEntity> entities = this.miniappCommandCrud.findAll();
         String internalObjectId;
-        if (entities.isEmpty())
-            internalObjectId = "1";
-        else
-            internalObjectId = Integer.toString(entities.size() + 1);
+//        if (entities.isEmpty())
+//            //internalObjectId = "1";
+//        else
+            //internalObjectId = Integer.toString(entities.size() + 1);
+        internalObjectId=UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant 
         command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalObjectId));
+        //todo
         command.setInvocationTimestamp(new Date());
         MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
         entity = this.miniappCommandCrud.save(entity);

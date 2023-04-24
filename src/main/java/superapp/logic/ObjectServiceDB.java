@@ -10,6 +10,7 @@ import superapp.boundries.SuperAppObjectBoundary;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.data.SuperAppObjectEntity;
 
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,12 +50,14 @@ public class ObjectServiceDB implements ObjectsService{
     public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
         List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
         String internalObjectId;
-        if (entities.isEmpty())
-            internalObjectId = "1";
-        else
-            internalObjectId = Integer.toString(entities.size() + 1);
+//        if (entities.isEmpty())
+//            internalObjectId = "1";
+//        else
+         //  internalObjectId = Integer.toString(entities.size() + 1);
+        internalObjectId=UUID.randomUUID().toString(); // the value is random so the size of entities isn't relevant
         //object.setObjectId(new ObjectId(nameFromSpringConfig));
         object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
+        //TODO
         object.setCreationTimestamp(new Date());
         if (object.getObjectDetails() == null)
             object.setObjectDetails(new HashMap<>());

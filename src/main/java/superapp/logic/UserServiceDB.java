@@ -11,6 +11,7 @@ import superapp.boundries.UserId;
 import superapp.dal.UserCrud;
 import superapp.data.UserEntity;
 
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 
