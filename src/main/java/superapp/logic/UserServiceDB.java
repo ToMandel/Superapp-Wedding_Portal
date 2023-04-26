@@ -11,7 +11,7 @@ import superapp.boundries.UserId;
 import superapp.dal.UserCrud;
 import superapp.data.UserEntity;
 
-import java.util.UUID;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +45,11 @@ public class UserServiceDB implements UsersService{
     @Override
     public UserBoundary createUser(NewUserBoundary newUser) {
         UserBoundary user = new UserBoundary();
+        String id = this.nameFromSpringConfig + "#" +  newUser.getEmail();
+        //To check if there is a user with the same email already
+        Optional<UserEntity> existing = this.userCrud.findById(id);
+        if (existing.isPresent())
+            throw new BadRequestException("User with same email already exists");
         UserId userId = new UserId(this.nameFromSpringConfig, newUser.getEmail());
         user.setUserId(userId);
         user.setRole(newUser.getRole());
