@@ -29,8 +29,14 @@ public class InvokedBy {
 		return "InvokedBy [userId=" + userId.toString() + "]";
 	}
 	
-	public static InvokedBy fromString(String str) {
-	    if (str == null || str.isEmpty()) {
+	public static InvokedBy userIdFromString(String str) {
+		String arr[] = str.split("#");
+		if (arr.length != 2)
+			return null;
+		UserId userId = new UserId();
+		userId.setSuperapp(arr[0]);
+		userId.setEmail(arr[1]);
+	    /*if (str == null || str.isEmpty()) {
 	        return null;
 	    }
 	    String[] parts = str.split("\\[|\\]");
@@ -41,7 +47,7 @@ public class InvokedBy {
 	    UserId userId = UserId.fromString(userIdStr);
 	    if (userId == null) {
 	        return null;
-	    }
+	    }*/
 	    return new InvokedBy(userId);
 	}
 

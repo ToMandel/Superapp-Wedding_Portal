@@ -26,8 +26,14 @@ public class TargetObject {
 		return "TargetObject [objectId=" + objectId.toString() + "]";
 	}
 	
-	public static TargetObject fromString(String str) {
-	    if (str == null || str.isEmpty()) {
+	public static TargetObject targetObjectFromString(String str) {
+		String arr[] = str.split("#");
+		if (arr.length != 2)
+			return null;
+		ObjectId objectId = new ObjectId();
+		objectId.setSuperapp(arr[0]);
+		objectId.setInternalObjectId(arr[1]);
+	    /*if (str == null || str.isEmpty()) {
 	        return null;
 	    }
 	    String[] parts = str.split("\\[|\\]");
@@ -38,7 +44,7 @@ public class TargetObject {
 	    ObjectId objectId = ObjectId.fromString(objectIdStr);
 	    if (objectId == null) {
 	        return null;
-	    }
+	    }*/
 	    return new TargetObject(objectId);
 	}
 	

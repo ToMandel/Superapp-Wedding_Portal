@@ -24,6 +24,16 @@ public class CreatedBy {
 	public void setUserId(UserId userId) {
 		this.userId = userId;
 	}
+
+	public static CreatedBy createdByFromString(String str) {
+		String arr[] = str.split("#");
+		if (arr.length != 2)
+			return null;
+		UserId userId = new UserId();
+		userId.setSuperapp(arr[0]);
+		userId.setEmail(arr[1]);
+		return new CreatedBy(userId);
+	}
 	
 	
 	

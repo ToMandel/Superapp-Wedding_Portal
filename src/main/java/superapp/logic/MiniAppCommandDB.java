@@ -46,14 +46,12 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     @Override
     public Object invokeCommand(MiniAppCommandBoundary command){
         List<MiniAppCommandEntity> entities = this.miniappCommandCrud.findAll();
-        String internalObjectId;
 //        if (entities.isEmpty())
 //            //internalObjectId = "1";
 //        else
             //internalObjectId = Integer.toString(entities.size() + 1);
-        internalObjectId=UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant 
-        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalObjectId));
-        //todo
+        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
+        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
         command.setInvocationTimestamp(new Date());
         MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
         entity = this.miniappCommandCrud.save(entity);

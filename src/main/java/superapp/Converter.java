@@ -65,56 +65,49 @@ public class Converter {
 	}
 
 	public MiniAppCommandEntity miniAppCommandToEntity(MiniAppCommandBoundary boundary) {
-	//TODO: Fix ID of entity
 		MiniAppCommandEntity entity = new MiniAppCommandEntity();
-		entity.setCommandId(boundary.getCommandId().toString());
+		CommandId commandId = boundary.getCommandId();
+		//create commandId with delimiter between each field
+		entity.setCommandId(commandId.getSuperapp() + '#' + commandId.getMiniapp() + '#' + commandId.getInternalCommandId());
 		if (boundary.getCommand() == null)
 			throw new BadRequestException("Command can't be null");
 		else
 			entity.setCommand(boundary.getCommand());
-		// return "CommandId [superapp=" + superapp + ", miniapp=" + miniapp + ",
-		// internalCommandId=" + internalCommandId+ "]";
-		//entity.setCommand(boundary.getCommand());
-		// return string
 		entity.setInvocationTimestamp(boundary.getInvocationTimestamp());
-
-		// return "EEE MMM dd HH:mm:ss zzz yyyy";
-		if (boundary.getInvokedBy().getUserId().getEmail() == null||
-				boundary.getInvokedBy().getUserId().getSuperapp() == null||
-				boundary.getInvokedBy().getUserId() == null)
-			throw new InternalServerErrorException("Creator of command's id is not fully defined");
-		else
-			entity.setInvokedBy(boundary.getInvokedBy().toString());
-		// return "InvokedBy [userId=" + userId + "]";
-		if (boundary.getTargetObject().getObjectId() == null||
-				boundary.getTargetObject().getObjectId().getSuperapp()==null ||
-				boundary.getTargetObject().getObjectId().getInternalObjectId()==null)
-			throw new InternalServerErrorException("Target object id is not fully defined");
-		
-		else
-			entity.setTargetObject(boundary.getTargetObject().toString());
-		// return "TargetObject [objectId=" + objectId + "]";
-		/*try {
-			entity.setCommandAttributes(this.jackson.writeValueAsString(boundary.getCommandAttributes()));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}*/
+		if (boundary.getInvokedBy() == null ||
+			boundary.getInvokedBy().getUserId().getEmail() == null||
+			boundary.getInvokedBy().getUserId().getSuperapp() == null||
+			boundary.getInvokedBy().getUserId() == null)
+				throw new InternalServerErrorException("Creator of command's id is not fully defined");
+		else {
+			//here if there is invokedBy key in the boundary
+			//create invokedBy with delimiter between each field
+			UserId userId = boundary.getInvokedBy().getUserId();
+			entity.setInvokedBy(userId.getSuperapp() + '#' + userId.getEmail());
+		}
+		if (boundary.getTargetObject() == null ||
+			boundary.getTargetObject().getObjectId() == null||
+			boundary.getTargetObject().getObjectId().getSuperapp()==null ||
+			boundary.getTargetObject().getObjectId().getInternalObjectId()==null)
+				throw new InternalServerErrorException("Target object id is not fully defined");
+		else {
+			//here if there is targetObject key in the boundary
+			//create targetObject with delimiter between each field
+			ObjectId objectId = boundary.getTargetObject().getObjectId();
+			entity.setTargetObject(objectId.getSuperapp() + '#' + objectId.getInternalObjectId());
+		}
 		entity.setCommandAttributes(boundary.getCommandAttributes());
 		return entity;
 	}
 
 	public MiniAppCommandBoundary miniAppCommandToBoundary(MiniAppCommandEntity entity) {
 		MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
-		boundary.setCommandId(CommandId.fromString(entity.getCommandId()));
+		//parse each id field (String) to an object
+		boundary.setCommandId(CommandId.commandIdFromString(entity.getCommandId()));
 		boundary.setCommand(entity.getCommand());
 		boundary.setInvocationTimestamp(entity.getInvocationTimestamp());
-		boundary.setInvokedBy(InvokedBy.fromString(entity.getInvokedBy()));
-		boundary.setTargetObject(TargetObject.fromString(entity.getTargetObject()));
-		/*try {
-			boundary.setCommandAttributes(this.jackson.readValue(entity.getCommandAttributes(), Map.class));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}*/
+		boundary.setInvokedBy(InvokedBy.userIdFromString(entity.getInvokedBy()));
+		boundary.setTargetObject(TargetObject.targetObjectFromString(entity.getTargetObject()));
 		boundary.setCommandAttributes(entity.getCommandAttributes());
 		return boundary;
 	}
@@ -149,17 +142,13 @@ public class Converter {
 			entity.setCreatedBy("");
 		else
 			entity.setCreatedBy(boundary.getCreatedBy().getUserId().getSuperapp() + "#" + boundary.getCreatedBy().getUserId().getEmail());
-		/*try {
-			entity.setObjectDetails(this.jackson.writeValueAsString(boundary.getObjectDetails()));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}*/
 		entity.setObjectDetails(boundary.getObjectDetails());
 		return entity;
 	}
 
 	public SuperAppObjectBoundary superAppObjectToBoundary(SuperAppObjectEntity entity) {
 		SuperAppObjectBoundary boundary = new SuperAppObjectBoundary();
+		/*
 		String arr[] = entity.getObjectId().split("#");
 		String superapp, internalObjectId;
 		if (arr.length == 2) {
@@ -170,24 +159,22 @@ public class Converter {
 			internalObjectId = "";
 		}
 		boundary.setObjectId(new ObjectId(superapp, internalObjectId));
+		 */
+		boundary.setObjectId(ObjectId.objectIdFromString(entity.getObjectId()));
 		boundary.setType(entity.getType());
 		boundary.setAlias(entity.getAlias());
 		boundary.setActive(entity.getActive());
 		boundary.setCreationTimestamp(entity.getCreationTempStamp());
 		boundary.setLocation(new Location(entity.getLat(), entity.getLng()));
-		String email;
+		/*String email;
 		arr = entity.getCreatedBy().split("#");
 		if (arr.length == 2)
 			email = arr[1];
 		else
 			email = "";
 		CreatedBy createdBy = new CreatedBy(new UserId(superapp, email));
-		boundary.setCreatedBy(createdBy);
-		/*try {
-			boundary.setObjectDetails(this.jackson.readValue(entity.getObjectDetails(), Map.class));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}*/
+		 */
+		boundary.setCreatedBy(CreatedBy.createdByFromString(entity.getCreatedBy()));
 		boundary.setObjectDetails(boundary.getObjectDetails());
 		return boundary;
 	}

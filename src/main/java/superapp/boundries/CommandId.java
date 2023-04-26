@@ -46,9 +46,15 @@ public class CommandId {
 				+ "]";
 	}
 	
-	public static CommandId fromString(String str) {
+	public static CommandId commandIdFromString(String str) {
 	    CommandId commandId = new CommandId();
-	    int startIndex = str.indexOf("[");
+		String arr[] = str.split("#");
+		if (arr.length != 3)
+			return null;
+		commandId.setSuperapp(arr[0]);
+		commandId.setMiniapp(arr[1]);
+		commandId.setInternalCommandId(arr[2]);
+	    /*int startIndex = str.indexOf("[");
 	    int endIndex = str.indexOf("]");
 	    if (startIndex == -1 || endIndex == -1 || endIndex <= startIndex) {
 	        // Invalid string format
@@ -78,7 +84,7 @@ public class CommandId {
 	                // Unknown field
 	                return null;
 	        }
-	    }
+	    }*/
 	    return commandId;
 	}
 	
