@@ -45,7 +45,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
 
     @Override
     public Object invokeCommand(MiniAppCommandBoundary command){
-        List<MiniAppCommandEntity> entities = this.miniappCommandCrud.findAll();
+        //List<MiniAppCommandEntity> entities = this.miniappCommandCrud.findAll();
 //        if (entities.isEmpty())
 //            //internalObjectId = "1";
 //        else

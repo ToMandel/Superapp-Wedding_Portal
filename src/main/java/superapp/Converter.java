@@ -48,7 +48,7 @@ public class Converter {
 	public UserBoundary userToBoundary(UserEntity entity) {
 
 		UserBoundary boundary = new UserBoundary();
-		String arr[] = entity.getUserId().split("#");
+		/*String arr[] = entity.getUserId().split("#");
 		String superapp, email;
 		if (arr.length == 2) {
 			superapp = arr[0];
@@ -58,6 +58,8 @@ public class Converter {
 			email = "";
 		}
 		boundary.setUserId(new UserId(superapp, email));
+		 */
+		boundary.setUserId(UserId.userIdFromString(entity.getUserId()));
 		boundary.setUsername(entity.getUsername());
 		boundary.setRole(entity.getRole());
 		boundary.setAvatar(entity.getAvatar());
