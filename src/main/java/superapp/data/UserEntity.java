@@ -1,7 +1,6 @@
 package superapp.data;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "USERS")
@@ -11,8 +10,6 @@ public class UserEntity  {
     private UserRole role;
     private String username;
     private String avatar;
-    @DBRef
-    private UserEntity originUser;
 
     public UserEntity() {
     }
@@ -54,13 +51,5 @@ public class UserEntity  {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
-    }
-
-    public UserEntity getOriginUser() {
-        return originUser;
-    }
-
-    public void setOriginUser(UserEntity originUser) {
-        this.originUser = originUser;
     }
 }

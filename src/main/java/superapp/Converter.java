@@ -22,7 +22,7 @@ public class Converter {
 
 	public UserEntity userToEntity(UserBoundary boundary) {
 		UserEntity entity = new UserEntity();
-		if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail() == "")
+		if (boundary.getUserId().getEmail() == null || boundary.getUserId().getEmail().equals(""))
 			throw new BadRequestException("E-mail is not in a valid format");
 		else
 			entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
@@ -177,7 +177,7 @@ public class Converter {
 		CreatedBy createdBy = new CreatedBy(new UserId(superapp, email));
 		 */
 		boundary.setCreatedBy(CreatedBy.createdByFromString(entity.getCreatedBy()));
-		boundary.setObjectDetails(boundary.getObjectDetails());
+		boundary.setObjectDetails(entity.getObjectDetails());
 		return boundary;
 	}
 
