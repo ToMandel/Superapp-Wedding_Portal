@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class ObjectServiceDB implements ObjectsService{
+public class ObjectServiceDB implements RelationshipObjectsService{
 
     private SupperAppObjectCrud objectCrud;
     private Converter converter;
@@ -108,5 +108,22 @@ public class ObjectServiceDB implements ObjectsService{
     @Override
     public void deleteAllObjects() {
         this.objectCrud.deleteAll();
+    }
+
+    @Override
+    public void relateOriginToChild(ObjectId objectId) {
+        //TODO: implement method
+    }
+
+    @Override
+    public SuperAppObjectBoundary[] getAllChildrenOfObject() {
+        //TODO: implement method
+        return new SuperAppObjectBoundary[0];
+    }
+
+    @Override
+    public SuperAppObjectBoundary[] getAllParentsOfObject() {
+        //TODO: implement method
+        return new SuperAppObjectBoundary[0];
     }
 }
