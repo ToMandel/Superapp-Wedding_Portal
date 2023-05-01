@@ -2,10 +2,7 @@ package superapp.apis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
 import superapp.logic.RelationshipObjectsService;
@@ -25,8 +22,9 @@ public class RelationshipController {
             method = {RequestMethod.PUT},
             consumes = {MediaType.APPLICATION_JSON_VALUE})
     public void relateOriginToChild(@PathVariable("superapp") String superapp,
-                                       @PathVariable("internalObjectId") String internalObjectId){
-        this.objects.relateOriginToChild(new ObjectId(superapp, internalObjectId));
+                                    @PathVariable("internalObjectId") String internalObjectId,
+                                    @RequestBody ObjectId responseIdWrapper){
+        this.objects.relateOriginToChild(new ObjectId(superapp, internalObjectId), responseIdWrapper);
 
     }
 
@@ -36,7 +34,7 @@ public class RelationshipController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public SuperAppObjectBoundary[] getAllChildrenOfObject(@PathVariable("superapp") String superapp,
                                        @PathVariable("internalObjectId") String internalObjectId){
-        return objects.getAllChildrenOfObject();
+        return objects.getAllChildrenOfObject(new ObjectId(superapp, internalObjectId));
     }
 
     @RequestMapping(
@@ -45,6 +43,6 @@ public class RelationshipController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public SuperAppObjectBoundary[] getAllParentsOfObject(@PathVariable("superapp") String superapp,
                                                         @PathVariable("internalObjectId") String internalObjectId){
-        return objects.getAllParentsOfObject();
+        return objects.getAllParentsOfObject(new ObjectId(superapp, internalObjectId));
     }
 }

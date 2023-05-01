@@ -5,9 +5,9 @@ import superapp.boundries.SuperAppObjectBoundary;
 
 public interface RelationshipObjectsService extends ObjectsService{
 
-    public void relateOriginToChild (ObjectId objectId);
+    public void relateOriginToChild (ObjectId parent, ObjectId child);
 
-    public SuperAppObjectBoundary[] getAllChildrenOfObject();
+    public SuperAppObjectBoundary[] getAllChildrenOfObject(ObjectId parent);
 
-    public SuperAppObjectBoundary[] getAllParentsOfObject();
+    public SuperAppObjectBoundary[] getAllParentsOfObject(ObjectId child);
 }

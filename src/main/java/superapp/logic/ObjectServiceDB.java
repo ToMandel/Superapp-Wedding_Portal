@@ -111,18 +111,18 @@ public class ObjectServiceDB implements RelationshipObjectsService{
     }
 
     @Override
-    public void relateOriginToChild(ObjectId objectId) {
+    public void relateOriginToChild(ObjectId parent, ObjectId child) {
         //TODO: implement method
     }
 
     @Override
-    public SuperAppObjectBoundary[] getAllChildrenOfObject() {
+    public SuperAppObjectBoundary[] getAllChildrenOfObject(ObjectId parent) {
         //TODO: implement method
         return new SuperAppObjectBoundary[0];
     }
 
     @Override
-    public SuperAppObjectBoundary[] getAllParentsOfObject() {
+    public SuperAppObjectBoundary[] getAllParentsOfObject(ObjectId child) {
         //TODO: implement method
         return new SuperAppObjectBoundary[0];
     }
