@@ -10,11 +10,7 @@ import superapp.boundries.SuperAppObjectBoundary;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.data.SuperAppObjectEntity;
 
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ObjectServiceDB implements RelationshipObjectsService{
@@ -48,16 +44,15 @@ public class ObjectServiceDB implements RelationshipObjectsService{
 
     @Override
     public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
-        List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
-        String internalObjectId;
+        //List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
+        //String internalObjectId;
 //        if (entities.isEmpty())
 //            internalObjectId = "1";
 //        else
          //  internalObjectId = Integer.toString(entities.size() + 1);
-        internalObjectId=UUID.randomUUID().toString(); // the value is random so the size of entities isn't relevant
+        String internalObjectId=UUID.randomUUID().toString(); // the value is random so the size of entities isn't relevant
         //object.setObjectId(new ObjectId(nameFromSpringConfig));
         object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
-        //TODO
         object.setCreationTimestamp(new Date());
         if (object.getObjectDetails() == null)
             object.setObjectDetails(new HashMap<>());
@@ -111,19 +106,44 @@ public class ObjectServiceDB implements RelationshipObjectsService{
     }
 
     @Override
-    public void relateOriginToChild(ObjectId parent, ObjectId child) {
-        //TODO: implement method
+    public void relateParentToChild(ObjectId parentObjectId, ObjectId childObjectId) {
+        String parentId = parentObjectId.getSuperapp() + "#" + parentObjectId.getInternalObjectId();
+        SuperAppObjectEntity parent = this.objectCrud
+                .findById(parentId)
+                .orElseThrow(()->new NotFoundException("could not find origin object by id: " + parentObjectId));
+
+        String childId = childObjectId.getSuperapp() + "#" + childObjectId.getInternalObjectId();
+        SuperAppObjectEntity child = this.objectCrud
+                .findById(childId)
+                .orElseThrow(()->new NotFoundException("could not find response object by id: " + childId));
+
+        child.setParentObject(parent);
+
+        this.objectCrud
+                .save(child);
     }
 
     @Override
-    public SuperAppObjectBoundary[] getAllChildrenOfObject(ObjectId parent) {
+    public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parent) {
         //TODO: implement method
-        return new SuperAppObjectBoundary[0];
+        return null;
     }
 
     @Override
-    public SuperAppObjectBoundary[] getAllParentsOfObject(ObjectId child) {
-        //TODO: implement method
-        return new SuperAppObjectBoundary[0];
+    public List<SuperAppObjectBoundary> getAllParentsOfObject(ObjectId child) {
+        List<SuperAppObjectBoundary> allParents = new ArrayList<SuperAppObjectBoundary>();
+        String childId = child.getSuperapp() + "#" + child.getInternalObjectId();
+        SuperAppObjectEntity childEntity = this.objectCrud
+                .findById(childId)
+                .orElseThrow(()->new NotFoundException("could not find object by id: " + childId));
+
+        SuperAppObjectEntity parentEntity = childEntity.getParentObject();
+        if (parentEntity != null) {
+            allParents.add(Optional.of(this.converter
+                    .superAppObjectToBoundary(parentEntity)).get());
+        }else {
+             //allParents.add(new SuperAppObjectBoundary());
+        }
+        return allParents;
     }
 }

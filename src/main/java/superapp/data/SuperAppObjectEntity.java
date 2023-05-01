@@ -20,7 +20,7 @@ public class SuperAppObjectEntity {
 	private Date creationTempStamp;
 
 	@DBRef
-	private SuperAppObjectEntity originObject;
+	private SuperAppObjectEntity parentObject;
 
 	private Map<String, Object> objectDetails;
 
@@ -94,12 +94,12 @@ public class SuperAppObjectEntity {
 		this.creationTempStamp = creationTempStamp;
 	}
 
-	public SuperAppObjectEntity getOriginObject() {
-		return originObject;
+	public SuperAppObjectEntity getParentObject() {
+		return parentObject;
 	}
 
-	public void setOriginObject(SuperAppObjectEntity originObject) {
-		this.originObject = originObject;
+	public void setParentObject(SuperAppObjectEntity parentObject) {
+		this.parentObject = parentObject;
 	}
 
 	public Map<String, Object> getObjectDetails() {
