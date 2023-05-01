@@ -22,6 +22,7 @@ public class ObjectsAPI {
 	public ObjectsAPI() {
 	}
 	
+	@CrossOrigin(origins = "*")	
 	@RequestMapping(
 		path = {"/superapp/objects/{superapp}/{internalObjectId}"},
 		method = {RequestMethod.GET},
@@ -31,7 +32,7 @@ public class ObjectsAPI {
 	
 	}
 	
-	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/objects"},
 			method = {RequestMethod.GET},
@@ -42,6 +43,8 @@ public class ObjectsAPI {
 		//return objects.getAllObjects();
 		
 	}
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/objects/{superapp}/{internalObjectId}"},
 			method = {RequestMethod.PUT},
@@ -51,6 +54,8 @@ public class ObjectsAPI {
 										@RequestBody SuperAppObjectBoundary update) {
 		objects.updateObject(superapp, internalObjectId, update);
 	}
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/objects"},
 			method = {RequestMethod.POST},
