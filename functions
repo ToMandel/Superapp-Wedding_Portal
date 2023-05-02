@@ -1,0 +1,8 @@
+implemented functions:
+
+    1. getTypes
+        * Input: 
+        * Output: List of strings - supplier's types
+    2. getAllSuppliers
+        * Input:
+        * Output: List of ObjectEntity - all object with type "Supplier"
