@@ -1,0 +1,6 @@
+# Supplier
+    1. When the user enters the "add supplier" add - use getTypes function in order to fill the dropDown with values
+    2. When creating a supplier:
+        *The type should be: "Supplier"
+        *In the alias field fill in the name of the supplier/business
+        *You don't have to insert the "active" field
