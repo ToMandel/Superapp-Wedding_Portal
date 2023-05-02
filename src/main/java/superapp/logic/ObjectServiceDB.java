@@ -18,7 +18,7 @@ public class ObjectServiceDB implements RelationshipObjectsService{
     private SupperAppObjectCrud objectCrud;
     private Converter converter;
     private String nameFromSpringConfig;
-    
+
 
     @Value("${spring.application.name:defaultName}")
     public void setNameFromSpringConfig(String nameFromSpringConfig) {
@@ -49,7 +49,7 @@ public class ObjectServiceDB implements RelationshipObjectsService{
 //        if (entities.isEmpty())
 //            internalObjectId = "1";
 //        else
-         //  internalObjectId = Integer.toString(entities.size() + 1);
+        //  internalObjectId = Integer.toString(entities.size() + 1);
         String internalObjectId=UUID.randomUUID().toString(); // the value is random so the size of entities isn't relevant
         //object.setObjectId(new ObjectId(nameFromSpringConfig));
         object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
@@ -142,7 +142,7 @@ public class ObjectServiceDB implements RelationshipObjectsService{
             allParents.add(Optional.of(this.converter
                     .superAppObjectToBoundary(parentEntity)).get());
         }else {
-             //allParents.add(new SuperAppObjectBoundary());
+            //allParents.add(new SuperAppObjectBoundary());
         }
         return allParents;
     }

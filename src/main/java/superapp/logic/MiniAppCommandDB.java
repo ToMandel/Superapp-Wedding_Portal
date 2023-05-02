@@ -8,7 +8,10 @@ import superapp.Converter;
 import superapp.boundries.CommandId;
 import superapp.boundries.MiniAppCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
+import superapp.dal.SupperAppObjectCrud;
 import superapp.data.MiniAppCommandEntity;
+import superapp.data.SuperAppObjectEntity;
+import superapp.objects.Supplier;
 
 import java.util.UUID;
 import java.util.ArrayList;
@@ -19,9 +22,10 @@ import java.util.List;
 public class MiniAppCommandDB implements MiniAppCommandService{
 
 	private MiniAppCommandCrud miniappCommandCrud;
+    private SupperAppObjectCrud supperAppObjectCrud;
 	private Converter converter;
     private String nameFromSpringConfig;
-    
+
     @Value("${spring.application.name:defaultName}")
     public void setNameFromSpringConfig(String nameFromSpringConfig) {
         this.nameFromSpringConfig = nameFromSpringConfig;
@@ -30,12 +34,12 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     @PostConstruct
     public void init() {
         System.err.println("**** spring.application.name = " + this.nameFromSpringConfig + " ****");
-
     }
     
     @Autowired
-    public void setMiniAppCommandCrude (MiniAppCommandCrud miniappCommandCrud) {
+    public void setMiniAppCommandCrude (MiniAppCommandCrud miniappCommandCrud, SupperAppObjectCrud supperAppObjectCrud) {
     	this.miniappCommandCrud = miniappCommandCrud;
+        this.supperAppObjectCrud = supperAppObjectCrud;
     }
     
     @Autowired
@@ -55,7 +59,9 @@ public class MiniAppCommandDB implements MiniAppCommandService{
         command.setInvocationTimestamp(new Date());
         MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
         entity = this.miniappCommandCrud.save(entity);
-        return this.converter.miniAppCommandToBoundary(entity);
+
+        String commandName = command.getCommand();
+        return callToFunction(commandName);
     }	
 
     @Override
@@ -82,5 +88,18 @@ public class MiniAppCommandDB implements MiniAppCommandService{
     @Override
     public void deleteAllCommands() {
     	this.miniappCommandCrud.deleteAll();
+    }
+
+    public Object callToFunction(String commandName){
+        switch (commandName){
+            case "getTypes":
+                return Supplier.getAllTypes();
+            case "getAllSuppliers":
+                List<SuperAppObjectEntity> allSuppliers = supperAppObjectCrud.findAllByType("Supplier");
+                return allSuppliers;
+            default:
+                throw new BadRequestException("Can find command: " + commandName);
+
+        }
     }
 }

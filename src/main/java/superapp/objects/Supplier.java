@@ -1,25 +1,28 @@
 package superapp.objects;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Supplier{
-	
+
 	public enum eServiceType{
 		FLOWERS, PHOTOGRAPHER, DJ
 		//TODO: add types
 	}
-	
+
 
 	private String name;
 	private eServiceType serviceType;
 	private ArrayList<String> eventIds;
 	private Rating rating;
 	//TODO: manage the occupied dates somehow
-	
-	
+
+
 	public Supplier() {
-		
+
 	}
 
 	public Supplier(String name, eServiceType serviceType) {
@@ -66,5 +69,12 @@ public class Supplier{
 		this.rating = rating;
 	}
 
-	
+	public static List<String> getAllTypes(){
+		List<String> types = Arrays.stream(eServiceType.values())
+				.map(Enum::name)
+				.collect(Collectors.toList());
+		return types;
+	}
+
+
 }

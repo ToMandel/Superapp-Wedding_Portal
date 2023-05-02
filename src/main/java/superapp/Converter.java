@@ -123,7 +123,7 @@ public class Converter {
 		else
 			entity.setType(boundary.getType());
 		if (boundary.getActive() == null)
-			entity.setActive(false);
+			entity.setActive(true);
 		else
 			entity.setActive(boundary.getActive());
 		if (boundary.getAlias() == null)
