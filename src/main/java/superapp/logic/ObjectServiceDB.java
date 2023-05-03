@@ -108,14 +108,14 @@ public class ObjectServiceDB implements RelationshipObjectsService{
     @Override
     public void relateParentToChild(ObjectId parentObjectId, ObjectId childObjectId) {
         String parentId = parentObjectId.getSuperapp() + "#" + parentObjectId.getInternalObjectId();
-        SuperAppObjectEntity parent = this.objectCrud
-                .findById(parentId)
-                .orElseThrow(()->new NotFoundException("could not find origin object by id: " + parentObjectId));
-
         String childId = childObjectId.getSuperapp() + "#" + childObjectId.getInternalObjectId();
         SuperAppObjectEntity child = this.objectCrud
                 .findById(childId)
-                .orElseThrow(()->new NotFoundException("could not find response object by id: " + childId));
+                .orElseThrow(()->new NotFoundException("could not find child object by id: " + childId));
+
+        SuperAppObjectEntity parent = this.objectCrud
+                .findById(parentId)
+                .orElseThrow(()->new NotFoundException("could not find parent object by id: " + parentId));
 
         child.setParentObject(parent);
 
@@ -124,9 +124,17 @@ public class ObjectServiceDB implements RelationshipObjectsService{
     }
 
     @Override
-    public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parent) {
-        //TODO: implement method
-        return null;
+    public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parentId) {
+        String id = parentId.getSuperapp() + "#" + parentId.getInternalObjectId();
+        List<SuperAppObjectEntity> parentEntities = this.objectCrud
+                .findAllByParentObject(id);
+
+        List<SuperAppObjectBoundary> rv = new ArrayList<>();
+
+        for (SuperAppObjectEntity entity : parentEntities) {
+            rv.add(this.converter.superAppObjectToBoundary(entity));
+        }
+        return rv;
     }
 
     @Override

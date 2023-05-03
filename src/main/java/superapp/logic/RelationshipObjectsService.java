@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RelationshipObjectsService extends ObjectsService{
 
-    public void relateParentToChild (ObjectId parent, ObjectId child);
+    public void relateParentToChild (ObjectId parentObjectId, ObjectId childrenObjectId);
 
     public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parent);
 

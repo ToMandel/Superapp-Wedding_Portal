@@ -26,10 +26,11 @@ public class RelationshipController {
             path = {"/superapp/objects/{superapp}/{internalObjectId}/children"},
             method = {RequestMethod.PUT},
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public void relateOriginToChild(@PathVariable("superapp") String superapp,
+    public void relateParentToChild(@PathVariable("superapp") String superapp,
                                     @PathVariable("internalObjectId") String internalObjectId,
-                                    @RequestBody ObjectId responseIdWrapper){
-        this.objects.relateParentToChild(new ObjectId(superapp, internalObjectId), responseIdWrapper);
+                                    @RequestBody ObjectId childObjectId){
+        ObjectId parentObjectId = new ObjectId(superapp, internalObjectId);
+        this.objects.relateParentToChild(parentObjectId, childObjectId);
 
     }
 
