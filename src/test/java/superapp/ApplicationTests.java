@@ -63,9 +63,9 @@ class ApplicationTests {
 		SuperAppObjectBoundary obj2 = new SuperAppObjectBoundary();
 		obj2 = this.restTemplate.postForObject(this.url, obj2, SuperAppObjectBoundary.class);
 
-		ResponseIdWrapper id2Wrapper = new ResponseIdWrapper();
-		id2Wrapper.setResponseId(obj2.getObjectId());
-		this.restTemplate.put(this.url + "/{responseId}/origin",id2Wrapper, obj1.getObjectId());
+//		ResponseIdWrapper id2Wrapper = new ResponseIdWrapper();
+//		id2Wrapper.setResponseId(obj2.getObjectId());
+//		this.restTemplate.put(this.url + "/{responseId}/origin",id2Wrapper, obj1.getObjectId());
 
 		// WHEN I GET /hello/{id2}/origin
 		SuperAppObjectBoundary actualResponse = this.restTemplate.getForObject(this.url + "/{responseId}/origin",

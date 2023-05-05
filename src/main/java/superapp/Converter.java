@@ -7,7 +7,6 @@ import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
 import superapp.logic.BadRequestException;
-import superapp.logic.InternalServerErrorException;
 
 import java.util.Map;
 
@@ -80,7 +79,7 @@ public class Converter {
 			boundary.getInvokedBy().getUserId().getEmail() == null||
 			boundary.getInvokedBy().getUserId().getSuperapp() == null||
 			boundary.getInvokedBy().getUserId() == null)
-				throw new InternalServerErrorException("Creator of command's id is not fully defined");
+				throw new BadRequestException("Creator of command's id is not fully defined");
 		else {
 			//here if there is invokedBy key in the boundary
 			//create invokedBy with delimiter between each field
@@ -91,7 +90,7 @@ public class Converter {
 			boundary.getTargetObject().getObjectId() == null||
 			boundary.getTargetObject().getObjectId().getSuperapp()==null ||
 			boundary.getTargetObject().getObjectId().getInternalObjectId()==null)
-				throw new InternalServerErrorException("Target object id is not fully defined");
+				throw new BadRequestException("Target object id is not fully defined");
 		else {
 			//here if there is targetObject key in the boundary
 			//create targetObject with delimiter between each field
