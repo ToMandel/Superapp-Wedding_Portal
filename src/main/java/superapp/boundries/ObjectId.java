@@ -1,5 +1,7 @@
 package superapp.boundries;
 
+import java.util.Objects;
+
 public class ObjectId {
 
 	private String superapp;
@@ -61,6 +63,19 @@ public class ObjectId {
 		objectId.setInternalObjectId(arr[1]);
 		return objectId;
 	}
-	
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		ObjectId objectId = (ObjectId) o;
+		return superapp.equals(objectId.superapp) && internalObjectId.equals(objectId.internalObjectId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(superapp, internalObjectId);
+	}
 }
