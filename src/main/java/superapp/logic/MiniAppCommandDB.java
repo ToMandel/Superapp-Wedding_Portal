@@ -59,7 +59,6 @@ public class MiniAppCommandDB implements MiniAppCommandService{
         command.setInvocationTimestamp(new Date());
         MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
         entity = this.miniappCommandCrud.save(entity);
-
         String commandName = command.getCommand();
         return callToFunction(commandName);
     }	
@@ -98,7 +97,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
                 List<SuperAppObjectEntity> allSuppliers = supperAppObjectCrud.findAllByType("Supplier");
                 return allSuppliers;
             default:
-                throw new BadRequestException("Can find command: " + commandName);
+                throw new BadRequestException("Command is not defined: " + commandName);
 
         }
     }

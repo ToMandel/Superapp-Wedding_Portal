@@ -140,15 +140,19 @@ public class ObjectServiceDB implements RelationshipObjectsService{
     @Override
     public List<SuperAppObjectBoundary> getAllParentsOfObject(ObjectId child) {
         List<SuperAppObjectBoundary> allParents = new ArrayList<SuperAppObjectBoundary>();
+        
         String childId = child.getSuperapp() + "#" + child.getInternalObjectId();
         SuperAppObjectEntity childEntity = this.objectCrud
                 .findById(childId)
                 .orElseThrow(()->new NotFoundException("could not find object by id: " + childId));
 
-        SuperAppObjectEntity parentEntity = childEntity.getParentObject();
-        if (parentEntity != null) {
-            allParents.add(Optional.of(this.converter
-                    .superAppObjectToBoundary(parentEntity)).get());
+        //SuperAppObjectEntity parentEntity = childEntity.getParentObject();
+        List<SuperAppObjectEntity> parentEntities = childEntity.getParentObject();
+        if (parentEntities != null) {
+        	for (SuperAppObjectEntity entity : parentEntities) {
+        		   allParents.add(Optional.of(this.converter
+                           .superAppObjectToBoundary(entity)).get());
+        	}
         }else {
             //allParents.add(new SuperAppObjectBoundary());
         }

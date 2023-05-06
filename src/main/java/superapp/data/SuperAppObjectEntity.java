@@ -4,7 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Document(collection = "SUPER_APP_OBJECTS")
@@ -19,11 +21,13 @@ public class SuperAppObjectEntity {
 	private String createdBy;
 	private Date creationTempStamp;
 
+	
+	//converted to list so you can add several parents to child
 	@DBRef
-	private SuperAppObjectEntity parentObject;
+	private List <SuperAppObjectEntity> parentObject = new ArrayList<>();
+	
 
 	private Map<String, Object> objectDetails;
-
 
 	
 	public SuperAppObjectEntity(){
@@ -94,12 +98,12 @@ public class SuperAppObjectEntity {
 		this.creationTempStamp = creationTempStamp;
 	}
 
-	public SuperAppObjectEntity getParentObject() {
+	public List<SuperAppObjectEntity> getParentObject() {
 		return parentObject;
 	}
 
 	public void setParentObject(SuperAppObjectEntity parentObject) {
-		this.parentObject = parentObject;
+		this.parentObject.add(parentObject);
 	}
 
 	public Map<String, Object> getObjectDetails() {
@@ -109,4 +113,6 @@ public class SuperAppObjectEntity {
 	public void setObjectDetails(Map<String, Object> objectDetails) {
 		this.objectDetails = objectDetails;
 	}
+
+
 }
