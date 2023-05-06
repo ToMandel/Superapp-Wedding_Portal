@@ -25,17 +25,16 @@ public class Converter {
 			throw new BadRequestException("E-mail is not in a valid format");
 		else
 			entity.setUserId(boundary.getUserId().getSuperapp() + "#" + boundary.getUserId().getEmail());
-		if (boundary.getUsername() == null)
-			throw new BadRequestException("User Name can't be null");
+		if (boundary.getUsername() == null || boundary.getUsername().equals(""))
+			throw new BadRequestException("User Name can't be null or empty");
 		else
 			entity.setUsername(boundary.getUsername());
 		
-		//Setting default user role
-		if (boundary.getRole() == null)
-			throw new BadRequestException("Role must be MINIAPP_USER or SUPERAPP_USER or ADMIN");
+		if(boundary.getRole() == null || boundary.getRole().toString().equals(""))
+			throw new BadRequestException("Role Name can't be null or empty");
 		else
 			entity.setRole(boundary.getRole());
-		
+
 		if (boundary.getAvatar() == null)
 			throw new BadRequestException("Avatar can't be null");
 		else
@@ -47,17 +46,6 @@ public class Converter {
 	public UserBoundary userToBoundary(UserEntity entity) {
 
 		UserBoundary boundary = new UserBoundary();
-		/*String arr[] = entity.getUserId().split("#");
-		String superapp, email;
-		if (arr.length == 2) {
-			superapp = arr[0];
-			email = arr[1];
-		} else {
-			superapp = arr[0];
-			email = "";
-		}
-		boundary.setUserId(new UserId(superapp, email));
-		 */
 		boundary.setUserId(UserId.userIdFromString(entity.getUserId()));
 		boundary.setUsername(entity.getUsername());
 		boundary.setRole(entity.getRole());
@@ -70,15 +58,15 @@ public class Converter {
 		CommandId commandId = boundary.getCommandId();
 		//create commandId with delimiter between each field
 		entity.setCommandId(commandId.getSuperapp() + '#' + commandId.getMiniapp() + '#' + commandId.getInternalCommandId());
-		if (boundary.getCommand() == null)
-			throw new BadRequestException("Command can't be null");
+		if (boundary.getCommand() == null || boundary.getCommand().equals(""))
+			throw new BadRequestException("Command can't be null or empty");
 		else
 			entity.setCommand(boundary.getCommand());
 		entity.setInvocationTimestamp(boundary.getInvocationTimestamp());
 		if (boundary.getInvokedBy() == null ||
-			boundary.getInvokedBy().getUserId().getEmail() == null||
-			boundary.getInvokedBy().getUserId().getSuperapp() == null||
-			boundary.getInvokedBy().getUserId() == null)
+			boundary.getInvokedBy().getUserId() == null ||
+			boundary.getInvokedBy().getUserId().getEmail() == null|| boundary.getInvokedBy().getUserId().getEmail().equals("") ||
+			boundary.getInvokedBy().getUserId().getSuperapp() == null|| boundary.getInvokedBy().getUserId().getSuperapp().equals(""))
 				throw new BadRequestException("Creator of command's id is not fully defined");
 		else {
 			//here if there is invokedBy key in the boundary
@@ -88,8 +76,8 @@ public class Converter {
 		}
 		if (boundary.getTargetObject() == null ||
 			boundary.getTargetObject().getObjectId() == null||
-			boundary.getTargetObject().getObjectId().getSuperapp()==null ||
-			boundary.getTargetObject().getObjectId().getInternalObjectId()==null)
+			boundary.getTargetObject().getObjectId().getSuperapp() == null || boundary.getTargetObject().getObjectId().getSuperapp().equals("") ||
+			boundary.getTargetObject().getObjectId().getInternalObjectId() == null || boundary.getTargetObject().getObjectId().getInternalObjectId().equals(""))
 				throw new BadRequestException("Target object id is not fully defined");
 		else {
 			//here if there is targetObject key in the boundary
@@ -116,8 +104,8 @@ public class Converter {
 	public SuperAppObjectEntity superAppObjectToEntity(SuperAppObjectBoundary boundary) {
 		SuperAppObjectEntity entity = new SuperAppObjectEntity();
 		entity.setObjectId(boundary.getObjectId().getSuperapp() + "#" + boundary.getObjectId().getInternalObjectId());
-		if (boundary.getType() == null)
-			throw new BadRequestException("Type can't be null");
+		if (boundary.getType() == null || boundary.getType().equals(""))
+			throw new BadRequestException("Type can't be null or empty");
 
 		else
 			entity.setType(boundary.getType());
@@ -125,8 +113,8 @@ public class Converter {
 			entity.setActive(true);
 		else
 			entity.setActive(boundary.getActive());
-		if (boundary.getAlias() == null)
-			throw new BadRequestException("Alias can't be null");
+		if (boundary.getAlias() == null || boundary.getAlias().equals(""))
+			throw new BadRequestException("Alias can't be null or empty");
 
 		else
 			entity.setAlias(boundary.getAlias());
@@ -149,32 +137,12 @@ public class Converter {
 
 	public SuperAppObjectBoundary superAppObjectToBoundary(SuperAppObjectEntity entity) {
 		SuperAppObjectBoundary boundary = new SuperAppObjectBoundary();
-		/*
-		String arr[] = entity.getObjectId().split("#");
-		String superapp, internalObjectId;
-		if (arr.length == 2) {
-			superapp = arr[0];
-			internalObjectId = arr[1];
-		} else {
-			superapp = arr[0];
-			internalObjectId = "";
-		}
-		boundary.setObjectId(new ObjectId(superapp, internalObjectId));
-		 */
 		boundary.setObjectId(ObjectId.objectIdFromString(entity.getObjectId()));
 		boundary.setType(entity.getType());
 		boundary.setAlias(entity.getAlias());
 		boundary.setActive(entity.getActive());
 		boundary.setCreationTimestamp(entity.getCreationTempStamp());
 		boundary.setLocation(new Location(entity.getLat(), entity.getLng()));
-		/*String email;
-		arr = entity.getCreatedBy().split("#");
-		if (arr.length == 2)
-			email = arr[1];
-		else
-			email = "";
-		CreatedBy createdBy = new CreatedBy(new UserId(superapp, email));
-		 */
 		boundary.setCreatedBy(CreatedBy.createdByFromString(entity.getCreatedBy()));
 		boundary.setObjectDetails(entity.getObjectDetails());
 		return boundary;

@@ -28,9 +28,9 @@ public class NewUserBoundary {
 
     public void setEmail(String email) {
     	if (isValid(email))
-        this.email = email;
+            this.email = email;
     	else 
-    	this.email ="";
+    	    this.email = "";
     	
     }
 
