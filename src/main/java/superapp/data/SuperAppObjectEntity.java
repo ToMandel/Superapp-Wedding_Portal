@@ -24,14 +24,14 @@ public class SuperAppObjectEntity {
 	
 	//converted to list so you can add several parents to child
 	@DBRef
-	private List <SuperAppObjectEntity> parentObject = new ArrayList<>();
+	private List <SuperAppObjectEntity> parentObject;
 	
 
 	private Map<String, Object> objectDetails;
 
 	
 	public SuperAppObjectEntity(){
-		
+		this.parentObject = new ArrayList<SuperAppObjectEntity>();
 	}
 
 	public String getObjectId() {

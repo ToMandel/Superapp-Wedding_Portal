@@ -58,9 +58,10 @@ public class MiniAppCommandDB implements MiniAppCommandService{
         command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
         command.setInvocationTimestamp(new Date());
         MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-        entity = this.miniappCommandCrud.save(entity);
         String commandName = command.getCommand();
-        return callToFunction(commandName);
+        Object rv = callToFunction(commandName);
+        entity = this.miniappCommandCrud.save(entity);
+        return rv;
     }	
 
     @Override
@@ -94,8 +95,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
             case "getTypes":
                 return Supplier.getAllTypes();
             case "getAllSuppliers":
-                List<SuperAppObjectEntity> allSuppliers = supperAppObjectCrud.findAllByType("Supplier");
-                return allSuppliers;
+                return supperAppObjectCrud.findAllByType("Supplier");
             default:
                 throw new BadRequestException("Command is not defined: " + commandName);
 
