@@ -1,5 +1,6 @@
 package superapp.logic;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,30 +11,36 @@ import superapp.boundries.MiniAppCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.data.MiniAppCommandEntity;
-import superapp.data.SuperAppObjectEntity;
 import superapp.objects.Supplier;
+import org.springframework.jms.core.JmsTemplate;
 
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
-public class MiniAppCommandDB implements MiniAppCommandService{
+public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
 
 	private MiniAppCommandCrud miniappCommandCrud;
     private SupperAppObjectCrud supperAppObjectCrud;
 	private Converter converter;
     private String nameFromSpringConfig;
+    private JmsTemplate jmsTemplate;
+    private ObjectMapper jackson;
 
     @Value("${spring.application.name:defaultName}")
     public void setNameFromSpringConfig(String nameFromSpringConfig) {
         this.nameFromSpringConfig = nameFromSpringConfig;
     }
+
+    @Autowired
+    public void setJmsTemplate(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
+        this.jmsTemplate.setDeliveryDelay(5000L);
+    }
     
     @PostConstruct
     public void init() {
         System.err.println("**** spring.application.name = " + this.nameFromSpringConfig + " ****");
+        this.jackson = new ObjectMapper();
     }
     
     @Autowired
@@ -49,19 +56,7 @@ public class MiniAppCommandDB implements MiniAppCommandService{
 
     @Override
     public Object invokeCommand(MiniAppCommandBoundary command){
-        //List<MiniAppCommandEntity> entities = this.miniappCommandCrud.findAll();
-//        if (entities.isEmpty())
-//            //internalObjectId = "1";
-//        else
-            //internalObjectId = Integer.toString(entities.size() + 1);
-        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
-        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
-        command.setInvocationTimestamp(new Date());
-        MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-        String commandName = command.getCommand();
-        Object rv = callToFunction(commandName);
-        entity = this.miniappCommandCrud.save(entity);
-        return rv;
+        throw new DeprecatedOperationException();
     }	
 
     @Override
@@ -100,5 +95,28 @@ public class MiniAppCommandDB implements MiniAppCommandService{
                 throw new BadRequestException("Command is not defined: " + commandName);
 
         }
+    }
+
+    @Override
+    public Object invokeMiniAppCommandAsync(MiniAppCommandBoundary command) {
+        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
+        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
+        command.setInvocationTimestamp(new Date());
+        if (command.getCommandAttributes() == null)
+            command.setCommandAttributes(new HashMap<>());
+        command.getCommandAttributes().put("status", "waiting");
+        try{
+            String json = this.jackson.writeValueAsString(command);
+
+            //MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
+            String commandName = command.getCommand();
+            Object rv = callToFunction(commandName);
+            //entity = this.miniappCommandCrud.save(entity);
+            return rv;
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
     }
 }
