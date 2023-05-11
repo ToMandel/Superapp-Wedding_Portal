@@ -4,3 +4,9 @@
         *The type should be: "Supplier"
         *In the alias field fill in the name of the supplier/business
         *You don't have to insert the "active" field
+    3. When creating a guest:
+        *The type should be "Guest"
+        *In the alias field fill in the full name of the guest
+        *In the ObjectDetails add two keys:
+            "type" - enter the type of the guest
+            "color" - an object with 4 keys: "r", "g", "b", "a" who represntes the color
