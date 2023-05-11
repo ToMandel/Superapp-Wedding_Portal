@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import superapp.Converter;
 import superapp.boundries.CommandId;
 import superapp.boundries.MiniAppCommandBoundary;
+import superapp.boundries.UnknownCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.data.MiniAppCommandEntity;
@@ -54,9 +55,17 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
         this.converter = converter;
     }
 
+
     @Override
     public Object invokeCommand(MiniAppCommandBoundary command){
-        throw new DeprecatedOperationException();
+        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
+        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
+        command.setInvocationTimestamp(new Date());
+        MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
+        String commandName = command.getCommand();
+        Object rv = callToFunction(commandName, command);
+        entity = this.miniappCommandCrud.save(entity);
+        return rv;
     }	
 
     @Override
@@ -85,14 +94,22 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     	this.miniappCommandCrud.deleteAll();
     }
 
-    public Object callToFunction(String commandName){
+    public Object callToFunction(String commandName, MiniAppCommandBoundary commandBoundary){
         switch (commandName){
             case "getTypes":
                 return Supplier.getAllTypes();
             case "getAllSuppliers":
                 return supperAppObjectCrud.findAllByType("Supplier");
             default:
-                throw new BadRequestException("Command is not defined: " + commandName);
+                UnknownCommandBoundary boundary = new UnknownCommandBoundary();
+                boundary.setCommandName(commandName);
+                boundary.setErrorMessage("Could not find command");
+                //commandBoundary.getCommandAttributes().put("error", "Could not found command");
+                //TODO: add attribute to map
+                //MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
+                //String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
+                //boundary.setCommandId(new CommandId(nameFromSpringConfig, boundary.getCommandId().getMiniapp(), internalCommandId));
+                return boundary;
 
         }
     }
@@ -107,11 +124,11 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
         command.getCommandAttributes().put("status", "waiting");
         try{
             String json = this.jackson.writeValueAsString(command);
-
-            //MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
+            this.jmsTemplate.convertAndSend("asyncMiniAppQueue", json);
+            MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
             String commandName = command.getCommand();
-            Object rv = callToFunction(commandName);
-            //entity = this.miniappCommandCrud.save(entity);
+            Object rv = callToFunction(commandName, command);
+            entity = this.miniappCommandCrud.save(entity);
             return rv;
         }
         catch (Exception e){

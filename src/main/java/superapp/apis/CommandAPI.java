@@ -22,7 +22,7 @@ public class CommandAPI {
 	public CommandAPI() {
 	}
 	
-	@CrossOrigin(origins = "*")
+	/*@CrossOrigin(origins = "*")
 	@RequestMapping(
 			path = {"/superapp/miniapp/{miniAppName}"},
 			method = {RequestMethod.POST},
@@ -33,7 +33,7 @@ public class CommandAPI {
 		commandId.setMiniapp(miniAppName);
 		miniAppCommandBoundary.setCommandId(commandId);
 		return commands.invokeCommand(miniAppCommandBoundary);
-	}
+	}*/
 
 
 

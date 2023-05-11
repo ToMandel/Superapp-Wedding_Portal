@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import superapp.Converter;
 import superapp.boundries.MiniAppCommandBoundary;
@@ -35,6 +36,7 @@ public class AsyncHandler {
         this.userCrud = userCrud;
     }
 
+    @JmsListener(destination = "asyncMiniAppQueue")
     public void handleMiniAppCommandFromQueue(String json){
         System.err.println("**** " + json);
         try{
