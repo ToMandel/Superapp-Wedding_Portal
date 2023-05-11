@@ -7,9 +7,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.client.RestTemplate;
+
+import superapp.boundries.NewUserBoundary;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
+import superapp.boundries.UserBoundary;
+import superapp.data.UserRole;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -32,7 +37,8 @@ class ApplicationTests {
 	@AfterEach
 	public void tearDown() {
 		// cleanup database
-		//we need to delete miniapp commands and then superapps objects and then the users
+		// we need to delete miniapp commands and then superapps objects and then the
+		// users
 		String deleteAllCommandsPATH = "/superapp/admin/miniapp";
 		String deleteAllObjectsPATH = "/superapp/admin/objects";
 		String deleteAllUsersPATH = "/superapp/admin/users";
@@ -41,16 +47,35 @@ class ApplicationTests {
 		this.restTemplate.delete(this.url + deleteAllUsersPATH);
 	}
 
+//	@Test
+//	public void contextLoads() {
+//	}
+
 	@Test
-	void contextLoads() {
-	}
+	public void createNewUser() {
+//		Given: The server is running
+		
+		NewUserBoundary user = new NewUserBoundary("hello@afeka.com",UserRole.ADMIN,"Tomiix","abc");
+		user = this.restTemplate
+			.postForObject(this.url + "/superapp/users", user, NewUserBoundary.class);
+//		When: POST request is made to APPURL/superapp/users
+//		Then: The response will be status code“2XX”
+//		And: A new user will be created in the database
+		UserBoundary actualResponse = this.restTemplate
+				.getForObject(this.url + "/superapp/users/login/2023b.zohar.tzabari/hello@afeka.com", UserBoundary.class,user.getEmail());
+			
+		assertThat(actualResponse)
+		.usingRecursiveComparison();
+			}
 
 	@Test
 	public void testRelationsBetweenChildToParent() throws Exception {
-		// GIVEN the server contains two objects with ids {parentObjectId} and {childObjectId}
-		// AND the object with {parentObjectId} is the parent of the object with {childObjectId}
+		// GIVEN the server contains two objects with ids {parentObjectId} and
+		// {childObjectId}
+		// AND the object with {parentObjectId} is the parent of the object with
+		// {childObjectId}
 
-		//create two objects - obj1, obj2
+		// create two objects - obj1, obj2
 		SuperAppObjectBoundary parent = new SuperAppObjectBoundary();
 		parent.setAlias("TestObj1");
 		parent.setType("TEST");
@@ -61,7 +86,7 @@ class ApplicationTests {
 		child.setType("TEST");
 		child = this.restTemplate.postForObject(this.url + "/superapp/objects", child, SuperAppObjectBoundary.class);
 
-		//set attributes to the parent and child ObjectIds
+		// set attributes to the parent and child ObjectIds
 		ObjectId parentObjectId = new ObjectId();
 		parentObjectId.setSuperapp(parent.getObjectId().getSuperapp());
 		parentObjectId.setInternalObjectId(parent.getObjectId().getInternalObjectId());
@@ -70,27 +95,30 @@ class ApplicationTests {
 		childObjectId.setSuperapp(child.getObjectId().getSuperapp());
 		childObjectId.setInternalObjectId(child.getObjectId().getInternalObjectId());
 
-		this.restTemplate.put(this.url + "/superapp/objects/{superapp}/{parentInternalId}/children",childObjectId, parent.getObjectId().getSuperapp(), parent.getObjectId().getInternalObjectId());
+		this.restTemplate.put(this.url + "/superapp/objects/{superapp}/{parentInternalId}/children", childObjectId,
+				parent.getObjectId().getSuperapp(), parent.getObjectId().getInternalObjectId());
 
 		// WHEN I GET /superapp/objects/{childSuperapp}/{childInternalObjectId}/parents
 		SuperAppObjectBoundary[] actualResponse;
-		actualResponse = this.restTemplate.getForObject(this.url + "/superapp/objects/{superapp}/{internalObjectId}/parents", SuperAppObjectBoundary[].class, childObjectId.getSuperapp(), childObjectId.getInternalObjectId());
+		actualResponse = this.restTemplate.getForObject(
+				this.url + "/superapp/objects/{superapp}/{internalObjectId}/parents", SuperAppObjectBoundary[].class,
+				childObjectId.getSuperapp(), childObjectId.getInternalObjectId());
 
 		// THEN the server responds with STATUs 2xx
 		// AND the server returns the a list with one object with {parentObjectId}
 		if (actualResponse[0] == null)
 			throw new Exception("Error while validating response id");
 		assertEquals(actualResponse[0].getObjectId(), parentObjectId);
-
 	}
-
 
 	@Test
 	public void testRelationsBetweenParentToChild() throws Exception {
-		// GIVEN the server contains two objects with ids {parentObjectId} and {childObjectId}
-		// AND the object with {parentObjectId} is the parent of the object with {childObjectId}
+		// GIVEN the server contains two objects with ids {parentObjectId} and
+		// {childObjectId}
+		// AND the object with {parentObjectId} is the parent of the object with
+		// {childObjectId}
 
-		//create two objects - obj1, obj2
+		// create two objects - obj1, obj2
 		SuperAppObjectBoundary parent = new SuperAppObjectBoundary();
 		parent.setAlias("TestObj1");
 		parent.setType("TEST");
@@ -101,7 +129,7 @@ class ApplicationTests {
 		child.setType("TEST");
 		child = this.restTemplate.postForObject(this.url + "/superapp/objects", child, SuperAppObjectBoundary.class);
 
-		//set attributes to the parent and child ObjectIds
+		// set attributes to the parent and child ObjectIds
 		ObjectId parentObjectId = new ObjectId();
 		parentObjectId.setSuperapp(parent.getObjectId().getSuperapp());
 		parentObjectId.setInternalObjectId(parent.getObjectId().getInternalObjectId());
@@ -110,11 +138,15 @@ class ApplicationTests {
 		childObjectId.setSuperapp(child.getObjectId().getSuperapp());
 		childObjectId.setInternalObjectId(child.getObjectId().getInternalObjectId());
 
-		this.restTemplate.put(this.url + "/superapp/objects/{superapp}/{parentInternalId}/children",childObjectId, parent.getObjectId().getSuperapp(), parent.getObjectId().getInternalObjectId());
+		this.restTemplate.put(this.url + "/superapp/objects/{superapp}/{parentInternalId}/children", childObjectId,
+				parent.getObjectId().getSuperapp(), parent.getObjectId().getInternalObjectId());
 
-		// WHEN I GET /superapp/objects/{parentSuperapp}/{parentInternalObjectId}/children
+		// WHEN I GET
+		// /superapp/objects/{parentSuperapp}/{parentInternalObjectId}/children
 		SuperAppObjectBoundary[] actualResponse;
-		actualResponse = this.restTemplate.getForObject(this.url + "/superapp/objects/{superapp}/{internalObjectId}/children", SuperAppObjectBoundary[].class, parentObjectId.getSuperapp(), parentObjectId.getInternalObjectId());
+		actualResponse = this.restTemplate.getForObject(
+				this.url + "/superapp/objects/{superapp}/{internalObjectId}/children", SuperAppObjectBoundary[].class,
+				parentObjectId.getSuperapp(), parentObjectId.getInternalObjectId());
 
 		// THEN the server responds with STATUs 2xx
 		// AND the server returns the a list with one object with {parentObjectId}
@@ -124,39 +156,36 @@ class ApplicationTests {
 
 	}
 
-	/*@Test
-	void ConverterMiniAppCommandToEntity() {
-		Converter c = new Converter();
-		MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
-
-		// Create a CommandId object
-		CommandId commandId = new CommandId("mySuperappZohar", "myMiniappTal", "1234");
-
-		// Create a TargetObject object
-		ObjectId objectId = new ObjectId("mySuperappZohar", "5678");
-		TargetObject targetObject = new TargetObject(objectId);
-
-		// Create an InvokedBy object
-		UserId userId = new UserId("mySuperappZohar", "user@example.com");
-		InvokedBy invokedBy = new InvokedBy(userId);
-
-		// Create a Map of command attributes
-		Map<String, Object> commandAttributes = new HashMap<>();
-		commandAttributes.put("color", "red");
-		commandAttributes.put("size", "small");
-
-		String command = "createObject";
-		// Create a MiniAppCommandBoundary object
-		MiniAppCommandBoundary commandBoundary = new MiniAppCommandBoundary(commandId, command, targetObject,
-				new Date(), invokedBy, commandAttributes);
-		MiniAppCommandEntity entity = c.miniAppCommandToEntity(commandBoundary);
-
-		// Check that the entity was created with the expected values
-		assertEquals(commandId.toString(), entity.getCommandId());
-		assertEquals(command, entity.getCommand());
-		assertEquals(targetObject, entity.getTargetObject().toString());
-		assertEquals(invokedBy, entity.getInvokedBy().toString());
-		assertEquals(commandAttributes, entity.getCommandAttributes().toString());
-	}*/
+	/*
+	 * @Test void ConverterMiniAppCommandToEntity() { Converter c = new Converter();
+	 * MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
+	 * 
+	 * // Create a CommandId object CommandId commandId = new
+	 * CommandId("mySuperappZohar", "myMiniappTal", "1234");
+	 * 
+	 * // Create a TargetObject object ObjectId objectId = new
+	 * ObjectId("mySuperappZohar", "5678"); TargetObject targetObject = new
+	 * TargetObject(objectId);
+	 * 
+	 * // Create an InvokedBy object UserId userId = new UserId("mySuperappZohar",
+	 * "user@example.com"); InvokedBy invokedBy = new InvokedBy(userId);
+	 * 
+	 * // Create a Map of command attributes Map<String, Object> commandAttributes =
+	 * new HashMap<>(); commandAttributes.put("color", "red");
+	 * commandAttributes.put("size", "small");
+	 * 
+	 * String command = "createObject"; // Create a MiniAppCommandBoundary object
+	 * MiniAppCommandBoundary commandBoundary = new
+	 * MiniAppCommandBoundary(commandId, command, targetObject, new Date(),
+	 * invokedBy, commandAttributes); MiniAppCommandEntity entity =
+	 * c.miniAppCommandToEntity(commandBoundary);
+	 * 
+	 * // Check that the entity was created with the expected values
+	 * assertEquals(commandId.toString(), entity.getCommandId());
+	 * assertEquals(command, entity.getCommand()); assertEquals(targetObject,
+	 * entity.getTargetObject().toString()); assertEquals(invokedBy,
+	 * entity.getInvokedBy().toString()); assertEquals(commandAttributes,
+	 * entity.getCommandAttributes().toString()); }
+	 */
 
 }

@@ -1,7 +1,9 @@
 package superapp.logic;
 
 public class DeprecatedOperationException extends RuntimeException{
-    public DeprecatedOperationException() {
+    private static final long serialVersionUID = -2174488076635281609L;
+
+	public DeprecatedOperationException() {
     }
 
     public DeprecatedOperationException(String message) {

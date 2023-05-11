@@ -6,3 +6,6 @@ implemented functions:
     2. getAllSuppliers
         * Input:
         * Output: List of ObjectEntity - all object with type "Supplier"
+    3. addGuest
+        *Input:  SuperAppObjectBoundary
+        *Output: SuperAppObjectBoundary (Nothing to do with the output)
