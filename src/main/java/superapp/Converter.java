@@ -35,8 +35,8 @@ public class Converter {
 		else
 			entity.setRole(boundary.getRole());
 
-		if (boundary.getAvatar() == null)
-			throw new BadRequestException("Avatar can't be null");
+		if (boundary.getAvatar() == null|| boundary.getAvatar().equals(""))
+			throw new BadRequestException("Avatar can't be null or empty");
 		else
 			entity.setAvatar(boundary.getAvatar());
 
