@@ -58,23 +58,20 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
 
     @Override
     public List<MiniAppCommandBoundary> getAllCommands() {
-    	List <MiniAppCommandEntity> commands = this.miniappCommandCrud.findAll();
-    	List< MiniAppCommandBoundary> rv = new ArrayList<MiniAppCommandBoundary>();
-    	for (MiniAppCommandEntity c : commands) {
-    		rv.add(this.converter.miniAppCommandToBoundary(c));
-    	}
-    	return rv;
+
+        return this.miniappCommandCrud.findAll()
+                .stream()
+                .map(this.converter::miniAppCommandToBoundary)
+                .toList();
     }
 
     @Override
     public List<MiniAppCommandBoundary> getAllMiniAppCommands(String miniAppName) {
-    	List <MiniAppCommandBoundary> allCommands = getAllCommands();
-        List<MiniAppCommandBoundary> miniAppCommands = new ArrayList<MiniAppCommandBoundary>();
-    	for (MiniAppCommandBoundary c : allCommands) {
-    		if (c.getCommandId().getMiniapp().equals(miniAppName))
-                miniAppCommands.add(c);
-    	}
-    	return miniAppCommands;
+        String Id = this.nameFromSpringConfig + "#" + miniAppName + "#" + "*";
+        return this.miniappCommandCrud.findAllByCommandIdLike(Id)
+                .stream()
+                .map(this.converter::miniAppCommandToBoundary)
+                .toList();
     }
 
     @Override
@@ -82,19 +79,33 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     	this.miniappCommandCrud.deleteAll();
     }
 
-    public Object callToFunction(String commandName){
-        switch (commandName){
-            case "getTypes":
-                return Supplier.getAllTypes();
-            case "getAllSuppliers":
-                return supperAppObjectCrud.findAllByType("Supplier");
-            default:
-                UnknownCommandBoundary boundary = new UnknownCommandBoundary();
-                boundary.setCommandName(commandName);
-                boundary.setErrorMessage("Could not find command");
-                return boundary;
+    public Object callToFunction(String commandName, String miniAppName){
+        switch (miniAppName) {
+            case ("suppliers"):
+                switch (commandName) {
+                    case "getTypes":
+                        return Supplier.getAllTypes();
+                    case "getAllSuppliers":
+                        return supperAppObjectCrud.findAllByType("Supplier");
+                    default:
+                        return createUnknownCommandBoundary(commandName, "Could not find command");
 
+                }
+            case "customers":
+                switch (commandName){
+                    default:
+                        return createUnknownCommandBoundary(commandName, "Could not find command");
+                }
+            default:
+                return createUnknownCommandBoundary(commandName, "Could not find miniapp");
         }
+    }
+
+    public UnknownCommandBoundary createUnknownCommandBoundary (String commandName, String errMsg){
+        UnknownCommandBoundary boundary = new UnknownCommandBoundary();
+        boundary.setCommandName(commandName);
+        boundary.setErrorMessage(errMsg);
+        return boundary;
     }
 
     @Override
@@ -108,8 +119,9 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
         String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
         command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
         command.setInvocationTimestamp(new Date());
+        String miniAppName = command.getCommandId().getMiniapp();
         String commandName = command.getCommand();
-        Object rv = callToFunction(commandName);
+        Object rv = callToFunction(commandName, miniAppName);
         if (command.getCommandAttributes() == null)
             command.setCommandAttributes(new HashMap<>());
         if (rv instanceof UnknownCommandBoundary)
