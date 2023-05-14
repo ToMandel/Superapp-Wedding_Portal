@@ -82,7 +82,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     	this.miniappCommandCrud.deleteAll();
     }
 
-    public Object callToFunction(String commandName, MiniAppCommandBoundary commandBoundary){
+    public Object callToFunction(String commandName){
         switch (commandName){
             case "getTypes":
                 return Supplier.getAllTypes();
@@ -98,39 +98,35 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     }
 
     @Override
-    public Object invokeCommand(MiniAppCommandBoundary command){
-        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
-        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
-        command.setInvocationTimestamp(new Date());
-        MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-        String commandName = command.getCommand();
-        Object rv = callToFunction(commandName, command);
-        entity = this.miniappCommandCrud.save(entity);
-        return rv;
+    @Deprecated
+    public Object invokeCommand(MiniAppCommandBoundary command) {
+        throw new DeprecatedOperationException();
     }
 
     @Override
-    public Object invokeMiniAppCommandAsync(MiniAppCommandBoundary command) {
+    public Object invokeMiniAppCommandAsync(MiniAppCommandBoundary command, boolean isAsync) {
         String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
         command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
         command.setInvocationTimestamp(new Date());
+        String commandName = command.getCommand();
+        Object rv = callToFunction(commandName);
         if (command.getCommandAttributes() == null)
             command.setCommandAttributes(new HashMap<>());
-        command.getCommandAttributes().put("status", "waiting");
-        try{
-            String commandName = command.getCommand();
-            Object rv = callToFunction(commandName, command);
-            if (rv instanceof UnknownCommandBoundary)
-                command.getCommandAttributes().put("error", "Could not found command");
-            String json = this.jackson.writeValueAsString(command);
-            this.jmsTemplate.convertAndSend("asyncMiniAppQueue", json);
-            MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-            entity = this.miniappCommandCrud.save(entity);
-            return rv;
+        if (rv instanceof UnknownCommandBoundary)
+            command.getCommandAttributes().put("error", "Could not found command");
+        MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
+        entity = this.miniappCommandCrud.save(entity);
+        if (isAsync) {
+            command.getCommandAttributes().put("status", "waiting");
+            try {
+                String json = this.jackson.writeValueAsString(command);
+                this.jmsTemplate.convertAndSend("asyncMiniAppQueue", json);
+                entity = this.converter.miniAppCommandToEntity(command);
+                entity = this.miniappCommandCrud.save(entity);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
-        catch (Exception e){
-            throw new RuntimeException(e);
-        }
-
+        return rv;
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import superapp.boundries.CommandId;
 import superapp.boundries.MiniAppCommandBoundary;
-import superapp.logic.MiniAppCommandService;
 import superapp.logic.MiniAppCommandServiceWithAsyncSupport;
 
 @RestController
@@ -49,8 +48,8 @@ public class CommandAPI {
 		commandId.setMiniapp(miniAppName);
 		miniAppCommandBoundary.setCommandId(commandId);
 		if (async)
-			return commands.invokeMiniAppCommandAsync(miniAppCommandBoundary);
-		return commands.invokeCommand(miniAppCommandBoundary);
+			return commands.invokeMiniAppCommandAsync(miniAppCommandBoundary, true);
+		return commands.invokeMiniAppCommandAsync(miniAppCommandBoundary, false);
 		//return commands.invokeCommand(miniAppCommandBoundary);
 	}
 	

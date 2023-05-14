@@ -4,5 +4,5 @@ import superapp.boundries.MiniAppCommandBoundary;
 
 public interface MiniAppCommandServiceWithAsyncSupport extends MiniAppCommandService{
 
-    public Object invokeMiniAppCommandAsync (MiniAppCommandBoundary command);
+    public Object invokeMiniAppCommandAsync (MiniAppCommandBoundary command, boolean isAsync);
 }
