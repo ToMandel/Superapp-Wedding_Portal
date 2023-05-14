@@ -57,18 +57,6 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
 
 
     @Override
-    public Object invokeCommand(MiniAppCommandBoundary command){
-        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
-        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
-        command.setInvocationTimestamp(new Date());
-        MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-        String commandName = command.getCommand();
-        Object rv = callToFunction(commandName, command);
-        entity = this.miniappCommandCrud.save(entity);
-        return rv;
-    }	
-
-    @Override
     public List<MiniAppCommandBoundary> getAllCommands() {
     	List <MiniAppCommandEntity> commands = this.miniappCommandCrud.findAll();
     	List< MiniAppCommandBoundary> rv = new ArrayList<MiniAppCommandBoundary>();
@@ -104,14 +92,21 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
                 UnknownCommandBoundary boundary = new UnknownCommandBoundary();
                 boundary.setCommandName(commandName);
                 boundary.setErrorMessage("Could not find command");
-                //commandBoundary.getCommandAttributes().put("error", "Could not found command");
-                //TODO: add attribute to map
-                //MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
-                //String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
-                //boundary.setCommandId(new CommandId(nameFromSpringConfig, boundary.getCommandId().getMiniapp(), internalCommandId));
                 return boundary;
 
         }
+    }
+
+    @Override
+    public Object invokeCommand(MiniAppCommandBoundary command){
+        String internalCommandId = UUID.randomUUID().toString(); //we're doing rand so the size of entities is not relevant
+        command.setCommandId(new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
+        command.setInvocationTimestamp(new Date());
+        MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
+        String commandName = command.getCommand();
+        Object rv = callToFunction(commandName, command);
+        entity = this.miniappCommandCrud.save(entity);
+        return rv;
     }
 
     @Override
@@ -123,11 +118,13 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
             command.setCommandAttributes(new HashMap<>());
         command.getCommandAttributes().put("status", "waiting");
         try{
+            String commandName = command.getCommand();
+            Object rv = callToFunction(commandName, command);
+            if (rv instanceof UnknownCommandBoundary)
+                command.getCommandAttributes().put("error", "Could not found command");
             String json = this.jackson.writeValueAsString(command);
             this.jmsTemplate.convertAndSend("asyncMiniAppQueue", json);
             MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-            String commandName = command.getCommand();
-            Object rv = callToFunction(commandName, command);
             entity = this.miniappCommandCrud.save(entity);
             return rv;
         }
