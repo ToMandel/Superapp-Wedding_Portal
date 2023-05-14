@@ -158,39 +158,37 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByLocation(double lat, double lng, double distance,
-			String distanceUnits, String superapp, String email, int size, int page) {
-		List<SuperAppObjectBoundary> rv = new ArrayList<SuperAppObjectBoundary>();
+			String distanceUnits, int size, int page) {
+//		List<SuperAppObjectBoundary> rv = new ArrayList<SuperAppObjectBoundary>();
 
-		Location inputLocation = new Location(lat, lng);
-		
-		List<SuperAppObjectBoundary> allObjects = this.objectCrud
+		return this.objectCrud
 				.findAll(PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
 				.stream() // Stream<superAppObjectEntity>
+				.filter(obj -> inRange(obj.getLat(), obj.getLng(), lat, lng, distance))
 				.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
 				.toList(); // List<superAppObjectToBoundary>
 
-		if (allObjects != null) {
-			for (SuperAppObjectBoundary boundary : allObjects) {
-				Location objectLoc = new Location(boundary.getLocation().getLat(), boundary.getLocation().getLng());
-				if (inRange(objectLoc, inputLocation, distance)) {
-					rv.add(Optional.of(boundary).get());
-				}
-			}
-		} else {
-			throw new RuntimeException("There are no objects in database");
-		}
-		return rv;
+//		if (allObjects != null) {
+//			for (SuperAppObjectBoundary boundary : allObjects) {
+//				Location objectLoc = new Location(boundary.getLocation().getLat(), boundary.getLocation().getLng());
+//				if (inRange(objectLoc, inputLocation, distance)) {
+//					rv.add(Optional.of(boundary).get());
+//				}
+//			}
+//		} else {
+//			throw new RuntimeException("There are no objects in database");
+//		}
+//		return allObjects;
 	}
 
-	public boolean inRange(Location objectLocation, Location inputLocation, double distance) {
+	public boolean inRange(double objLat, double objLng, double inputLat, double inputLng, double distance) {
 
-		double plusLat = inputLocation.getLat() + distance;
-		double minusLat = inputLocation.getLat() - distance;
-		double plusLng = inputLocation.getLng() + distance;
-		double minusLng = inputLocation.getLng() - distance;
+		double plusLat = inputLat + distance;
+		double minusLat = inputLat - distance;
+		double plusLng = inputLng + distance;
+		double minusLng = inputLng - distance;
 
-		if (objectLocation.getLat() <= plusLat && objectLocation.getLat() >= minusLat
-				&& objectLocation.getLng() >= plusLng && objectLocation.getLng() >= minusLng) {
+		if (objLat <= plusLat && objLat >= minusLat && objLng <= plusLng && objLng >= minusLng) {
 			return true;
 		} else {
 			return false;
