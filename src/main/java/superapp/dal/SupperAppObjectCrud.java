@@ -15,4 +15,6 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 
 	public List<SuperAppObjectEntity> findAllByType(@Param("type") String type);
 
+	public List<SuperAppObjectEntity> findAllByTypeAndCreatedBy(@Param("type") String type, @Param("createdBy") String createdBy);
+
 }

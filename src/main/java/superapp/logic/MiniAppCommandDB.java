@@ -79,7 +79,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     	this.miniappCommandCrud.deleteAll();
     }
 
-    public Object callToFunction(String commandName, String miniAppName){
+    public Object callToFunction(MiniAppCommandBoundary command, String commandName, String miniAppName){
         switch (miniAppName) {
             case ("suppliers"):
                 switch (commandName) {
@@ -93,6 +93,16 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
                 }
             case "customers":
                 switch (commandName){
+                    default:
+                        return createUnknownCommandBoundary(commandName, "Could not find command");
+                }
+            case "tables":
+                switch (commandName){
+                    case "getAllTablesOfGuest":
+                        String type = "guest";
+                        String invokedBy = command.getInvokedBy().getUserId().getSuperapp() + "#" + command.getInvokedBy().getUserId().getEmail();
+                        //assume that the user invoked the command is the same user that created the object
+                        return this.supperAppObjectCrud.findAllByTypeAndCreatedBy(type, invokedBy);
                     default:
                         return createUnknownCommandBoundary(commandName, "Could not find command");
                 }
@@ -121,7 +131,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
         command.setInvocationTimestamp(new Date());
         String miniAppName = command.getCommandId().getMiniapp();
         String commandName = command.getCommand();
-        Object rv = callToFunction(commandName, miniAppName);
+        Object rv = callToFunction(command, commandName, miniAppName);
         if (command.getCommandAttributes() == null)
             command.setCommandAttributes(new HashMap<>());
         if (rv instanceof UnknownCommandBoundary)

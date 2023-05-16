@@ -5,7 +5,10 @@ implemented functions:
         * Output: List of strings - supplier's types
     2. getAllSuppliers
         * Input:
-        * Output: List of ObjectEntity - all object with type "Supplier"
+        * Output: List of ObjectEntity - all object with type "supplier"
     3. addGuest
         *Input:  SuperAppObjectBoundary
         *Output: SuperAppObjectBoundary (Nothing to do with the output)
+    4. getAllTablesOfGuest
+        *Input: MiniAppCommandBoundary
+        *Output: List of SuperAppObjectBoundaries - all objects with type "guest" and CreatedBy is the same of invokedBy
