@@ -22,6 +22,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	private Converter converter;
 	private String nameFromSpringConfig;
 
+
 	@Value("${spring.application.name:defaultName}")
 	public void setNameFromSpringConfig(String nameFromSpringConfig) {
 		this.nameFromSpringConfig = nameFromSpringConfig;
@@ -179,6 +180,24 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 //			throw new RuntimeException("There are no objects in database");
 //		}
 //		return allObjects;
+	}
+
+	@Override
+	public List<SuperAppObjectBoundary> searchObjectsByType(String type, int size, int page) {
+		return this.objectCrud
+				.findAllByType(type, PageRequest.of(page, size))
+				.stream()
+				.map(this.converter::superAppObjectToBoundary)
+				.toList();
+	}
+
+	@Override
+	public List<SuperAppObjectBoundary> searchObjectsByAlias(String alias, int size, int page) {
+		return this.objectCrud
+				.findAllByAlias(alias, PageRequest.of(page, size))
+				.stream()
+				.map(this.converter::superAppObjectToBoundary)
+				.toList();
 	}
 
 	public boolean inRange(double objLat, double objLng, double inputLat, double inputLng, double distance) {

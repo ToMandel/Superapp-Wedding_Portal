@@ -72,4 +72,27 @@ public class ObjectsAPI {
 		return rv.toArray(new SuperAppObjectBoundary[0]);
 	}
 
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = { "/superapp/objects/search/byType/{type}" }, method = {
+			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public SuperAppObjectBoundary[] searchObjectsByType(@PathVariable("type") String type,
+															@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
+															@RequestParam(name = "userEmail", required = true) String userEmail,
+															@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+															@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+		return objects.searchObjectsByType(type, size, page).toArray(new SuperAppObjectBoundary[0]);
+	}
+
+
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = { "/superapp/objects/search/byAlias/{alias}" }, method = {
+			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public SuperAppObjectBoundary[] searchObjectsByAlias(@PathVariable("alias") String alias,
+														@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
+														@RequestParam(name = "userEmail", required = true) String userEmail,
+														@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+														@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+		return objects.searchObjectsByAlias(alias, size, page).toArray(new SuperAppObjectBoundary[0]);
+	}
+
 }

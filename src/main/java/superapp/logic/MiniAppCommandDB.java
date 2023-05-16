@@ -3,6 +3,7 @@ package superapp.logic;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import superapp.Converter;
@@ -85,8 +86,8 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
                 switch (commandName) {
                     case "getTypes":
                         return Supplier.getAllTypes();
-                    case "getAllSuppliers":
-                        return supperAppObjectCrud.findAllByType("Supplier");
+                    //case "getAllSuppliers":
+                    //    return supperAppObjectCrud.findAllByType("Supplier", PageRequest.of(FIRST_PAGE, MAX_SIZE));
                     default:
                         return createUnknownCommandBoundary(commandName, "Could not find command");
 
