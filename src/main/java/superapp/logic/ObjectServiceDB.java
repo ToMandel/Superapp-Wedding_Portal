@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import superapp.Converter;
 import superapp.boundries.Location;
+import superapp.logic.DeprecatedOperationException;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
 import superapp.dal.SupperAppObjectCrud;
@@ -87,11 +88,13 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
+	
 	public SuperAppObjectBoundary getSpecificObject(String objectSuperApp, String internalId) {
 		String objectId = objectSuperApp + "#" + internalId;
 		SuperAppObjectEntity existing = this.objectCrud.findById(objectId)
 				.orElseThrow(() -> new RuntimeException("could not find object by id: " + objectId));
 		return this.converter.superAppObjectToBoundary(existing);
+		
 	}
 
 	@Override

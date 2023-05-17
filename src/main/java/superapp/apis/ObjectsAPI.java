@@ -21,11 +21,12 @@ public class ObjectsAPI {
 
 	public ObjectsAPI() {
 	}
+	
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = { "/superapp/objects/{superapp}/{internalObjectId}" }, method = {
 			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SuperAppObjectBoundary getSpecificObject(@PathVariable("superapp") String superapp,
+	public SuperAppObjectBoundary getSpecificObject(@PathVariable("superapp")String superapp ,
 			@PathVariable("internalObjectId") String internalObjectId) {
 		return objects.getSpecificObject(superapp, internalObjectId);
 
