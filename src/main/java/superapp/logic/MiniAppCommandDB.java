@@ -13,6 +13,7 @@ import superapp.boundries.MiniAppCommandBoundary;
 import superapp.boundries.UnknownCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
 import superapp.dal.SupperAppObjectCrud;
+import superapp.dal.UserCrud;
 import superapp.data.MiniAppCommandEntity;
 import superapp.data.UserEntity;
 import superapp.data.UserRole;
@@ -22,10 +23,13 @@ import org.springframework.jms.core.JmsTemplate;
 import java.util.*;
 
 @Service
-public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
+public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination{
 
 	private MiniAppCommandCrud miniappCommandCrud;
     private SupperAppObjectCrud supperAppObjectCrud;
+
+    private UserCrud userCrud;
+
 	private Converter converter;
     private String nameFromSpringConfig;
     private JmsTemplate jmsTemplate;
@@ -49,8 +53,17 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     }
     
     @Autowired
-    public void setMiniAppCommandCrude (MiniAppCommandCrud miniappCommandCrud, SupperAppObjectCrud supperAppObjectCrud) {
+    public void setMiniAppCommandCrud (MiniAppCommandCrud miniappCommandCrud) {
     	this.miniappCommandCrud = miniappCommandCrud;
+    }
+
+    @Autowired
+    public void setUserCrud (UserCrud userCrud){
+        this.userCrud = userCrud;
+    }
+
+    @Autowired
+    public void setSupperAppObjectCrud (SupperAppObjectCrud supperAppObjectCrud){
         this.supperAppObjectCrud = supperAppObjectCrud;
     }
     
@@ -59,39 +72,56 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
         this.converter = converter;
     }
 
+    private UserEntity getUser (String superAppName, String email){
+        String id = superAppName + "#" + email;
+        return this.userCrud.findById(id)
+                .orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email));
+    }
+
 
     @Override
-    public List<MiniAppCommandBoundary> getAllCommands() {
+    public List<MiniAppCommandBoundary> getAllCommands(String superAppName, String email, int page, int size) {
+        UserEntity user = getUser(superAppName, email);
+        if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
+            return this.miniappCommandCrud.findAll(PageRequest.of(page, size))
+                    .stream()
+                    .map(this.converter::miniAppCommandToBoundary)
+                    .toList();
+        }
+        else
+            throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
+    }
 
-        return this.miniappCommandCrud.findAll()
-                .stream()
-                .map(this.converter::miniAppCommandToBoundary)
-                .toList();
+    @Override
+    public void deleteAllCommands(String email) {
+        this.miniappCommandCrud.deleteAll();
     }
 
     @Override
     @Deprecated
     public List<MiniAppCommandBoundary> getAllMiniAppCommands(String miniAppName) {
-       /* String Id = this.nameFromSpringConfig + "#" + miniAppName + "#" + "*";
-        return this.miniappCommandCrud.findAllByCommandIdLike(Id)
-                .stream()
-                .map(this.converter::miniAppCommandToBoundary)
-                .toList();*/
     	throw new DeprecatedOperationException();
     }
    
     
-    public List<MiniAppCommandBoundary>getAllMiniAppCommands(String miniAppName,String superAppName, String email,int size, int page){
-    	return this.miniappCommandCrud
-				.findAllBySuperAppNameAndMiniAppNameAndEmail(miniAppName,superAppName,email,PageRequest.of(size, page, Direction.ASC, "miniAppName","commandId"))
-				.stream()
-				.map(this.converter::miniAppCommandToBoundary)
-				.toList();
-    	
+    public List<MiniAppCommandBoundary>getAllMiniAppCommands(String superAppName, String miniAppName, String email,int size, int page){
+        UserEntity user = getUser(superAppName, email);
+        if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
+           String id = this.nameFromSpringConfig + "#" + miniAppName + "#" + "*";
+        return this.miniappCommandCrud.findAllByCommandIdLike(id, PageRequest.of(page, size))
+                .stream()
+                .map(this.converter::miniAppCommandToBoundary)
+                .toList();
+        }
+        else
+            throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
+
     }
+
     @Override
+    @Deprecated
     public void deleteAllCommands() {
-    	this.miniappCommandCrud.deleteAll();
+    	throw new DeprecatedOperationException();
     }
 
     public Object callToFunction(MiniAppCommandBoundary command, String commandName, String miniAppName){
@@ -136,6 +166,12 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     @Override
     @Deprecated
     public Object invokeCommand(MiniAppCommandBoundary command) {
+        throw new DeprecatedOperationException();
+    }
+
+    @Deprecated
+    @Override
+    public List<MiniAppCommandBoundary> getAllCommands() {
         throw new DeprecatedOperationException();
     }
 

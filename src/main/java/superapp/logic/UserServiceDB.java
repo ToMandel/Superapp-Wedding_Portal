@@ -106,17 +106,18 @@ public class UserServiceDB implements UsersServiceWithPagination {
 	}
 
 	@Override
-	public List<UserBoundary> getAllUsers(String superAppName, String email, int size, int page) {
-		UserEntity user = this.userCrud.findBySuperappAndEmail(superAppName, email);
-		if (user.getRole() == UserRole.ADMIN)
+	public List<UserBoundary> getAllUsers(String superAppName, String email, int page, int size) {
+		String id = superAppName + "#" + email;
+		UserEntity user = this.userCrud.findById(id)
+				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email));
+		if (user.getRole() != null && user.getRole() == UserRole.ADMIN)
 			return this.userCrud
-					.findAll(PageRequest.of(size, page, Direction.ASC, "role", "username", "avatar", "userId"))
+					.findAll(PageRequest.of(page, size, Direction.ASC, "role", "username", "avatar", "userId"))
 					.stream()
 					.map(this.converter::userToBoundary)
 					.toList();
-		else {
-			throw new UnauthorizedException("Operation is not allowed, the user is not ADMIN");
-		}
+		else
+			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
 	}
 
 }

@@ -11,13 +11,13 @@ import java.util.List;
 
 public interface MiniAppCommandCrud extends ListCrudRepository<MiniAppCommandEntity, String> ,PagingAndSortingRepository<MiniAppCommandEntity, String>  {
 	
-    public List<MiniAppCommandEntity> findAllByCommandIdLike(@Param("Id") String Id);
+    public List<MiniAppCommandEntity> findAllByCommandIdLike(@Param("Id") String Id, Pageable pageable);
     
-    public List<MiniAppCommandEntity> findAllBySuperAppNameAndMiniAppNameAndEmail (
+    /*public List<MiniAppCommandEntity> findAllBySuperAppNameAndMiniAppNameAndEmail (
 			@Param("miniAppName") String miniAppName,
 			@Param("superAppName") String superAppName,
 			@Param("email") String email,
-			Pageable pageable);
+			Pageable pageable);*/
 		
     
    
