@@ -45,6 +45,12 @@ public class UserServiceDB implements UsersServiceWithPagination {
 		this.converter = converter;
 	}
 
+	private UserEntity getUser (String superAppName, String email){
+		String id = superAppName + "#" + email;
+		return this.userCrud.findById(id)
+				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email + "in " + superAppName + " superapp"));
+	}
+
 	@Override
 	public UserBoundary createUser(NewUserBoundary newUser) {
 		UserBoundary user = new UserBoundary();
@@ -101,21 +107,30 @@ public class UserServiceDB implements UsersServiceWithPagination {
 	}
 
 	@Override
+	@Deprecated
 	public void deleteAllUsers() {
-		this.userCrud.deleteAll();
+		throw new DeprecatedOperationException();
 	}
 
 	@Override
 	public List<UserBoundary> getAllUsers(String superAppName, String email, int page, int size) {
-		String id = superAppName + "#" + email;
-		UserEntity user = this.userCrud.findById(id)
-				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email));
+		UserEntity user = getUser(superAppName, email);
 		if (user.getRole() != null && user.getRole() == UserRole.ADMIN)
 			return this.userCrud
 					.findAll(PageRequest.of(page, size, Direction.ASC, "role", "username", "avatar", "userId"))
 					.stream()
 					.map(this.converter::userToBoundary)
 					.toList();
+		else
+			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
+	}
+
+	@Override
+	public void deleteAllUsers(String superAppName, String email) {
+		UserEntity user = getUser(superAppName, email);
+		if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
+			this.userCrud.deleteAll();
+		}
 		else
 			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
 	}
