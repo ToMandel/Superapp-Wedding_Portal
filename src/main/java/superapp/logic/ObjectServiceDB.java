@@ -7,11 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import superapp.Converter;
-import superapp.boundries.Location;
 import superapp.dal.UserCrud;
 import superapp.data.UserEntity;
 import superapp.data.UserRole;
-import superapp.logic.DeprecatedOperationException;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
 import superapp.dal.SupperAppObjectCrud;
@@ -27,7 +25,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	private UserCrud userCrud;
 	private Converter converter;
 	private String nameFromSpringConfig;
-
 
 	@Value("${spring.application.name:defaultName}")
 	public void setNameFromSpringConfig(String nameFromSpringConfig) {
@@ -45,7 +42,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Autowired
-	public void setUserCrud (UserCrud userCrud){
+	public void setUserCrud(UserCrud userCrud) {
 		this.userCrud = userCrud;
 	}
 
@@ -54,10 +51,10 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		this.converter = converter;
 	}
 
-	private UserEntity getUser (String superAppName, String email){
+	private UserEntity getUser(String superAppName, String email) {
 		String id = superAppName + "#" + email;
-		return this.userCrud.findById(id)
-				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email + "in " + superAppName + " superapp"));
+		return this.userCrud.findById(id).orElseThrow(() -> new UnauthorizedException(
+				"There is no user with email: " + email + "in " + superAppName + " superapp"));
 	}
 
 	@Override
@@ -104,13 +101,13 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
-	
+
 	public SuperAppObjectBoundary getSpecificObject(String objectSuperApp, String internalId) {
 		String objectId = objectSuperApp + "#" + internalId;
 		SuperAppObjectEntity existing = this.objectCrud.findById(objectId)
 				.orElseThrow(() -> new RuntimeException("could not find object by id: " + objectId));
 		return this.converter.superAppObjectToBoundary(existing);
-		
+
 	}
 
 	@Override
@@ -126,7 +123,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	@Override
 	@Deprecated
 	public void deleteAllObjects() {
-		//this.objectCrud.deleteAll();
+		// this.objectCrud.deleteAll();
 		throw new DeprecatedOperationException();
 	}
 
@@ -179,16 +176,49 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
-	public List<SuperAppObjectBoundary> searchObjectsByLocation(double lat, double lng, double distance,
-			String distanceUnits, int size, int page) {
-//		List<SuperAppObjectBoundary> rv = new ArrayList<SuperAppObjectBoundary>();
+	public List<SuperAppObjectBoundary> searchObjectsByLocation(String superAppName, String email, double lat,
+			double lng, double distance, String distanceUnits, int size, int page) {
+		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();
 
-		return this.objectCrud
-				.findAll(PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
-				.stream() // Stream<superAppObjectEntity>
-				.filter(obj -> inRange(obj.getLat(), obj.getLng(), lat, lng, distance))
-				.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
-				.toList(); // List<superAppObjectToBoundary>
+		double minLat = lat - distance;
+		double maxLat = lat + distance;
+		double minLng = lng - distance;
+		double maxLng = lng + distance;
+
+		UserEntity user = getUser(superAppName, email);
+
+		if (user.getRole() != null) {
+			if (user.getRole() == UserRole.MINIAPP_USER) {
+				objects = this.objectCrud
+						.findByLatBetweenAndLngBetween(minLat, maxLat, minLng, maxLng,
+								PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
+										"objectId"))
+						.stream().filter(obj -> obj.getActive() == true).map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
+						.toList(); // List<superAppObjectToBoundary>
+			} else if (user.getRole() == UserRole.SUPERAPP_USER) {
+				objects = this.objectCrud
+						.findByLatBetweenAndLngBetween(minLat, maxLat, minLng, maxLng,
+						PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
+						.stream()
+						.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
+						.toList(); // List<superAppObjectToBoundary>
+
+			} else {
+				throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
+			}
+		}
+		if (objects.isEmpty()) {
+			throw new NotFoundException("Couldn't find any objects nearby");
+		}
+		return objects;
+	}
+
+//		return this.objectCrud
+//				.findAll(PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
+//				.stream() // Stream<superAppObjectEntity>
+//				.filter(obj -> inRange(obj.getLat(), obj.getLng(), lat, lng, distance))
+//				.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
+//				.toList(); // List<superAppObjectToBoundary>
 
 //		if (allObjects != null) {
 //			for (SuperAppObjectBoundary boundary : allObjects) {
@@ -200,25 +230,19 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 //		} else {
 //			throw new RuntimeException("There are no objects in database");
 //		}
-//		return allObjects;
-	}
+////		return allObjects;
+//	}
 
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByType(String type, int size, int page) {
-		return this.objectCrud
-				.findAllByType(type, PageRequest.of(page, size))
-				.stream()
-				.map(this.converter::superAppObjectToBoundary)
-				.toList();
+		return this.objectCrud.findAllByType(type, PageRequest.of(page, size)).stream()
+				.map(this.converter::superAppObjectToBoundary).toList();
 	}
 
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByAlias(String alias, int size, int page) {
-		return this.objectCrud
-				.findAllByAlias(alias, PageRequest.of(page, size))
-				.stream()
-				.map(this.converter::superAppObjectToBoundary)
-				.toList();
+		return this.objectCrud.findAllByAlias(alias, PageRequest.of(page, size)).stream()
+				.map(this.converter::superAppObjectToBoundary).toList();
 	}
 
 	@Override
@@ -226,24 +250,23 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		UserEntity user = getUser(superAppName, email);
 		if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
 			this.objectCrud.deleteAll();
-		}
-		else
+		} else
 			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
 
 	}
 
-	public boolean inRange(double objLat, double objLng, double inputLat, double inputLng, double distance) {
-
-		double plusLat = inputLat + distance;
-		double minusLat = inputLat - distance;
-		double plusLng = inputLng + distance;
-		double minusLng = inputLng - distance;
-
-		if (objLat <= plusLat && objLat >= minusLat && objLng <= plusLng && objLng >= minusLng) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
+//	public boolean inRange(double objLat, double objLng, double inputLat, double inputLng, double distance) {
+//
+//		double plusLat = inputLat + distance;
+//		double minusLat = inputLat - distance;
+//		double plusLng = inputLng + distance;
+//		double minusLng = inputLng - distance;
+//
+//		if (objLat <= plusLat && objLat >= minusLat && objLng <= plusLng && objLng >= minusLng) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//
+//	}
 }

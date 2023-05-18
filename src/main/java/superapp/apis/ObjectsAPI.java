@@ -63,11 +63,11 @@ public class ObjectsAPI {
 	public SuperAppObjectBoundary[] searchObjectsByLocation(@PathVariable("lat") double lat,
 			@PathVariable("lng") double lng, @PathVariable("distance") double distance,
 			@RequestParam(name = "distanceUnits", required = false, defaultValue = "NEUTRAL") String distanceUnits,
-			@RequestParam(name = "userSuperapp", required = true) String superapp,
+			@RequestParam(name = "userSuperapp", required = true) String superAppName,
 			@RequestParam(name = "userEmail", required = true) String email,
 			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
-		List<SuperAppObjectBoundary> rv = this.objects.searchObjectsByLocation(lat, lng, distance, distanceUnits, size,
+		List<SuperAppObjectBoundary> rv = this.objects.searchObjectsByLocation(superAppName,email,lat, lng, distance, distanceUnits, size,
 				page);
 
 		return rv.toArray(new SuperAppObjectBoundary[0]);
