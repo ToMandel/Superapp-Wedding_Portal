@@ -6,17 +6,19 @@ import java.util.List;
 
 public interface ObjectsService {
 
-    public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object);
-    
-    @Deprecated
-    public SuperAppObjectBoundary updateObject (String objectSuperApp, String internalObjectId, SuperAppObjectBoundary update);
+	public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object);
 
-    public SuperAppObjectBoundary getSpecificObject (String objectSuperApp, String internalObjectId);
+	@Deprecated
+	public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId,
+			SuperAppObjectBoundary update);
 
-    public List<SuperAppObjectBoundary> getAllObjects();
+	@Deprecated
+	public SuperAppObjectBoundary getSpecificObject(String objectSuperApp, String internalObjectId);
 
-    @Deprecated
-    public void deleteAllObjects();
+	@Deprecated
+	public List<SuperAppObjectBoundary> getAllObjects();
 
+	@Deprecated
+	public void deleteAllObjects();
 
 }

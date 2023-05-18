@@ -25,19 +25,25 @@ public class ObjectsAPI {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = { "/superapp/objects/{superapp}/{internalObjectId}" }, method = {
 			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SuperAppObjectBoundary getSpecificObject(@PathVariable("superapp") String superapp,
-			@PathVariable("internalObjectId") String internalObjectId) {
-		return objects.getSpecificObject(superapp, internalObjectId);
+	public SuperAppObjectBoundary getSpecificObject(
+			@PathVariable("superapp") String superapp,
+			@PathVariable("internalObjectId") String internalObjectId,
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
+			@RequestParam(name = "userEmail", required = true) String email) {
+		return objects.getSpecificObject(userSuperapp,email,superapp, internalObjectId);
 
 	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = { "/superapp/objects" }, method = { RequestMethod.GET }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public SuperAppObjectBoundary[] getAllObjects() {
-		List<SuperAppObjectBoundary> rv = this.objects.getAllObjects();
+	public SuperAppObjectBoundary[] getAllObjects(
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
+			@RequestParam(name = "userEmail", required = true) String email,
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+		List<SuperAppObjectBoundary> rv = this.objects.getAllObjects(userSuperapp,email,size,page);
 		return rv.toArray(new SuperAppObjectBoundary[0]);
-		// return objects.getAllObjects();
 
 	}
 

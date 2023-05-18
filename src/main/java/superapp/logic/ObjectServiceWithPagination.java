@@ -17,5 +17,9 @@ public interface ObjectServiceWithPagination extends RelationshipObjectsService 
 	
 	public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId, SuperAppObjectBoundary update,
 			String userSuperapp, String email);
+	
+	  public List<SuperAppObjectBoundary> getAllObjects(String userSuperapp, String email, int size, int page);
+	  
+	  public SuperAppObjectBoundary getSpecificObject(String userSuperapp, String email,String objectSuperApp, String internalObjectId);
 
 }
