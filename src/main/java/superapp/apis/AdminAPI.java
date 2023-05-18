@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import superapp.boundries.MiniAppCommandBoundary;
 import superapp.boundries.UserBoundary;
 import superapp.logic.MiniAppCommandService;
+import superapp.logic.MiniAppCommandServiceWithPagination;
 import superapp.logic.ObjectsService;
 import superapp.logic.UsersService;
 import superapp.logic.UsersServiceWithPagination;
@@ -21,7 +22,7 @@ import java.util.List;
 public class AdminAPI {
 
 	private ObjectsService objects;
-	private MiniAppCommandService commands;
+	private MiniAppCommandServiceWithPagination commands;
 	private UsersServiceWithPagination users;
 
 	@Autowired
@@ -35,7 +36,7 @@ public class AdminAPI {
 	}
 
 	@Autowired
-	public void setCommands(MiniAppCommandService commands) {
+	public void setCommands(MiniAppCommandServiceWithPagination commands) {
 		this.commands = commands;
 	}
 

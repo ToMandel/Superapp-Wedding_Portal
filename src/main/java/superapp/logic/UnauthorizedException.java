@@ -1,3 +1,4 @@
+
 package superapp.logic;
 
 import org.springframework.http.HttpStatus;
@@ -23,3 +24,5 @@ public class UnauthorizedException extends RuntimeException {
 		super(message, cause);
 	}
 }
+
+

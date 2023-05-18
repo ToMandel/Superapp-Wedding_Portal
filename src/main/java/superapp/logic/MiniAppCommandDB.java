@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import superapp.Converter;
@@ -13,6 +14,8 @@ import superapp.boundries.UnknownCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.data.MiniAppCommandEntity;
+import superapp.data.UserEntity;
+import superapp.data.UserRole;
 import superapp.objects.Supplier;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -67,14 +70,25 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithAsyncSupport{
     }
 
     @Override
+    @Deprecated
     public List<MiniAppCommandBoundary> getAllMiniAppCommands(String miniAppName) {
-        String Id = this.nameFromSpringConfig + "#" + miniAppName + "#" + "*";
+       /* String Id = this.nameFromSpringConfig + "#" + miniAppName + "#" + "*";
         return this.miniappCommandCrud.findAllByCommandIdLike(Id)
                 .stream()
                 .map(this.converter::miniAppCommandToBoundary)
-                .toList();
+                .toList();*/
+    	throw new DeprecatedOperationException();
     }
-
+   
+    
+    public List<MiniAppCommandBoundary>getAllMiniAppCommands(String miniAppName,String superAppName, String email,int size, int page){
+    	return this.miniappCommandCrud
+				.findAllBySuperAppNameAndMiniAppNameAndEmail(miniAppName,superAppName,email,PageRequest.of(size, page, Direction.ASC, "miniAppName","commandId"))
+				.stream()
+				.map(this.converter::miniAppCommandToBoundary)
+				.toList();
+    	
+    }
     @Override
     public void deleteAllCommands() {
     	this.miniappCommandCrud.deleteAll();
