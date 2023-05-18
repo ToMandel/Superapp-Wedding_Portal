@@ -104,8 +104,8 @@ public class AdminAPI {
 	public void deleteAllObjects(
 			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
 			@RequestParam(name = "userEmail", required = true) String email) {
-		//objects.deleteAllObjects(superAppName,email);
-		objects.deleteAllObjects();
+		objects.deleteAllObjects(superAppName,email);
+		//objects.deleteAllObjects();
 	}
 	
 	@CrossOrigin(origins = "*")

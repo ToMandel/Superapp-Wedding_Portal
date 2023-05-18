@@ -44,6 +44,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		this.objectCrud = objectCrud;
 	}
 
+	@Autowired
 	public void setUserCrud (UserCrud userCrud){
 		this.userCrud = userCrud;
 	}
