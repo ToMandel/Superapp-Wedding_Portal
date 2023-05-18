@@ -78,26 +78,39 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
+
+	@Deprecated
 	public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId,
 			SuperAppObjectBoundary update) {
-		String objectId = objectSuperApp + "#" + internalObjectId;
-		SuperAppObjectEntity existing = this.objectCrud.findById(objectId)
-				.orElseThrow(() -> new RuntimeException("could not find object by id: " + objectId));
-		if (update.getType() != null)
-			existing.setType(update.getType());
-		if (update.getAlias() != null)
-			existing.setAlias(update.getAlias());
-		if (update.getActive() != null)
-			existing.setActive(update.getActive());
-		if (update.getLocation() != null) {
-			existing.setLng(update.getLocation().getLng());
-			existing.setLat(update.getLocation().getLat());
-		}
-		if (update.getObjectDetails() != null)
-			// existing.setObjectDetails(this.converter.toEntity(update.getObjectDetails()));
-			existing.setObjectDetails(update.getObjectDetails());
-		this.objectCrud.save(existing);
-		return this.converter.superAppObjectToBoundary(existing);
+		throw new DeprecatedOperationException();
+	}
+
+	@Override
+	public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId,
+			SuperAppObjectBoundary update, String userSuperapp, String email) {
+		UserEntity user = getUser(userSuperapp, email);
+		if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
+			String objectId = objectSuperApp + "#" + internalObjectId;
+			SuperAppObjectEntity existing = this.objectCrud.findById(objectId)
+					.orElseThrow(() -> new RuntimeException("could not find object by id: " + objectId));
+			if (update.getType() != null)
+				existing.setType(update.getType());
+			if (update.getAlias() != null)
+				existing.setAlias(update.getAlias());
+			if (update.getActive() != null)
+				existing.setActive(update.getActive());
+			if (update.getLocation() != null) {
+				existing.setLng(update.getLocation().getLng());
+				existing.setLat(update.getLocation().getLat());
+			}
+			if (update.getObjectDetails() != null)
+				// existing.setObjectDetails(this.converter.toEntity(update.getObjectDetails()));
+				existing.setObjectDetails(update.getObjectDetails());
+			this.objectCrud.save(existing);
+			return this.converter.superAppObjectToBoundary(existing);
+		} else
+			throw new ForbiddenException("Operation is not allowed, the user is not SUPERAPP_USER");
+
 	}
 
 	@Override
@@ -198,9 +211,9 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			} else if (user.getRole() == UserRole.SUPERAPP_USER) {
 				objects = this.objectCrud
 						.findByLatBetweenAndLngBetween(minLat, maxLat, minLng, maxLng,
-						PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
-						.stream()
-						.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
+								PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
+										"objectId"))
+						.stream().map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
 						.toList(); // List<superAppObjectToBoundary>
 
 			} else {
@@ -212,26 +225,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		}
 		return objects;
 	}
-
-//		return this.objectCrud
-//				.findAll(PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
-//				.stream() // Stream<superAppObjectEntity>
-//				.filter(obj -> inRange(obj.getLat(), obj.getLng(), lat, lng, distance))
-//				.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
-//				.toList(); // List<superAppObjectToBoundary>
-
-//		if (allObjects != null) {
-//			for (SuperAppObjectBoundary boundary : allObjects) {
-//				Location objectLoc = new Location(boundary.getLocation().getLat(), boundary.getLocation().getLng());
-//				if (inRange(objectLoc, inputLocation, distance)) {
-//					rv.add(Optional.of(boundary).get());
-//				}
-//			}
-//		} else {
-//			throw new RuntimeException("There are no objects in database");
-//		}
-////		return allObjects;
-//	}
 
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByType(String type, int size, int page) {
@@ -254,19 +247,4 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
 
 	}
-
-//	public boolean inRange(double objLat, double objLng, double inputLat, double inputLng, double distance) {
-//
-//		double plusLat = inputLat + distance;
-//		double minusLat = inputLat - distance;
-//		double plusLng = inputLng + distance;
-//		double minusLng = inputLng - distance;
-//
-//		if (objLat <= plusLat && objLat >= minusLat && objLng <= plusLng && objLng >= minusLng) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//
-//	}
 }

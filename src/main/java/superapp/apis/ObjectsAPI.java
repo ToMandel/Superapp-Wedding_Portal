@@ -21,12 +21,11 @@ public class ObjectsAPI {
 
 	public ObjectsAPI() {
 	}
-	
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = { "/superapp/objects/{superapp}/{internalObjectId}" }, method = {
 			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SuperAppObjectBoundary getSpecificObject(@PathVariable("superapp")String superapp ,
+	public SuperAppObjectBoundary getSpecificObject(@PathVariable("superapp") String superapp,
 			@PathVariable("internalObjectId") String internalObjectId) {
 		return objects.getSpecificObject(superapp, internalObjectId);
 
@@ -45,10 +44,16 @@ public class ObjectsAPI {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = { "/superapp/objects/{superapp}/{internalObjectId}" }, method = {
 			RequestMethod.PUT }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public void updateObject(@PathVariable("internalObjectId") String internalObjectId,
-			@PathVariable("superapp") String superapp, @RequestBody SuperAppObjectBoundary update) {
-		objects.updateObject(superapp, internalObjectId, update);
+	public void updateObject(
+			@PathVariable("superapp") String superapp, 
+			@PathVariable("internalObjectId") String internalObjectId,
+			@RequestBody SuperAppObjectBoundary update,
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
+			@RequestParam(name = "userEmail", required = true) String email) {
+		objects.updateObject(superapp, internalObjectId, update,userSuperapp, email);
 	}
+	
+	//WORKING
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = { "/superapp/objects" }, method = { RequestMethod.POST }, produces = {
@@ -63,36 +68,35 @@ public class ObjectsAPI {
 	public SuperAppObjectBoundary[] searchObjectsByLocation(@PathVariable("lat") double lat,
 			@PathVariable("lng") double lng, @PathVariable("distance") double distance,
 			@RequestParam(name = "distanceUnits", required = false, defaultValue = "NEUTRAL") String distanceUnits,
-			@RequestParam(name = "userSuperapp", required = true) String superAppName,
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
 			@RequestParam(name = "userEmail", required = true) String email,
 			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
-		List<SuperAppObjectBoundary> rv = this.objects.searchObjectsByLocation(superAppName,email,lat, lng, distance, distanceUnits, size,
-				page);
+		List<SuperAppObjectBoundary> rv = this.objects.searchObjectsByLocation(userSuperapp, email, lat, lng, distance,
+				distanceUnits, size, page);
 
 		return rv.toArray(new SuperAppObjectBoundary[0]);
 	}
 
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = { "/superapp/objects/search/byType/{type}" }, method = {
-			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(path = { "/superapp/objects/search/byType/{type}" }, method = { RequestMethod.GET }, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
 	public SuperAppObjectBoundary[] searchObjectsByType(@PathVariable("type") String type,
-															@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
-															@RequestParam(name = "userEmail", required = true) String userEmail,
-															@RequestParam(name = "size", required = false, defaultValue = "20") int size,
-															@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
+			@RequestParam(name = "userEmail", required = true) String userEmail,
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
 		return objects.searchObjectsByType(type, size, page).toArray(new SuperAppObjectBoundary[0]);
 	}
 
-
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = { "/superapp/objects/search/byAlias/{alias}" }, method = {
-			RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(path = { "/superapp/objects/search/byAlias/{alias}" }, method = { RequestMethod.GET }, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
 	public SuperAppObjectBoundary[] searchObjectsByAlias(@PathVariable("alias") String alias,
-														@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
-														@RequestParam(name = "userEmail", required = true) String userEmail,
-														@RequestParam(name = "size", required = false, defaultValue = "20") int size,
-														@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
+			@RequestParam(name = "userEmail", required = true) String userEmail,
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
 		return objects.searchObjectsByAlias(alias, size, page).toArray(new SuperAppObjectBoundary[0]);
 	}
 

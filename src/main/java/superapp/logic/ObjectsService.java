@@ -7,7 +7,8 @@ import java.util.List;
 public interface ObjectsService {
 
     public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object);
-
+    
+    @Deprecated
     public SuperAppObjectBoundary updateObject (String objectSuperApp, String internalObjectId, SuperAppObjectBoundary update);
 
     public SuperAppObjectBoundary getSpecificObject (String objectSuperApp, String internalObjectId);

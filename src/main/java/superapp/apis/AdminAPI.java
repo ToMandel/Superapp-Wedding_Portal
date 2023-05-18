@@ -76,7 +76,9 @@ public class AdminAPI {
 			path = {"/superapp/admin/miniapp/{miniAppName}"},
 			method = {RequestMethod.GET},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public MiniAppCommandBoundary[] getMiniAppCommands (@PathVariable("miniAppName")String miniAppName,@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
+	public MiniAppCommandBoundary[] getMiniAppCommands (
+			@PathVariable("miniAppName")String miniAppName,
+			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
 			@RequestParam(name = "userEmail", required = true) String email,
 			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
