@@ -1,7 +1,6 @@
 package superapp.dal;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -22,8 +21,11 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 
 	public List<SuperAppObjectEntity> findAllByAlias(@Param("alias") String alias, Pageable pageable);
 
-//	@Query("SELECT obj FROM ObjectEntity obj WHERE obj.latitude BETWEEN :minLatitude AND :maxLatitude AND obj.longitude BETWEEN :minLongitude AND :maxLongitude")
 	public List<SuperAppObjectEntity> findByLatBetweenAndLngBetween(
-			  double minLat, double maxLat, double minLng, double maxLng, Pageable pageable);
+			@Param("minLat") double minLat,
+			@Param("maxLat") double maxLat,
+			@Param("minLng") double minLng,
+			@Param("maxLng") double maxLng,
+			Pageable pageable);
 
 }
