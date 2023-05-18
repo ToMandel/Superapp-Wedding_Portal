@@ -9,7 +9,7 @@ public interface MiniAppCommandServiceWithPagination extends MiniAppCommandServi
 
 	public List<MiniAppCommandBoundary> getAllCommands(String superAppName, String email, int page, int size);
 
-	public void deleteAllCommands (String email);
+	public void deleteAllCommands (String superAppName, String email);
 	
 
 }

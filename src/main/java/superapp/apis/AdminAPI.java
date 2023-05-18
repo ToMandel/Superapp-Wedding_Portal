@@ -115,8 +115,9 @@ public class AdminAPI {
 	public void deleteAllCommandsHistory(
 			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String superAppName,
 			@RequestParam(name = "userEmail", required = true) String email) {
-		//commands.deleteAllCommands(superAppName,email);
-		commands.deleteAllCommands();
+		commands.deleteAllCommands(superAppName, email);
+
+		//WORKING
 	}
 
 }

@@ -8,6 +8,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import superapp.Converter;
 import superapp.boundries.Location;
+import superapp.dal.UserCrud;
+import superapp.data.UserEntity;
+import superapp.data.UserRole;
 import superapp.logic.DeprecatedOperationException;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
@@ -20,6 +23,8 @@ import java.util.*;
 public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	private SupperAppObjectCrud objectCrud;
+
+	private UserCrud userCrud;
 	private Converter converter;
 	private String nameFromSpringConfig;
 
@@ -39,9 +44,19 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		this.objectCrud = objectCrud;
 	}
 
+	public void setUserCrud (UserCrud userCrud){
+		this.userCrud = userCrud;
+	}
+
 	@Autowired
 	public void setConverter(Converter converter) {
 		this.converter = converter;
+	}
+
+	private UserEntity getUser (String superAppName, String email){
+		String id = superAppName + "#" + email;
+		return this.userCrud.findById(id)
+				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email + "in " + superAppName + " superapp"));
 	}
 
 	@Override
@@ -108,8 +123,10 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
+	@Deprecated
 	public void deleteAllObjects() {
-		this.objectCrud.deleteAll();
+		//this.objectCrud.deleteAll();
+		throw new DeprecatedOperationException();
 	}
 
 	@Override
@@ -201,6 +218,17 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 				.stream()
 				.map(this.converter::superAppObjectToBoundary)
 				.toList();
+	}
+
+	@Override
+	public void deleteAllObjects(String superAppName, String email) {
+		UserEntity user = getUser(superAppName, email);
+		if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
+			this.objectCrud.deleteAll();
+		}
+		else
+			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
+
 	}
 
 	public boolean inRange(double objLat, double objLng, double inputLat, double inputLng, double distance) {

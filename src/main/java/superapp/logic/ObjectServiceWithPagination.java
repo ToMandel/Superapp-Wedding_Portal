@@ -13,4 +13,6 @@ public interface ObjectServiceWithPagination extends RelationshipObjectsService 
 
 	public List<SuperAppObjectBoundary> searchObjectsByAlias (String type, int size, int page);
 
+	public void deleteAllObjects (String superAppName, String email);
+
 }

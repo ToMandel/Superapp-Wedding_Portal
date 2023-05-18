@@ -1,6 +1,7 @@
 package superapp.logic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -75,7 +76,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination{
     private UserEntity getUser (String superAppName, String email){
         String id = superAppName + "#" + email;
         return this.userCrud.findById(id)
-                .orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email));
+                .orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email + "in " + superAppName + " superapp"));
     }
 
 
@@ -93,8 +94,13 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination{
     }
 
     @Override
-    public void deleteAllCommands(String email) {
-        this.miniappCommandCrud.deleteAll();
+    public void deleteAllCommands(String superAppName, String email) {
+        UserEntity user = getUser(superAppName, email);
+        if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
+            this.miniappCommandCrud.deleteAll();
+        }
+        else
+            throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
     }
 
     @Override

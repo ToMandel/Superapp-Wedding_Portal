@@ -14,6 +14,7 @@ public interface ObjectsService {
 
     public List<SuperAppObjectBoundary> getAllObjects();
 
+    @Deprecated
     public void deleteAllObjects();
 
 
