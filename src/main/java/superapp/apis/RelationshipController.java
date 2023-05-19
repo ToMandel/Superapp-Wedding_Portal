@@ -5,19 +5,21 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
+import superapp.logic.ObjectServiceWithPagination;
 import superapp.logic.RelationshipObjectsService;
 
 
 @RestController
 public class RelationshipController {
 
-    private RelationshipObjectsService objects;
+    private ObjectServiceWithPagination objects;
     @Autowired
-    public RelationshipController(RelationshipObjectsService objects){
+    public RelationshipController(ObjectServiceWithPagination objects){
         super();
         this.objects = objects;
     }
@@ -28,9 +30,11 @@ public class RelationshipController {
             consumes = {MediaType.APPLICATION_JSON_VALUE})
     public void relateParentToChild(@PathVariable("superapp") String superapp,
                                     @PathVariable("internalObjectId") String internalObjectId,
-                                    @RequestBody ObjectId childObjectId){
+                                    @RequestBody ObjectId childObjectId,
+                        			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
+                        			@RequestParam(name = "userEmail", required = true) String email){
         ObjectId parentObjectId = new ObjectId(superapp, internalObjectId);
-        this.objects.relateParentToChild(parentObjectId, childObjectId);
+        this.objects.relateParentToChild(parentObjectId, childObjectId,userSuperApp,email);
 
     }
 
