@@ -21,6 +21,12 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 
 	public List<SuperAppObjectEntity> findAllByAlias(@Param("alias") String alias, Pageable pageable);
 
+	public List<SuperAppObjectEntity> findByLatBetweenAndLngBetweenAndActiveIsTrue(
+			@Param("minLat") double minLat,
+			@Param("maxLat") double maxLat,
+			@Param("minLng") double minLng,
+			@Param("maxLng") double maxLng,
+			Pageable pageable);
 	public List<SuperAppObjectEntity> findByLatBetweenAndLngBetween(
 			@Param("minLat") double minLat,
 			@Param("maxLat") double maxLat,

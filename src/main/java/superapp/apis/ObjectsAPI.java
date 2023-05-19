@@ -35,8 +35,9 @@ public class ObjectsAPI {
 	}
 
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = { "/superapp/objects" }, method = { RequestMethod.GET }, produces = {
-			MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(path = { "/superapp/objects" }, 
+	method = { RequestMethod.GET }, 
+	produces = {MediaType.APPLICATION_JSON_VALUE})
 	public SuperAppObjectBoundary[] getAllObjects(
 			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperapp,
 			@RequestParam(name = "userEmail", required = true) String email,

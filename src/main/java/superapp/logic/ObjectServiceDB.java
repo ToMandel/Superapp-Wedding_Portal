@@ -144,6 +144,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public List<SuperAppObjectBoundary> getAllObjects(String userSuperapp, String email, int size, int page) {
+		
 		UserEntity user = getUser(userSuperapp, email);
 		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();
 
@@ -231,8 +232,9 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByLocation(String superAppName, String email, double lat,
 			double lng, double distance, String distanceUnits, int size, int page) {
-		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();
-
+		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();		
+		
+		
 		double minLat = lat - distance;
 		double maxLat = lat + distance;
 		double minLng = lng - distance;
@@ -243,10 +245,11 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		if (user.getRole() != null) {
 			if (user.getRole() == UserRole.MINIAPP_USER) {
 				objects = this.objectCrud
-						.findByLatBetweenAndLngBetween(minLat, maxLat, minLng, maxLng,
+						.findByLatBetweenAndLngBetweenAndActiveIsTrue(minLat, maxLat, minLng, maxLng,
 								PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
 										"objectId"))
-						.stream().filter(obj -> obj.getActive() == true).map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
+						.stream()
+						.map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
 						.toList(); // List<superAppObjectToBoundary>
 			} else if (user.getRole() == UserRole.SUPERAPP_USER) {
 				objects = this.objectCrud
@@ -255,7 +258,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 										"objectId"))
 						.stream().map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
 						.toList(); // List<superAppObjectToBoundary>
-
 			} else {
 				throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
 			}
