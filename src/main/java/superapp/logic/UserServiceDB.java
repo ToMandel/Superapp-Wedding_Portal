@@ -72,7 +72,7 @@ public class UserServiceDB implements UsersServiceWithPagination {
 	public UserBoundary login(String userSuperApp, String userEmail) {
 		String userId = userSuperApp + "#" + userEmail;
 		UserEntity existing = this.userCrud.findById(userId)
-				.orElseThrow(() -> new RuntimeException("could not find user by id: " + userId));
+				.orElseThrow(() -> new NotFoundException("could not find user by id: " + userId));
 		return this.converter.userToBoundary(existing);
 	}
 
