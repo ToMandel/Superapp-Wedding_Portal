@@ -12,7 +12,9 @@ import java.util.List;
 public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEntity, String>,
 		PagingAndSortingRepository<SuperAppObjectEntity, String> {
 
-	public List<SuperAppObjectEntity> findAllByParentObject(@Param("parentId") String parentId);
+	public List<SuperAppObjectEntity> findAllByParentObject(@Param("parentId") String parentId,Pageable pageable);
+	
+	public List<SuperAppObjectEntity> findAllByParentObjectAndActiveIsTrue(@Param("parentId") String parentId,Pageable pageable);
 
 	public List<SuperAppObjectEntity> findAllByType(@Param("type") String type, Pageable pageable);
 

@@ -42,18 +42,30 @@ public class RelationshipController {
             path = {"/superapp/objects/{superapp}/{internalObjectId}/children"},
             method = {RequestMethod.GET},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public SuperAppObjectBoundary[] getAllChildrenOfObject(@PathVariable("superapp") String superapp,
-                                       @PathVariable("internalObjectId") String internalObjectId){
+    public SuperAppObjectBoundary[] getAllChildrenOfObject(
+    		@PathVariable("superapp") String superapp,
+    		@PathVariable("internalObjectId") String internalObjectId,
+            @RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
+            @RequestParam(name = "userEmail", required = true) String email,
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+			@RequestParam(name = "page", required = false, defaultValue = "0") int page){
 
-        return objects.getAllChildrenOfObject(new ObjectId(superapp, internalObjectId)).toArray(new SuperAppObjectBoundary[0]);
+        return objects.getAllChildrenOfObject(new ObjectId(superapp, internalObjectId),userSuperApp,email,size,page)
+        		.toArray(new SuperAppObjectBoundary[0]);
     }
 
     @RequestMapping(
             path = {"/superapp/objects/{superapp}/{internalObjectId}/parents"},
             method = {RequestMethod.GET},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public SuperAppObjectBoundary[] getAllParentsOfObject(@PathVariable("superapp") String superapp,
-                                                        @PathVariable("internalObjectId") String internalObjectId){
-        return objects.getAllParentsOfObject(new ObjectId(superapp, internalObjectId)).toArray(new SuperAppObjectBoundary[0]);
+    public SuperAppObjectBoundary[] getAllParentsOfObject(
+    		@PathVariable("superapp") String superapp,
+            @PathVariable("internalObjectId") String internalObjectId,
+            @RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
+            @RequestParam(name = "userEmail", required = true) String email,
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
+			@RequestParam(name = "page", required = false, defaultValue = "0") int page){
+        return objects.getAllParentsOfObject(new ObjectId(superapp, internalObjectId),userSuperApp,email,size,page)
+        		.toArray(new SuperAppObjectBoundary[0]);
     }
 }

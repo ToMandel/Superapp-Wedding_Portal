@@ -153,7 +153,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 					.findAll(
 							PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
 					.getContent();
-
 		} else
 			throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
 
@@ -195,37 +194,72 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
+	@Deprecated
 	public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parentId) {
-		// TODO: support pagination and authorization
-		String id = parentId.getSuperapp() + "#" + parentId.getInternalObjectId();
-		List<SuperAppObjectEntity> parentEntities = this.objectCrud.findAllByParentObject(id);
-
-		List<SuperAppObjectBoundary> rv = new ArrayList<>();
-
-		for (SuperAppObjectEntity entity : parentEntities) {
-			rv.add(this.converter.superAppObjectToBoundary(entity));
-		}
-		return rv;
+		throw new DeprecatedOperationException();
 	}
 
 	@Override
+	@Deprecated
 	public List<SuperAppObjectBoundary> getAllParentsOfObject(ObjectId child) {
-		// TODO: support pagination and authorization
-		List<SuperAppObjectBoundary> allParents = new ArrayList<SuperAppObjectBoundary>();
+		throw new DeprecatedOperationException();
+	}
+
+	@Override
+	public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parent, String userSuperApp, String email,
+			int size, int page) {
+		String id = parent.getSuperapp() + "#" + parent.getInternalObjectId();
+
+		UserEntity user = getUser(userSuperApp, email);
+
+		if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
+			return this.objectCrud
+					.findAllByParentObject(id,
+							PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
+					.stream().map(this.converter::superAppObjectToBoundary).toList();
+
+		} else if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
+			return this.objectCrud
+					.findAllByParentObjectAndActiveIsTrue(id,
+							PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
+					.stream().map(this.converter::superAppObjectToBoundary).toList();
+
+		} else
+			throw new ForbiddenException("Operation is not allowed only for ADMIN");
+	}
+
+	@Override
+	public List<SuperAppObjectBoundary> getAllParentsOfObject(ObjectId child, String userSuperApp, String email,
+			int size, int page) {
 
 		String childId = child.getSuperapp() + "#" + child.getInternalObjectId();
+		UserEntity user = getUser(userSuperApp, email);
+		List<SuperAppObjectBoundary> allParents = new ArrayList<SuperAppObjectBoundary>();
 		SuperAppObjectEntity childEntity = this.objectCrud.findById(childId)
 				.orElseThrow(() -> new NotFoundException("could not find object by id: " + childId));
 
-		// SuperAppObjectEntity parentEntity = childEntity.getParentObject();
-		List<SuperAppObjectEntity> parentEntities = childEntity.getParentObject();
-		if (parentEntities != null) {
-			for (SuperAppObjectEntity entity : parentEntities) {
-				allParents.add(Optional.of(this.converter.superAppObjectToBoundary(entity)).get());
+		if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
+
+			// SuperAppObjectEntity parentEntity = childEntity.getParentObject();
+			List<SuperAppObjectEntity> parentEntities = childEntity.getParentObject();
+			if (parentEntities != null) {
+				for (SuperAppObjectEntity entity : parentEntities) {
+					allParents.add(Optional.of(this.converter.superAppObjectToBoundary(entity)).get());
+				}
 			}
-		} else {
-			// allParents.add(new SuperAppObjectBoundary());
-		}
+		} else if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
+
+			// SuperAppObjectEntity parentEntity = childEntity.getParentObject();
+			List<SuperAppObjectEntity> parentEntities = childEntity.getParentObject();
+			if (parentEntities != null) {
+				for (SuperAppObjectEntity entity : parentEntities) {
+					if (entity.getActive() == true)
+						allParents.add(Optional.of(this.converter.superAppObjectToBoundary(entity)).get());
+				}
+			}
+		} else
+			throw new ForbiddenException("Operation is not allowed only for ADMIN");
+
 		return allParents;
 	}
 
