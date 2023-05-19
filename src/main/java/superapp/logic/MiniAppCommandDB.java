@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import superapp.Converter;
@@ -89,7 +90,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination{
     public List<MiniAppCommandBoundary> getAllCommands(String superAppName, String email, int page, int size) {
         UserEntity user = getUser(superAppName, email);
         if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
-            return this.miniappCommandCrud.findAll(PageRequest.of(page, size))
+            return this.miniappCommandCrud.findAll(PageRequest.of(page, size, Direction.ASC,"command", "invokedBy", "invocationTimestamp","commandId"))
                     .stream()
                     .map(this.converter::miniAppCommandToBoundary)
                     .toList();
@@ -109,7 +110,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination{
         UserEntity user = getUser(superAppName, email);
         if (user.getRole() != null && user.getRole() == UserRole.ADMIN) {
            String id = this.nameFromSpringConfig + "#" + miniAppName + "#" + "*";
-        return this.miniappCommandCrud.findAllByCommandIdLike(id, PageRequest.of(page, size))
+        return this.miniappCommandCrud.findAllByCommandIdLike(id, PageRequest.of(page, size, Direction.ASC,"command", "invokedBy", "invocationTimestamp","commandId"))
                 .stream()
                 .map(this.converter::miniAppCommandToBoundary)
                 .toList();
