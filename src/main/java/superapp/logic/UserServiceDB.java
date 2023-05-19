@@ -15,7 +15,6 @@ import superapp.data.UserEntity;
 import superapp.data.UserRole;
 
 import java.util.Optional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,7 +47,7 @@ public class UserServiceDB implements UsersServiceWithPagination {
 	private UserEntity getUser (String superAppName, String email){
 		String id = superAppName + "#" + email;
 		return this.userCrud.findById(id)
-				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email + "in " + superAppName + " superapp"));
+				.orElseThrow(() -> new UnauthorizedException("There is no user with email: " + email + " in " + superAppName + " superapp"));
 	}
 
 	@Override
@@ -97,18 +96,6 @@ public class UserServiceDB implements UsersServiceWithPagination {
 	@Override
 	@Deprecated
 	public List<UserBoundary> getAllUsers() {
-//        List<UserEntity> entities = this.userCrud.findAll();
-//        List<UserBoundary> rv = new ArrayList<UserBoundary>();
-//        for (UserEntity e : entities){
-//            rv.add(this.converter.userToBoundary(e));
-//        }
-//        return rv;
-		throw new DeprecatedOperationException();
-	}
-
-	@Override
-	@Deprecated
-	public void deleteAllUsers() {
 		throw new DeprecatedOperationException();
 	}
 
@@ -123,6 +110,12 @@ public class UserServiceDB implements UsersServiceWithPagination {
 					.toList();
 		else
 			throw new ForbiddenException("Operation is not allowed, the user is not ADMIN");
+	}
+
+	@Override
+	@Deprecated
+	public void deleteAllUsers() {
+		throw new DeprecatedOperationException();
 	}
 
 	@Override

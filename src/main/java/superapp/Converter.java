@@ -104,9 +104,15 @@ public class Converter {
 	public SuperAppObjectEntity superAppObjectToEntity(SuperAppObjectBoundary boundary) {
 		SuperAppObjectEntity entity = new SuperAppObjectEntity();
 		entity.setObjectId(boundary.getObjectId().getSuperapp() + "#" + boundary.getObjectId().getInternalObjectId());
+		if (boundary.getCreatedBy() == null || boundary.getCreatedBy().getUserId() == null ||
+			boundary.getCreatedBy().getUserId().getSuperapp() == null ||
+			boundary.getCreatedBy().getUserId().getSuperapp().equals("") ||
+			boundary.getCreatedBy().getUserId().getEmail() == null ||
+			boundary.getCreatedBy().getUserId().getEmail().equals(""))
+			throw new BadRequestException("Created by can't be null or empty");
+
 		if (boundary.getType() == null || boundary.getType().equals(""))
 			throw new BadRequestException("Type can't be null or empty");
-
 		else
 			entity.setType(boundary.getType());
 		if (boundary.getActive() == null)
@@ -115,7 +121,6 @@ public class Converter {
 			entity.setActive(boundary.getActive());
 		if (boundary.getAlias() == null || boundary.getAlias().equals(""))
 			throw new BadRequestException("Alias can't be null or empty");
-
 		else
 			entity.setAlias(boundary.getAlias());
 		if (boundary.getLocation() == null) {

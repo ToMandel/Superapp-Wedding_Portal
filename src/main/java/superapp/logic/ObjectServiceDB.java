@@ -54,40 +54,36 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	private UserEntity getUser(String superAppName, String email) {
 		String id = superAppName + "#" + email;
 		return this.userCrud.findById(id).orElseThrow(() -> new UnauthorizedException(
-				"There is no user with email: " + email + "in " + superAppName + " superapp"));
+				"There is no user with email: " + email + " in " + superAppName + " superapp"));
 	}
 
 	@Override
 	public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
-		// List<SuperAppObjectEntity> entities = this.objectCrud.findAll();
-		// String internalObjectId;
-//        if (entities.isEmpty())
-//            internalObjectId = "1";
-//        else
-		// internalObjectId = Integer.toString(entities.size() + 1);
-		String internalObjectId = UUID.randomUUID().toString(); // the value is random so the size of entities isn't
-																// relevant
-		// object.setObjectId(new ObjectId(nameFromSpringConfig));
-		object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
-		object.setCreationTimestamp(new Date());
-		if (object.getObjectDetails() == null)
-			object.setObjectDetails(new HashMap<>());
-		SuperAppObjectEntity entity = this.converter.superAppObjectToEntity(object);
-		entity = this.objectCrud.save(entity);
-		return this.converter.superAppObjectToBoundary(entity);
+		UserEntity user = getUser(object.getCreatedBy().getUserId().getSuperapp(), object.getCreatedBy().getUserId().getEmail());
+		if (user.getRole() == UserRole.SUPERAPP_USER) {
+			String internalObjectId = UUID.randomUUID().toString(); // the value is random so the size of entities isn't relevant
+			object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
+			object.setCreationTimestamp(new Date());
+			if (object.getObjectDetails() == null)
+				object.setObjectDetails(new HashMap<>());
+			SuperAppObjectEntity entity = this.converter.superAppObjectToEntity(object);
+			entity = this.objectCrud.save(entity);
+			return this.converter.superAppObjectToBoundary(entity);
+		}
+		throw new ForbiddenException("Only SUPERAPP users can create new objects");
 	}
 
 	@Override
 
 	@Deprecated
 	public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId,
-			SuperAppObjectBoundary update) {
+											   SuperAppObjectBoundary update) {
 		throw new DeprecatedOperationException();
 	}
 
 	@Override
 	public SuperAppObjectBoundary updateObject(String objectSuperApp, String internalObjectId,
-			SuperAppObjectBoundary update, String userSuperapp, String email) {
+											   SuperAppObjectBoundary update, String userSuperapp, String email) {
 		UserEntity user = getUser(userSuperapp, email);
 		if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
 			String objectId = objectSuperApp + "#" + internalObjectId;
@@ -104,7 +100,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 				existing.setLat(update.getLocation().getLat());
 			}
 			if (update.getObjectDetails() != null)
-				// existing.setObjectDetails(this.converter.toEntity(update.getObjectDetails()));
 				existing.setObjectDetails(update.getObjectDetails());
 			this.objectCrud.save(existing);
 			return this.converter.superAppObjectToBoundary(existing);
@@ -115,24 +110,23 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public SuperAppObjectBoundary getSpecificObject(String userSuperapp, String email, String objectSuperApp,
-			String internalObjectId) {
+													String internalObjectId) {
 
 		UserEntity user = getUser(userSuperapp, email);
 		String objectId = objectSuperApp + "#" + internalObjectId;
 
-		if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
-			SuperAppObjectEntity existing = this
-					.objectCrud.findById(objectId)
-					.filter(obj -> obj.getActive() == true)
-					.orElseThrow(() -> new NotFoundException("could not find object by id: " + objectId));
-			return this.converter.superAppObjectToBoundary(existing);
+		SuperAppObjectEntity existing = this
+				.objectCrud.findById(objectId)
+				.orElseThrow(() -> new NotFoundException("could not find object by id: " + objectId));
 
-		} else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
-			SuperAppObjectEntity existing = this.objectCrud
-					.findById(objectId)
-					.orElseThrow(() -> new NotFoundException("could not find object by id: " + objectId));
+		if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER)
+			if (existing.getActive())
+				return this.converter.superAppObjectToBoundary(existing);
+			else
+				throw new NotFoundException("There is no active user with id: " + objectId);
+		else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
 			return this.converter.superAppObjectToBoundary(existing);
-		} else
+		else
 			throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
 	}
 
@@ -144,28 +138,25 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public List<SuperAppObjectBoundary> getAllObjects(String userSuperapp, String email, int size, int page) {
-		
+
 		UserEntity user = getUser(userSuperapp, email);
-		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();
+		List<SuperAppObjectEntity> objects = new ArrayList<SuperAppObjectEntity>();
 
 		if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
-			objects = this.objectCrud
-					.findAll(
-							PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
-					.stream().filter(obj -> obj.getActive() == true).map(this.converter::superAppObjectToBoundary)
-					.toList();
+			objects = this.objectCrud.findAllByActiveIsTrue(PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
+			if (objects.isEmpty())
+				throw new NotFoundException("There are no active objects");
 		} else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
-			objects = this.objectCrud
-					.findAll(
-							PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"))
-					.stream().map(this.converter::superAppObjectToBoundary).toList();
+			objects = this.objectCrud.findAll(PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId")).getContent();
+
 		} else
 			throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
 
-		if (objects.isEmpty()) {
-			throw new NotFoundException("Couldn't find any objects in DB");
-		}
-		return objects;
+		return objects
+				.stream()
+				.map(this.converter::superAppObjectToBoundary)
+				.toList();
+
 	}
 
 	@Override
@@ -175,14 +166,8 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
-	@Deprecated
-	public void deleteAllObjects() {
-		// this.objectCrud.deleteAll();
-		throw new DeprecatedOperationException();
-	}
-
-	@Override
 	public void relateParentToChild(ObjectId parentObjectId, ObjectId childObjectId) {
+		//TODO: support authorization
 		String parentId = parentObjectId.getSuperapp() + "#" + parentObjectId.getInternalObjectId();
 		String childId = childObjectId.getSuperapp() + "#" + childObjectId.getInternalObjectId();
 		SuperAppObjectEntity child = this.objectCrud.findById(childId)
@@ -198,6 +183,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parentId) {
+		//TODO: support pagination and authorization
 		String id = parentId.getSuperapp() + "#" + parentId.getInternalObjectId();
 		List<SuperAppObjectEntity> parentEntities = this.objectCrud.findAllByParentObject(id);
 
@@ -211,6 +197,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public List<SuperAppObjectBoundary> getAllParentsOfObject(ObjectId child) {
+		//TODO: support pagination and authorization
 		List<SuperAppObjectBoundary> allParents = new ArrayList<SuperAppObjectBoundary>();
 
 		String childId = child.getSuperapp() + "#" + child.getInternalObjectId();
@@ -231,10 +218,10 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByLocation(String superAppName, String email, double lat,
-			double lng, double distance, String distanceUnits, int size, int page) {
-		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();		
-		
-		
+																double lng, double distance, String distanceUnits, int size, int page) {
+		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();
+
+
 		double minLat = lat - distance;
 		double maxLat = lat + distance;
 		double minLng = lng - distance;
@@ -259,7 +246,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 						.stream().map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
 						.toList(); // List<superAppObjectToBoundary>
 			} else {
-				throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
+				throw new ForbiddenException("Operation is not allowed for ADMIN user");
 			}
 		}
 		if (objects.isEmpty()) {
@@ -269,15 +256,47 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	}
 
 	@Override
-	public List<SuperAppObjectBoundary> searchObjectsByType(String type, int size, int page) {
-		return this.objectCrud.findAllByType(type, PageRequest.of(page, size)).stream()
-				.map(this.converter::superAppObjectToBoundary).toList();
+	public List<SuperAppObjectBoundary> searchObjectsByType(String type, int size, int page, String superAppName, String email) {
+		UserEntity user = getUser(superAppName, email);
+		List<SuperAppObjectEntity> objects = new ArrayList<SuperAppObjectEntity>();
+		if (user.getRole() != null  && user.getRole() == UserRole.MINIAPP_USER) {
+			objects = this.objectCrud.findAllByTypeAndActiveIsTrue(type, PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
+					"objectId"));
+			if (objects.isEmpty())
+				throw new NotFoundException("There are no active users with type " + type);
+
+		}
+		else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
+			objects = this.objectCrud.findAllByType(type, PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
+					"objectId"));
+		else if (user.getRole() != null)
+			throw new ForbiddenException("Operation is not allowed for ADMIN user");
+		return objects.stream().map(this.converter::superAppObjectToBoundary).toList();
 	}
 
 	@Override
-	public List<SuperAppObjectBoundary> searchObjectsByAlias(String alias, int size, int page) {
-		return this.objectCrud.findAllByAlias(alias, PageRequest.of(page, size)).stream()
-				.map(this.converter::superAppObjectToBoundary).toList();
+	public List<SuperAppObjectBoundary> searchObjectsByAlias(String alias, int size, int page, String superAppName, String email) {
+		UserEntity user = getUser(superAppName, email);
+		List<SuperAppObjectEntity> objects = new ArrayList<SuperAppObjectEntity>();
+		if (user.getRole() != null  && user.getRole() == UserRole.MINIAPP_USER) {
+			objects = this.objectCrud.findAllByAliasAndActiveIsTrue(alias, PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
+					"objectId"));
+			if (objects.isEmpty())
+				throw new NotFoundException("There are no active users with alias " + alias);
+
+		}
+		else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
+			objects = this.objectCrud.findAllByAlias(alias, PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
+					"objectId"));
+		else if (user.getRole() != null)
+			throw new ForbiddenException("Operation is not allowed for ADMIN user");
+		return objects.stream().map(this.converter::superAppObjectToBoundary).toList();
+	}
+
+	@Override
+	@Deprecated
+	public void deleteAllObjects() {
+		throw new DeprecatedOperationException();
 	}
 
 	@Override

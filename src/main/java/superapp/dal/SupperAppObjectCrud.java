@@ -16,10 +16,14 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 
 	public List<SuperAppObjectEntity> findAllByType(@Param("type") String type, Pageable pageable);
 
+	public List<SuperAppObjectEntity> findAllByTypeAndActiveIsTrue(@Param("type") String type, Pageable pageable);
+
 	public List<SuperAppObjectEntity> findAllByTypeAndCreatedBy(@Param("type") String type,
 			@Param("createdBy") String createdBy);
 
 	public List<SuperAppObjectEntity> findAllByAlias(@Param("alias") String alias, Pageable pageable);
+
+	public List<SuperAppObjectEntity> findAllByAliasAndActiveIsTrue(@Param("alias") String alias, Pageable pageable);
 
 	public List<SuperAppObjectEntity> findByLatBetweenAndLngBetweenAndActiveIsTrue(
 			@Param("minLat") double minLat,
@@ -33,5 +37,7 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 			@Param("minLng") double minLng,
 			@Param("maxLng") double maxLng,
 			Pageable pageable);
+
+	public List<SuperAppObjectEntity> findAllByActiveIsTrue(Pageable pageable);
 
 }

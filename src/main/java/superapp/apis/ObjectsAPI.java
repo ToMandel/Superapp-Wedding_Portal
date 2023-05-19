@@ -93,7 +93,7 @@ public class ObjectsAPI {
 			@RequestParam(name = "userEmail", required = true) String userEmail,
 			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
-		return objects.searchObjectsByType(type, size, page).toArray(new SuperAppObjectBoundary[0]);
+		return objects.searchObjectsByType(type, size, page, userSuperapp, userEmail).toArray(new SuperAppObjectBoundary[0]);
 	}
 
 	@CrossOrigin(origins = "*")
@@ -104,7 +104,7 @@ public class ObjectsAPI {
 			@RequestParam(name = "userEmail", required = true) String userEmail,
 			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int page) {
-		return objects.searchObjectsByAlias(alias, size, page).toArray(new SuperAppObjectBoundary[0]);
+		return objects.searchObjectsByAlias(alias, size, page, userSuperapp, userEmail).toArray(new SuperAppObjectBoundary[0]);
 	}
 
 }
