@@ -2,16 +2,13 @@ package superapp;
 
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.client.RestTemplate;
-
-import superapp.boundries.NewUserBoundary;
-import superapp.boundries.ObjectId;
-import superapp.boundries.SuperAppObjectBoundary;
-import superapp.boundries.UserBoundary;
+import superapp.boundries.*;
 import superapp.data.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +19,9 @@ class ApplicationTests {
 	private RestTemplate restTemplate;
 	private String url;
 	private int port;
+
+	private UserBoundary adminUser;
+	private UserBoundary superAppUser;
 
 	@LocalServerPort
 	public void setPort(int port) {
@@ -42,9 +42,41 @@ class ApplicationTests {
 		String deleteAllCommandsPATH = "/superapp/admin/miniapp";
 		String deleteAllObjectsPATH = "/superapp/admin/objects";
 		String deleteAllUsersPATH = "/superapp/admin/users";
-		this.restTemplate.delete(this.url + deleteAllCommandsPATH);
-		this.restTemplate.delete(this.url + deleteAllObjectsPATH);
-		this.restTemplate.delete(this.url + deleteAllUsersPATH);
+		this.restTemplate.delete(this.url + deleteAllCommandsPATH + "?userEmail=" + this.adminUser.getUserId().getEmail());
+		this.restTemplate.delete(this.url + deleteAllObjectsPATH + "?userEmail=" + this.adminUser.getUserId().getEmail());
+		this.restTemplate.delete(this.url + deleteAllUsersPATH + "?userEmail=" + this.adminUser.getUserId().getEmail());
+	}
+
+	@BeforeEach
+	public void setUpAdminUser(){
+		//get admin user if exists
+		try {
+			this.adminUser = this.restTemplate.getForObject(this.url + "/superapp/users/login/2023b.zohar.tzabari/admin@mail.com", UserBoundary.class);
+		}
+		catch (Exception e) {
+			NewUserBoundary newUser = new NewUserBoundary();
+			newUser.setUsername("ADMIN");
+			newUser.setRole(UserRole.ADMIN);
+			newUser.setAvatar("A");
+			newUser.setEmail("admin@mail.com");
+			this.adminUser = this.restTemplate.postForObject(this.url + "/superapp/users", newUser, UserBoundary.class);
+		}
+	}
+
+	@BeforeEach
+	public void setUpSuperAppUser(){
+		//get admin user if exists
+		try {
+			this.superAppUser = this.restTemplate.getForObject(this.url + "/superapp/users/login/2023b.zohar.tzabari/superapp@mail.com", UserBoundary.class);
+		}
+		catch (Exception e) {
+			NewUserBoundary newUser = new NewUserBoundary();
+			newUser.setUsername("SUPERAPP");
+			newUser.setRole(UserRole.SUPERAPP_USER);
+			newUser.setAvatar("SA");
+			newUser.setEmail("superapp@mail.com");
+			this.superAppUser = this.restTemplate.postForObject(this.url + "/superapp/users", newUser, UserBoundary.class);
+		}
 	}
 
 //	@Test
@@ -75,15 +107,21 @@ class ApplicationTests {
 		// AND the object with {parentObjectId} is the parent of the object with
 		// {childObjectId}
 
+		UserId userId = new UserId();
+		userId.setSuperapp(this.superAppUser.getUserId().getSuperapp());
+		userId.setEmail(this.superAppUser.getUserId().getEmail());
+
 		// create two objects - obj1, obj2
 		SuperAppObjectBoundary parent = new SuperAppObjectBoundary();
 		parent.setAlias("TestObj1");
 		parent.setType("TEST");
+		parent.setCreatedBy(new CreatedBy(userId));
 		parent = this.restTemplate.postForObject(this.url + "/superapp/objects", parent, SuperAppObjectBoundary.class);
 
 		SuperAppObjectBoundary child = new SuperAppObjectBoundary();
 		child.setAlias("TestObj2");
 		child.setType("TEST");
+		child.setCreatedBy(new CreatedBy(userId));
 		child = this.restTemplate.postForObject(this.url + "/superapp/objects", child, SuperAppObjectBoundary.class);
 
 		// set attributes to the parent and child ObjectIds
@@ -95,18 +133,21 @@ class ApplicationTests {
 		childObjectId.setSuperapp(child.getObjectId().getSuperapp());
 		childObjectId.setInternalObjectId(child.getObjectId().getInternalObjectId());
 
-		this.restTemplate.put(this.url + "/superapp/objects/{superapp}/{parentInternalId}/children", childObjectId,
+		String bindUrl = this.url + "/superapp/objects/{superapp}/{parentInternalId}/children?userEmail=" + this.superAppUser.getUserId().getEmail();
+		String getUrl = this.url + "/superapp/objects/{superapp}/{internalObjectId}/parents?userEmail=" + this.superAppUser.getUserId().getEmail();
+
+		this.restTemplate.put(bindUrl , childObjectId,
 				parent.getObjectId().getSuperapp(), parent.getObjectId().getInternalObjectId());
 
 		// WHEN I GET /superapp/objects/{childSuperapp}/{childInternalObjectId}/parents
 		SuperAppObjectBoundary[] actualResponse;
 		actualResponse = this.restTemplate.getForObject(
-				this.url + "/superapp/objects/{superapp}/{internalObjectId}/parents", SuperAppObjectBoundary[].class,
+				getUrl, SuperAppObjectBoundary[].class,
 				childObjectId.getSuperapp(), childObjectId.getInternalObjectId());
 
 		// THEN the server responds with STATUs 2xx
 		// AND the server returns the a list with one object with {parentObjectId}
-		if (actualResponse[0] == null)
+		if (actualResponse != null && actualResponse[0] == null)
 			throw new Exception("Error while validating response id");
 		assertEquals(actualResponse[0].getObjectId(), parentObjectId);
 	}
@@ -118,15 +159,21 @@ class ApplicationTests {
 		// AND the object with {parentObjectId} is the parent of the object with
 		// {childObjectId}
 
+		UserId userId = new UserId();
+		userId.setSuperapp(this.superAppUser.getUserId().getSuperapp());
+		userId.setEmail(this.superAppUser.getUserId().getEmail());
+
 		// create two objects - obj1, obj2
 		SuperAppObjectBoundary parent = new SuperAppObjectBoundary();
 		parent.setAlias("TestObj1");
 		parent.setType("TEST");
+		parent.setCreatedBy(new CreatedBy(userId));
 		parent = this.restTemplate.postForObject(this.url + "/superapp/objects", parent, SuperAppObjectBoundary.class);
 
 		SuperAppObjectBoundary child = new SuperAppObjectBoundary();
 		child.setAlias("TestObj2");
 		child.setType("TEST");
+		child.setCreatedBy(new CreatedBy(userId));
 		child = this.restTemplate.postForObject(this.url + "/superapp/objects", child, SuperAppObjectBoundary.class);
 
 		// set attributes to the parent and child ObjectIds
@@ -138,54 +185,51 @@ class ApplicationTests {
 		childObjectId.setSuperapp(child.getObjectId().getSuperapp());
 		childObjectId.setInternalObjectId(child.getObjectId().getInternalObjectId());
 
-		this.restTemplate.put(this.url + "/superapp/objects/{superapp}/{parentInternalId}/children", childObjectId,
+		String bindUrl = this.url + "/superapp/objects/{superapp}/{parentInternalId}/children?userEmail=" + this.superAppUser.getUserId().getEmail();
+		String getUrl = this.url + "/superapp/objects/{superapp}/{internalObjectId}/children?userEmail=" + this.superAppUser.getUserId().getEmail();
+
+		this.restTemplate.put(bindUrl, childObjectId,
 				parent.getObjectId().getSuperapp(), parent.getObjectId().getInternalObjectId());
 
 		// WHEN I GET
 		// /superapp/objects/{parentSuperapp}/{parentInternalObjectId}/children
 		SuperAppObjectBoundary[] actualResponse;
 		actualResponse = this.restTemplate.getForObject(
-				this.url + "/superapp/objects/{superapp}/{internalObjectId}/children", SuperAppObjectBoundary[].class,
+				getUrl, SuperAppObjectBoundary[].class,
 				parentObjectId.getSuperapp(), parentObjectId.getInternalObjectId());
 
 		// THEN the server responds with STATUs 2xx
 		// AND the server returns the a list with one object with {parentObjectId}
-		if (actualResponse[0] == null)
+		if (actualResponse != null && actualResponse[0] == null)
 			throw new Exception("Error while validating response id");
 		assertEquals(actualResponse[0].getObjectId(), childObjectId);
 
 	}
 
-	/*
-	 * @Test void ConverterMiniAppCommandToEntity() { Converter c = new Converter();
-	 * MiniAppCommandBoundary boundary = new MiniAppCommandBoundary();
-	 * 
-	 * // Create a CommandId object CommandId commandId = new
-	 * CommandId("mySuperappZohar", "myMiniappTal", "1234");
-	 * 
-	 * // Create a TargetObject object ObjectId objectId = new
-	 * ObjectId("mySuperappZohar", "5678"); TargetObject targetObject = new
-	 * TargetObject(objectId);
-	 * 
-	 * // Create an InvokedBy object UserId userId = new UserId("mySuperappZohar",
-	 * "user@example.com"); InvokedBy invokedBy = new InvokedBy(userId);
-	 * 
-	 * // Create a Map of command attributes Map<String, Object> commandAttributes =
-	 * new HashMap<>(); commandAttributes.put("color", "red");
-	 * commandAttributes.put("size", "small");
-	 * 
-	 * String command = "createObject"; // Create a MiniAppCommandBoundary object
-	 * MiniAppCommandBoundary commandBoundary = new
-	 * MiniAppCommandBoundary(commandId, command, targetObject, new Date(),
-	 * invokedBy, commandAttributes); MiniAppCommandEntity entity =
-	 * c.miniAppCommandToEntity(commandBoundary);
-	 * 
-	 * // Check that the entity was created with the expected values
-	 * assertEquals(commandId.toString(), entity.getCommandId());
-	 * assertEquals(command, entity.getCommand()); assertEquals(targetObject,
-	 * entity.getTargetObject().toString()); assertEquals(invokedBy,
-	 * entity.getInvokedBy().toString()); assertEquals(commandAttributes,
-	 * entity.getCommandAttributes().toString()); }
-	 */
+	@Test
+	public void checkSuperAppUserGetAllObjects(){
+		// GIVEN the server contains two objects
+		// AND there is a user with SUPERAPP_USER role
 
+		UserId userId = new UserId();
+		userId.setSuperapp(this.superAppUser.getUserId().getSuperapp());
+		userId.setEmail(this.superAppUser.getUserId().getEmail());
+
+
+		//create two objects - obj1, obj2
+		SuperAppObjectBoundary obj1 = new SuperAppObjectBoundary();
+		obj1.setAlias("TestObj1");
+		obj1.setType("TEST");
+		obj1.setCreatedBy(new CreatedBy(userId));
+		obj1 = this.restTemplate.postForObject(this.url + "/superapp/objects", obj1, SuperAppObjectBoundary.class);
+
+		SuperAppObjectBoundary obj2 = new SuperAppObjectBoundary();
+		obj2.setAlias("TestObj2");
+		obj2.setType("TEST");
+		obj2.setCreatedBy(new CreatedBy(userId));
+		obj2 = this.restTemplate.postForObject(this.url + "/superapp/objects", obj2, SuperAppObjectBoundary.class);
+
+		// WHEN A GET request is made to superapp/objects/{parentSuperapp}/{parentInternalObjectId}/children
+
+	}
 }
