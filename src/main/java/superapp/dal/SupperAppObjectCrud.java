@@ -1,5 +1,6 @@
 package superapp.dal;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -41,5 +42,6 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 			Pageable pageable);
 
 	public List<SuperAppObjectEntity> findAllByActiveIsTrue(Pageable pageable);
+
 
 }
