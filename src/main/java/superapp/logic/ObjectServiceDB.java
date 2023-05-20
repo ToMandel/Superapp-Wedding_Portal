@@ -124,7 +124,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			if (existing.getActive())
 				return this.converter.superAppObjectToBoundary(existing);
 			else
-				throw new NotFoundException("There is no active user with id: " + objectId);
+				throw new NotFoundException("There is no active object with id: " + objectId);
 		else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
 			return this.converter.superAppObjectToBoundary(existing);
 		else
@@ -266,7 +266,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	@Override
 	public List<SuperAppObjectBoundary> searchObjectsByLocation(String userSuperApp, String email, double lat,
 			double lng, double distance, String distanceUnits, int size, int page) {
-		List<SuperAppObjectBoundary> objects = new ArrayList<SuperAppObjectBoundary>();
+		List<SuperAppObjectEntity> objects = new ArrayList<SuperAppObjectEntity>();
 
 		double minLat = lat - distance;
 		double maxLat = lat + distance;
@@ -280,16 +280,14 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 				objects = this.objectCrud
 						.findByLatBetweenAndLngBetweenAndActiveIsTrue(minLat, maxLat, minLng, maxLng,
 								PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
-										"objectId"))
-						.stream().map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
-						.toList(); // List<superAppObjectToBoundary>
+										"objectId"));
+
 			} else if (user.getRole() == UserRole.SUPERAPP_USER) {
 				objects = this.objectCrud
 						.findByLatBetweenAndLngBetween(minLat, maxLat, minLng, maxLng,
 								PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp",
-										"objectId"))
-						.stream().map(this.converter::superAppObjectToBoundary) // Stream<superAppObjectToBoundary>
-						.toList(); // List<superAppObjectToBoundary>
+										"objectId"));
+
 			} else {
 				throw new ForbiddenException("Operation is not allowed for ADMIN user");
 			}
@@ -297,7 +295,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		if (objects.isEmpty()) {
 			throw new NotFoundException("Couldn't find any objects nearby");
 		}
-		return objects;
+		return objects.stream().map(this.converter::superAppObjectToBoundary).toList();
 	}
 
 	@Override
@@ -309,7 +307,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			objects = this.objectCrud.findAllByTypeAndActiveIsTrue(type,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
 			if (objects.isEmpty())
-				throw new NotFoundException("There are no active users with type " + type);
+				throw new NotFoundException("There are no active objects with type " + type);
 
 		} else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
 			objects = this.objectCrud.findAllByType(type,
@@ -328,7 +326,7 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			objects = this.objectCrud.findAllByAliasAndActiveIsTrue(alias,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
 			if (objects.isEmpty())
-				throw new NotFoundException("There are no active users with alias " + alias);
+				throw new NotFoundException("There are no active objects with alias " + alias);
 
 		} else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
 			objects = this.objectCrud.findAllByAlias(alias,
