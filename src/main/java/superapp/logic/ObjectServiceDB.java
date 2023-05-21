@@ -206,7 +206,9 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			SuperAppObjectEntity parent = this.objectCrud.findById(parentId)
 					.orElseThrow(() -> new NotFoundException("could not find parent object by id: " + parentId));
 			child.setParentObject(parent);
+			parent.setChildrenObject(child);
 			this.objectCrud.save(child);
+			this.objectCrud.save(parent);
 		} else
 			throw new ForbiddenException("Only SUPERAPP_USER users can relate parent to child");
 
@@ -234,42 +236,38 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		} else
 			throw new ForbiddenException("Operation is not allowed only for ADMIN");
 
-		
-
 		return objects.stream().map(this.converter::superAppObjectToBoundary).toList();
 	}
 
 	@Override
 	public List<SuperAppObjectBoundary> getAllParentsOfObject(ObjectId child, String userSuperApp, String email,
-			int size, int page) {
-		
+			int page, int size) {
+
 		String childId = child.getSuperapp() + "#" + child.getInternalObjectId();
-		
-		List<SuperAppObjectBoundary> allParents = new ArrayList<SuperAppObjectBoundary>();
+
+		List<SuperAppObjectEntity> allParents = new ArrayList<SuperAppObjectEntity>();
+
 		SuperAppObjectEntity childEntity = this.objectCrud.findById(childId)
 				.orElseThrow(() -> new NotFoundException("could not find object by id: " + childId));
+
 		UserEntity user = getUser(userSuperApp, email);
-		List<SuperAppObjectEntity> parentEntities = childEntity.getParentObject();
 
 		if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
-			if (parentEntities != null) {
-				for (SuperAppObjectEntity entity : parentEntities) {
-					allParents.add(Optional.of(this.converter.superAppObjectToBoundary(entity)).get());
-				}
-			}
-		} else if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
 
-			// SuperAppObjectEntity parentEntity = childEntity.getParentObject();
-			if (parentEntities != null) {
-				for (SuperAppObjectEntity entity : parentEntities) {
-					if (entity.getActive() == true)
-						allParents.add(Optional.of(this.converter.superAppObjectToBoundary(entity)).get());
-				}
-			}
+			allParents = this.objectCrud.findAllByChildrenObject(childEntity.getObjectId(),
+					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
+
+			if (allParents.isEmpty())
+				throw new NotFoundException("There are no parents to this child object");
+
+		} else if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
+			allParents = this.objectCrud.findAllByChildrenObjectAndActiveIsTrue(childEntity.getObjectId(),
+					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
+
 		} else
 			throw new ForbiddenException("Operation is not allowed for ADMIN users");
 
-		return allParents;
+		return allParents.stream().map(this.converter::superAppObjectToBoundary).toList();
 	}
 
 	@Override

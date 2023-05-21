@@ -1,7 +1,6 @@
 package superapp.data;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -27,12 +26,16 @@ public class SuperAppObjectEntity {
 	@DBRef
 	private List <SuperAppObjectEntity> parentObject;
 	
+	@DBRef
+	private List <SuperAppObjectEntity> childrenObject;
+	
 
 	private Map<String, Object> objectDetails;
 
 	
 	public SuperAppObjectEntity(){
 		this.parentObject = new ArrayList<SuperAppObjectEntity>();
+		this.childrenObject = new ArrayList<SuperAppObjectEntity>();
 	}
 
 	public String getObjectId() {
@@ -106,6 +109,9 @@ public class SuperAppObjectEntity {
 	public void setParentObject(SuperAppObjectEntity parentObject) {
 		this.parentObject.add(parentObject);
 	}
+	public void setChildrenObject(SuperAppObjectEntity childrenObject) {
+		this.childrenObject.add(childrenObject);
+	}
 
 	public Map<String, Object> getObjectDetails() {
 		return objectDetails;
@@ -113,6 +119,10 @@ public class SuperAppObjectEntity {
 
 	public void setObjectDetails(Map<String, Object> objectDetails) {
 		this.objectDetails = objectDetails;
+	}
+
+	public List<SuperAppObjectEntity> getChildrenObject() {
+		return childrenObject;
 	}
 
 

@@ -63,9 +63,10 @@ public class RelationshipController {
             @PathVariable("internalObjectId") String internalObjectId,
             @RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
             @RequestParam(name = "userEmail", required = true) String email,
-			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
-			@RequestParam(name = "page", required = false, defaultValue = "0") int page){
-        return objects.getAllParentsOfObject(new ObjectId(superapp, internalObjectId),userSuperApp,email,size,page)
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size
+			){
+        return objects.getAllParentsOfObject(new ObjectId(superapp, internalObjectId),userSuperApp,email,page,size)
         		.toArray(new SuperAppObjectBoundary[0]);
     }
 }
