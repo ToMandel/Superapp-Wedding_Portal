@@ -216,13 +216,13 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 			}
 		case "tables":
 			switch (commandName) {
-			case "getAllTablesOfGuest":
+			case "getAllGuestsOfUser":
+				//find all objects with type "guest" with the desired email
 				String type = "guest";
-				String invokedBy = command.getInvokedBy().getUserId().getSuperapp() + "#"
-						+ command.getInvokedBy().getUserId().getEmail();
-				// assume that the user invoked the command is the same user that created the
-				// object
-				return this.supperAppObjectCrud.findAllByTypeAndCreatedBy(type, invokedBy);
+				String mail = command.getCommandAttributes().get("mail").toString();
+				String createdBy = command.getInvokedBy().getUserId().getSuperapp() + "#" + mail;
+				//we look for objects that createdBy specific user
+				return this.supperAppObjectCrud.findAllByTypeAndCreatedBy(type, createdBy);
 			default:
 				return createUnknownCommandBoundary(commandName, "Could not find command");
 			}
