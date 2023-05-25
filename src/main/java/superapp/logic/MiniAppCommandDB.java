@@ -22,7 +22,6 @@ import superapp.data.UserRole;
 import superapp.objects.Supplier;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -139,9 +138,8 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 		throw new DeprecatedOperationException();
 	}
 
-	@Override
+
 	public Object invokeMiniAppCommandAsync(MiniAppCommandBoundary command, boolean isAsync) {
-		
 		UserEntity user = getUser(command.getInvokedBy().getUserId().getSuperapp(),
 				command.getInvokedBy().getUserId().getEmail());
 
@@ -149,45 +147,37 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 			throw new ForbiddenException("Only MINIAPP users can invoke commands");
 
 		String objectId = command.getTargetObject().getObjectId().getSuperapp() + "#"
-						+ command.getTargetObject().getObjectId().getInternalObjectId();
-		
+				+ command.getTargetObject().getObjectId().getInternalObjectId();
+
 		SuperAppObjectEntity targetObject = this.supperAppObjectCrud.findById(objectId)
 				.orElseThrow(() -> new NotFoundException("There is no object with object id: " + objectId));
-		
+
 		if (!targetObject.getActive())
 			throw new NotFoundException("The target object you are trying to invoke a command on him is inactive");
-		
-		String internalCommandId = UUID.randomUUID().toString(); // we're doing rand so the size of entities is not
-																	// relevant
+
 		command.setCommandId(
-				new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), internalCommandId));
-		
+				new CommandId(nameFromSpringConfig, command.getCommandId().getMiniapp(), UUID.randomUUID().toString()));
 		command.setInvocationTimestamp(new Date());
-		String miniAppName = command.getCommandId().getMiniapp();
-		String commandName = command.getCommand();
-		Object rv = callToFunction(command, commandName, miniAppName);
-		
-		if (command.getCommandAttributes() == null)
-			command.setCommandAttributes(new HashMap<>());
-		if (rv instanceof UnknownCommandBoundary)
-			command.getCommandAttributes().put("error", "Could not find command");
-		
-		MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
-		entity = this.miniappCommandCrud.save(entity);
-	
-		if (isAsync) {
+		if (isAsync){
 			command.getCommandAttributes().put("status", "waiting");
 			try {
 				String json = this.jackson.writeValueAsString(command);
 				this.jmsTemplate.convertAndSend("asyncMiniAppQueue", json);
-				entity = this.converter.miniAppCommandToEntity(command);
-				entity = this.miniappCommandCrud.save(entity);
+				return command;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
-		return rv;
+		else {
+			String miniAppName = command.getCommandId().getMiniapp();
+			String commandName = command.getCommand();
+			Object rv = callToFunction(command, commandName, miniAppName);
+			MiniAppCommandEntity entity = this.converter.miniAppCommandToEntity(command);
+			entity = this.miniappCommandCrud.save(entity);
+			return rv;
+		}
 	}
+
 
 	public Object callToFunction(MiniAppCommandBoundary command, String commandName, String miniAppName) {
 		switch (miniAppName) {
