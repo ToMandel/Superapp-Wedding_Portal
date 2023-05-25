@@ -184,8 +184,8 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		} else
 			throw new ForbiddenException("Operation is not allowed, the user is ADMIN");
 
-		if (objects.isEmpty())
-			throw new NotFoundException("There are no objects");
+		//if (objects.isEmpty())
+		//	throw new NotFoundException("There are no objects");
 
 		return objects.stream().map(this.converter::superAppObjectToBoundary).toList();
 
@@ -217,20 +217,21 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	@Override
 	public List<SuperAppObjectBoundary> getAllChildrenOfObject(ObjectId parent, String userSuperApp, String email,
 			int size, int page) {
-		String id = parent.getSuperapp() + "#" + parent.getInternalObjectId();
+		String parentId = parent.getSuperapp() + "#" + parent.getInternalObjectId();
+		SuperAppObjectEntity parentEntity = this.objectCrud.findById(parentId)
+				.orElseThrow(() -> new NotFoundException("could not find object by id: " + parentId));
+
 
 		UserEntity user = getUser(userSuperApp, email);
 
 		List<SuperAppObjectEntity> objects = new ArrayList<SuperAppObjectEntity>();
 
 		if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER) {
-			objects = this.objectCrud.findAllByParentObject(id,
+			objects = this.objectCrud.findAllByParentObject(parentId,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
-			if (objects.isEmpty())
-				throw new NotFoundException("There are no children to this parent object");
 
 		} else if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
-			objects = this.objectCrud.findAllByParentObjectAndActiveIsTrue(id,
+			objects = this.objectCrud.findAllByParentObjectAndActiveIsTrue(parentId,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
 
 		} else
@@ -244,7 +245,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			int page, int size) {
 
 		String childId = child.getSuperapp() + "#" + child.getInternalObjectId();
-
 		List<SuperAppObjectEntity> allParents = new ArrayList<SuperAppObjectEntity>();
 
 		SuperAppObjectEntity childEntity = this.objectCrud.findById(childId)
@@ -257,8 +257,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			allParents = this.objectCrud.findAllByChildrenObject(childEntity.getObjectId(),
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
 
-			if (allParents.isEmpty())
-				throw new NotFoundException("There are no parents to this child object");
 
 		} else if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
 			allParents = this.objectCrud.findAllByChildrenObjectAndActiveIsTrue(childEntity.getObjectId(),
@@ -310,9 +308,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
 			objects = this.objectCrud.findAllByTypeAndActiveIsTrue(type,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
-			if (objects.isEmpty())
-				throw new NotFoundException("There are no active objects with type " + type);
-
 		} else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
 			objects = this.objectCrud.findAllByType(type,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
@@ -329,8 +324,6 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		if (user.getRole() != null && user.getRole() == UserRole.MINIAPP_USER) {
 			objects = this.objectCrud.findAllByAliasAndActiveIsTrue(alias,
 					PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
-			if (objects.isEmpty())
-				throw new NotFoundException("There are no active objects with alias " + alias);
 
 		} else if (user.getRole() != null && user.getRole() == UserRole.SUPERAPP_USER)
 			objects = this.objectCrud.findAllByAlias(alias,
