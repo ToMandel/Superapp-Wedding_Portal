@@ -3,7 +3,6 @@ package superapp.apis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 import superapp.boundries.CommandId;
 import superapp.boundries.MiniAppCommandBoundary;
 import superapp.logic.MiniAppCommandServiceWithAsyncSupport;
@@ -17,24 +16,9 @@ public class CommandAPI {
 	public void setCommands(MiniAppCommandServiceWithAsyncSupport commands) {
 		this.commands = commands;
 	}
-	
+
 	public CommandAPI() {
 	}
-	
-	/*@CrossOrigin(origins = "*")
-	@RequestMapping(
-			path = {"/superapp/miniapp/{miniAppName}"},
-			method = {RequestMethod.POST},
-			produces = {MediaType.APPLICATION_JSON_VALUE},
-			consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public Object invokeCommand (@PathVariable("miniAppName")String miniAppName, @RequestBody MiniAppCommandBoundary miniAppCommandBoundary) {
-		CommandId commandId = new CommandId();
-		commandId.setMiniapp(miniAppName);
-		miniAppCommandBoundary.setCommandId(commandId);
-		return commands.invokeCommand(miniAppCommandBoundary);
-	}*/
-
-
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(

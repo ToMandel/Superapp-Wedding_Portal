@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -19,9 +20,15 @@ class ApplicationTests {
 	private RestTemplate restTemplate;
 	private String url;
 	private int port;
-
+	private String nameFromSpringConfig;
 	private UserBoundary adminUser;
 	private UserBoundary superAppUser;
+
+	@Value("${spring.application.name:defaultName}")
+	public void setNameFromSpringConfig(String nameFromSpringConfig) {
+		this.nameFromSpringConfig = nameFromSpringConfig;
+	}
+
 
 	@LocalServerPort
 	public void setPort(int port) {
@@ -51,7 +58,7 @@ class ApplicationTests {
 	public void setUpAdminUser(){
 		//get admin user if exists
 		try {
-			this.adminUser = this.restTemplate.getForObject(this.url + "/superapp/users/login/2023b.zohar.tzabari/admin@mail.com", UserBoundary.class);
+			this.adminUser = this.restTemplate.getForObject(this.url + "/superapp/users/login/" +  this.nameFromSpringConfig + "/admin@mail.com", UserBoundary.class);
 		}
 		catch (Exception e) {
 			NewUserBoundary newUser = new NewUserBoundary();
@@ -67,7 +74,7 @@ class ApplicationTests {
 	public void setUpSuperAppUser(){
 		//get admin user if exists
 		try {
-			this.superAppUser = this.restTemplate.getForObject(this.url + "/superapp/users/login/2023b.zohar.tzabari/superapp@mail.com", UserBoundary.class);
+			this.superAppUser = this.restTemplate.getForObject(this.url + "/superapp/users/login/" + this.nameFromSpringConfig + "/superapp@mail.com", UserBoundary.class);
 		}
 		catch (Exception e) {
 			NewUserBoundary newUser = new NewUserBoundary();
@@ -94,7 +101,7 @@ class ApplicationTests {
 //		Then: The response will be status code“2XX”
 //		And: A new user will be created in the database
 		UserBoundary actualResponse = this.restTemplate
-				.getForObject(this.url + "/superapp/users/login/2023b.zohar.tzabari/hello@afeka.com", UserBoundary.class,user.getEmail());
+				.getForObject(this.url + "/superapp/users/login/" + this.nameFromSpringConfig + "/hello@afeka.com", UserBoundary.class,user.getEmail());
 			
 		assertThat(actualResponse)
 		.usingRecursiveComparison();

@@ -1,23 +1,25 @@
 package superapp.apis;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
 import superapp.logic.ObjectServiceWithPagination;
-import superapp.logic.RelationshipObjectsService;
 
 
 @RestController
 public class RelationshipController {
 
     private ObjectServiceWithPagination objects;
+    private String nameFromSpringConfig;
+
+    @Value("${spring.application.name:defaultName}")
+    public void setNameFromSpringConfig(String nameFromSpringConfig) {
+        this.nameFromSpringConfig = nameFromSpringConfig;
+    }
+
     @Autowired
     public RelationshipController(ObjectServiceWithPagination objects){
         super();
@@ -31,9 +33,11 @@ public class RelationshipController {
     public void relateParentToChild(@PathVariable("superapp") String superapp,
                                     @PathVariable("internalObjectId") String internalObjectId,
                                     @RequestBody ObjectId childObjectId,
-                        			@RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
+                        			@RequestParam(name = "userSuperApp", required = false) String userSuperApp,
                         			@RequestParam(name = "userEmail", required = true) String email){
         ObjectId parentObjectId = new ObjectId(superapp, internalObjectId);
+        if (userSuperApp == null)
+            userSuperApp = this.nameFromSpringConfig;
         this.objects.relateParentToChild(parentObjectId, childObjectId,userSuperApp,email);
 
     }
@@ -45,11 +49,12 @@ public class RelationshipController {
     public SuperAppObjectBoundary[] getAllChildrenOfObject(
     		@PathVariable("superapp") String superapp,
     		@PathVariable("internalObjectId") String internalObjectId,
-            @RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
+            @RequestParam(name = "userSuperApp", required = false) String userSuperApp,
             @RequestParam(name = "userEmail", required = true) String email,
 			@RequestParam(name = "size", required = false, defaultValue = "20") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "0") int page){
-
+        if (userSuperApp == null)
+            userSuperApp = this.nameFromSpringConfig;
         return objects.getAllChildrenOfObject(new ObjectId(superapp, internalObjectId),userSuperApp,email,size,page)
         		.toArray(new SuperAppObjectBoundary[0]);
     }
@@ -61,11 +66,12 @@ public class RelationshipController {
     public SuperAppObjectBoundary[] getAllParentsOfObject(
     		@PathVariable("superapp") String superapp,
             @PathVariable("internalObjectId") String internalObjectId,
-            @RequestParam(name = "userSuperApp", required = false, defaultValue = "2023b.zohar.tzabari") String userSuperApp,
+            @RequestParam(name = "userSuperApp", required = false) String userSuperApp,
             @RequestParam(name = "userEmail", required = true) String email,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-			@RequestParam(name = "size", required = false, defaultValue = "20") int size
-			){
+			@RequestParam(name = "size", required = false, defaultValue = "20") int size){
+        if (userSuperApp == null)
+            userSuperApp = this.nameFromSpringConfig;
         return objects.getAllParentsOfObject(new ObjectId(superapp, internalObjectId),userSuperApp,email,page,size)
         		.toArray(new SuperAppObjectBoundary[0]);
     }
