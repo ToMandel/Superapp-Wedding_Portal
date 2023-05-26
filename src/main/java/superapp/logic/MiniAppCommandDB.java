@@ -201,6 +201,11 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 			}
 		case "customers":
 			switch (commandName) {
+				case "getSupplierFreeDates":{
+					String objectId = command.getTargetObject().getObjectId().getSuperapp() + "#" + command.getTargetObject().getObjectId().getInternalObjectId();
+					SuperAppObjectEntity supplier = this.supperAppObjectCrud.findById(objectId).get();
+					return supplier.getObjectDetails().get("freeDates");
+				}
 			default:
 				return createUnknownCommandBoundary(commandName, "Could not find command");
 			}
