@@ -12,6 +12,11 @@
 - customers
 - tables
 
+# Instructions on creating objects
+- When creating a supplier - put in type "supplier"
+- When creating a guest - put in type "guest"
+- When creating a customer - put in type "customer"
+
 # Commands name and instructions:
 
 ## Suppliers mini app:
