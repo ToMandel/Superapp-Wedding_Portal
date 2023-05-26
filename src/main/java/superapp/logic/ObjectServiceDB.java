@@ -1,6 +1,9 @@
 package superapp.logic;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +30,9 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 	private UserCrud userCrud;
 	private Converter converter;
 	private String nameFromSpringConfig;
+	private Log logger = LogFactory.getLog(ObjectServiceDB.class);
+
+	private ObjectMapper jackson;
 
 	@Value("${spring.application.name:defaultName}")
 	public void setNameFromSpringConfig(String nameFromSpringConfig) {
@@ -35,7 +41,8 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@PostConstruct
 	public void init() {
-		System.err.println("**** spring.application.name = " + this.nameFromSpringConfig + " ****");
+		this.logger.info("**** spring.application.name=" + this.nameFromSpringConfig);
+		this.jackson = new ObjectMapper();
 	}
 
 	@Autowired
@@ -104,18 +111,33 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	@Override
 	public SuperAppObjectBoundary createObject(SuperAppObjectBoundary object) {
+		this.logger.trace("&&&&& inserting super app object to db started");
+		long beginCount = System.currentTimeMillis();
+
 		UserEntity user = getUser(object.getCreatedBy().getUserId().getSuperapp(),
 				object.getCreatedBy().getUserId().getEmail());
 		if (user.getRole() == UserRole.SUPERAPP_USER) {
-			String internalObjectId = UUID.randomUUID().toString(); // the value is random so the size of entities isn't
-																	// relevant
-			object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
-			object.setCreationTimestamp(new Date());
-			if (object.getObjectDetails() == null)
-				object.setObjectDetails(new HashMap<>());
-			SuperAppObjectEntity entity = this.converter.superAppObjectToEntity(object);
-			entity = this.objectCrud.save(entity);
-			return this.converter.superAppObjectToBoundary(entity);
+			try {
+				String internalObjectId = UUID.randomUUID().toString(); // the value is random so the size of entities isn' relevant
+				object.setObjectId(new ObjectId(nameFromSpringConfig, internalObjectId));
+				object.setCreationTimestamp(new Date());
+				if (object.getObjectDetails() == null)
+					object.setObjectDetails(new HashMap<>());
+				SuperAppObjectEntity entity = this.converter.superAppObjectToEntity(object);
+				entity = this.objectCrud.save(entity);
+				return this.converter.superAppObjectToBoundary(entity);
+			}
+			finally {
+				long endCount = System.currentTimeMillis();
+				long elapsed = endCount - beginCount;
+				String json = "";
+				try {
+					json = this.jackson.writeValueAsString(object);
+				} catch (Exception e) {
+					this.logger.error(e.getMessage());
+				}
+				this.logger.debug("&&&&& inserting to db: " + json + " - ended - and took " + elapsed + "ms");
+			}
 		}
 		throw new ForbiddenException("Only SUPERAPP_USER users can create new objects");
 	}
