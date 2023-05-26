@@ -1,13 +1,11 @@
 package superapp.dal;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Point;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.util.Streamable;
-
 import superapp.data.SuperAppObjectEntity;
 
 import java.util.List;
@@ -31,13 +29,22 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 
 	public List<SuperAppObjectEntity> findAllByAliasAndActiveIsTrue(@Param("alias") String alias, Pageable pageable);
 
-	public List<SuperAppObjectEntity> findByLatBetweenAndLngBetweenAndActiveIsTrue(@Param("minLat") double minLat,
+	/*public List<SuperAppObjectEntity> findByLatBetweenAndLngBetweenAndActiveIsTrue(@Param("minLat") double minLat,
 			@Param("maxLat") double maxLat, @Param("minLng") double minLng, @Param("maxLng") double maxLng,
 			Pageable pageable);
 
 	public List<SuperAppObjectEntity> findByLatBetweenAndLngBetween(@Param("minLat") double minLat,
 			@Param("maxLat") double maxLat, @Param("minLng") double minLng, @Param("maxLng") double maxLng,
 			Pageable pageable);
+	 */
+
+	public List<SuperAppObjectEntity> findAllByLocationNear(@Param("location") Point location,
+															@Param("distance") Distance distance,
+															Pageable pageable);
+
+	public List<SuperAppObjectEntity> findAllByLocationNearAndActiveIsTrue(@Param("location") Point location,
+															@Param("distance") Distance distance,
+															Pageable pageable);
 
 	public List<SuperAppObjectEntity> findAllByActiveIsTrue(Pageable pageable);
 

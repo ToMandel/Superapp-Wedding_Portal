@@ -1,6 +1,7 @@
 package superapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Component;
 import superapp.boundries.*;
 import superapp.data.MiniAppCommandEntity;
@@ -123,13 +124,10 @@ public class Converter {
 			throw new BadRequestException("Alias can't be null or empty");
 		else
 			entity.setAlias(boundary.getAlias());
-		if (boundary.getLocation() == null) {
-			entity.setLat(0.0);
-			entity.setLng(0.0);
-		} else {
-			entity.setLat(boundary.getLocation().getLat());
-			entity.setLng(boundary.getLocation().getLng());
-		}
+		if (boundary.getLocation() == null)
+			entity.setLocation(new Point(0, 0));
+		else
+			entity.setLocation(new Point(boundary.getLocation().getLat(), boundary.getLocation().getLng()));
 
 		entity.setCreationTempStamp(boundary.getCreationTimestamp());
 		if (boundary.getCreatedBy() == null || boundary.getCreatedBy().getUserId() == null)
@@ -147,7 +145,8 @@ public class Converter {
 		boundary.setAlias(entity.getAlias());
 		boundary.setActive(entity.getActive());
 		boundary.setCreationTimestamp(entity.getCreationTempStamp());
-		boundary.setLocation(new Location(entity.getLat(), entity.getLng()));
+		boundary.setLocation(new Location(entity.getLocation().getX(), entity.getLocation().getY()));
+		//boundary.setLocation(new Location(entity.getLat(), entity.getLng()));
 		boundary.setCreatedBy(CreatedBy.createdByFromString(entity.getCreatedBy()));
 		boundary.setObjectDetails(entity.getObjectDetails());
 		return boundary;

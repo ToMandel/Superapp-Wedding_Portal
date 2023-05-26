@@ -5,15 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import superapp.Converter;
-import superapp.dal.UserCrud;
-import superapp.data.UserEntity;
-import superapp.data.UserRole;
 import superapp.boundries.ObjectId;
 import superapp.boundries.SuperAppObjectBoundary;
 import superapp.dal.SupperAppObjectCrud;
+import superapp.dal.UserCrud;
 import superapp.data.SuperAppObjectEntity;
+import superapp.data.UserEntity;
+import superapp.data.UserRole;
 
 import java.util.*;
 
@@ -21,7 +24,6 @@ import java.util.*;
 public class ObjectServiceDB implements ObjectServiceWithPagination {
 
 	private SupperAppObjectCrud objectCrud;
-
 	private UserCrud userCrud;
 	private Converter converter;
 	private String nameFromSpringConfig;
@@ -133,8 +135,9 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			if (update.getActive() != null)
 				existing.setActive(update.getActive());
 			if (update.getLocation() != null) {
-				existing.setLng(update.getLocation().getLng());
-				existing.setLat(update.getLocation().getLat());
+				//existing.setLng(update.getLocation().getLng());
+				//existing.setLat(update.getLocation().getLat());
+				existing.setLocation(new Point(update.getLocation().getLng(), update.getLocation().getLat()));
 			}
 			if (update.getObjectDetails() != null)
 				existing.setObjectDetails(update.getObjectDetails());
@@ -273,31 +276,33 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 			double lng, double distance, String distanceUnits, int size, int page) {
 		List<SuperAppObjectEntity> objects = new ArrayList<SuperAppObjectEntity>();
 
-		double minLat = lat - distance;
-		double maxLat = lat + distance;
-		double minLng = lng - distance;
-		double maxLng = lng + distance;
-
 		UserEntity user = getUser(userSuperApp, email);
+		Point p = new Point(lat, lng);
+		Distance d = new Distance(distance, getMetricUnit(distanceUnits));
+		PageRequest pageRequest =  PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId");
 
 		if (user.getRole() != null) {
-			if (user.getRole() == UserRole.MINIAPP_USER) {
-				objects = this.objectCrud.findByLatBetweenAndLngBetweenAndActiveIsTrue(minLat, maxLat, minLng, maxLng,
-						PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
-
-			} else if (user.getRole() == UserRole.SUPERAPP_USER) {
-				objects = this.objectCrud.findByLatBetweenAndLngBetween(minLat, maxLat, minLng, maxLng,
-						PageRequest.of(page, size, Direction.ASC, "type", "alias", "creationTimestamp", "objectId"));
-
-			} else {
+			if (user.getRole() == UserRole.MINIAPP_USER)
+				objects = this.objectCrud.findAllByLocationNearAndActiveIsTrue(p, d, pageRequest);
+			else if (user.getRole() == UserRole.SUPERAPP_USER)
+				objects = this.objectCrud.findAllByLocationNear(p, d, pageRequest);
+			else
 				throw new ForbiddenException("Operation is not allowed for ADMIN users");
-			}
-		}
-		if (objects.isEmpty()) {
-			throw new NotFoundException(
-					"Couldn't find any objects in " + distance + "around the location (" + lat + "," + lng + ")");
 		}
 		return objects.stream().map(this.converter::superAppObjectToBoundary).toList();
+	}
+
+	private Metrics getMetricUnit (String unit){
+		switch (unit.toLowerCase()){
+			case "kilometers":
+				return Metrics.KILOMETERS;
+			case "miles":
+				return Metrics.MILES;
+			case "neutral":
+				return Metrics.NEUTRAL;
+			default:
+				throw new BadRequestException("Invalid metric unit: " + unit);
+		}
 	}
 
 	@Override

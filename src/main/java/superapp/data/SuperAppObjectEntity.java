@@ -1,6 +1,10 @@
 package superapp.data;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,14 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 @Document(collection = "SUPER_APP_OBJECTS")
+@CompoundIndexes({@CompoundIndex(name = "location_2dsphere", def = "{'location': '2dsphere'}")})
 public class SuperAppObjectEntity {
 	@Id
 	private String objectId;
 	private String type;
 	private String alias;
 	private Boolean active;
-	private Double lat;
-	private Double lng;
+	@GeoSpatialIndexed
+	private Point location;
 	private String createdBy;
 	private Date creationTempStamp;
 
@@ -70,20 +75,12 @@ public class SuperAppObjectEntity {
 		this.active = active;
 	}
 
-	public Double getLat() {
-		return lat;
+	public Point getLocation() {
+		return location;
 	}
 
-	public void setLat(Double lat) {
-		this.lat = lat;
-	}
-
-	public Double getLng() {
-		return lng;
-	}
-
-	public void setLng(Double lng) {
-		this.lng = lng;
+	public void setLocation(Point location) {
+		this.location = location;
 	}
 
 	public String getCreatedBy() {
