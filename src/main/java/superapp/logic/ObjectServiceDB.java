@@ -134,11 +134,8 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 				existing.setAlias(update.getAlias());
 			if (update.getActive() != null)
 				existing.setActive(update.getActive());
-			if (update.getLocation() != null) {
-				//existing.setLng(update.getLocation().getLng());
-				//existing.setLat(update.getLocation().getLat());
-				existing.setLocation(new Point(update.getLocation().getLng(), update.getLocation().getLat()));
-			}
+			if (update.getLocation() != null)
+				existing.setLocation(new Point(update.getLocation().getLat(), update.getLocation().getLng()));
 			if (update.getObjectDetails() != null)
 				existing.setObjectDetails(update.getObjectDetails());
 			this.objectCrud.save(existing);
