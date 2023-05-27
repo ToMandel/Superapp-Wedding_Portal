@@ -19,7 +19,8 @@ import superapp.data.MiniAppCommandEntity;
 import superapp.data.SuperAppObjectEntity;
 import superapp.data.UserEntity;
 import superapp.data.UserRole;
-import superapp.objects.Supplier;
+import superapp.miniapps.CommandsInvoker;
+import superapp.miniapps.MiniAppsCommand;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 	private MiniAppCommandCrud miniappCommandCrud;
 	private SupperAppObjectCrud supperAppObjectCrud;
 	private UserCrud userCrud;
-
+	private CommandsInvoker commandsInvoker;
 	private Converter converter;
 	private String nameFromSpringConfig;
 	private JmsTemplate jmsTemplate;
@@ -72,6 +73,11 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 	@Autowired
 	public void setConverter(Converter converter) {
 		this.converter = converter;
+	}
+
+	@Autowired
+	public void setCommandsInvoker(CommandsInvoker commandsInvoker){
+		this.commandsInvoker = commandsInvoker;
 	}
 
 	private UserEntity getUser(String superAppName, String email) {
@@ -179,22 +185,35 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 	}
 
 
-	public Object callToFunction(MiniAppCommandBoundary command, String commandName, String miniAppName) {
-		switch (miniAppName) {
+	public Object callToFunction(MiniAppCommandBoundary commandBoundary, String commandName, String miniAppName) {
+		//MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.getMiniAppName(miniAppName.toUpperCase());
+		//Object isLegal = isLegalCommand(miniAppName, commandName);
+
+		//MiniAppsCommand.COMMANDS miniAppCommand = MiniAppsCommand.getCommandName(commandName);
+		//System.out.println(miniAppCommand);
+		//MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.MINI_APPS.valueOf(miniAppName);
+		//MiniAppsCommand.COMMANDS commandEnum = MiniAppsCommand.COMMANDS.valueOf(commandName);
+		//System.out.println(miniApp + " " + commandEnum);
+
+		MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.getMiniAppName(miniAppName.toUpperCase());
+		if (miniApp == MiniAppsCommand.MINI_APPS.UNKNOWN_MINIAPP)
+			return createUnknownCommandBoundary(commandName, "Could not find miniapp");
+		List<String> miniAppCommands = this.commandsInvoker.getCommandsInMiniApp().get(miniApp);
+		boolean found =  false;
+		for (String command : miniAppCommands){
+			if (command.equals(commandName)) {
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			return createUnknownCommandBoundary(commandName, "Could not find command: " + commandName + " in miniapp: " + miniAppName);
+		return this.commandsInvoker.createCommandClass(commandName).execute(commandBoundary);
+		/*switch (miniAppName) {
 		case ("suppliers"):
 			switch (commandName) {
 			case "getTypes":
-				String objectId = command.getTargetObject().getObjectId().getSuperapp() + "#"
-						+ command.getTargetObject().getObjectId().getInternalObjectId();
-				SuperAppObjectEntity entity = this.supperAppObjectCrud.findById(objectId).get();
-				// we already checked that the entity exists
-				if (!entity.getType().equals("supplier_manager"))
-					throw new ForbiddenException(
-							"You can not get suppliers types with objects who is not supplier_manager");
-				return Supplier.getAllTypes();
-			// case "getAllSuppliers":
-			// return supperAppObjectCrud.findAllByType("Supplier",
-			// PageRequest.of(FIRST_PAGE, MAX_SIZE));
+				return this.commandsInvoker.createCommandClass(commandName).execute(command);
 			default:
 				return createUnknownCommandBoundary(commandName, "Could not find command");
 
@@ -202,9 +221,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 		case "customers":
 			switch (commandName) {
 				case "getSupplierFreeDates":{
-					String objectId = command.getTargetObject().getObjectId().getSuperapp() + "#" + command.getTargetObject().getObjectId().getInternalObjectId();
-					SuperAppObjectEntity supplier = this.supperAppObjectCrud.findById(objectId).get();
-					return supplier.getObjectDetails().get("freeDates");
+					return this.commandsInvoker.createCommandClass(commandName).execute(command);
 				}
 			default:
 				return createUnknownCommandBoundary(commandName, "Could not find command");
@@ -212,18 +229,13 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 		case "tables":
 			switch (commandName) {
 			case "getAllGuestsOfUser":
-				//find all objects with type "guest" with the desired email
-				String type = "guest";
-				String mail = command.getCommandAttributes().get("mail").toString();
-				String createdBy = command.getInvokedBy().getUserId().getSuperapp() + "#" + mail;
-				//we look for objects that createdBy specific user
-				return this.supperAppObjectCrud.findAllByTypeAndCreatedBy(type, createdBy);
+				return this.commandsInvoker.createCommandClass(commandName).execute(command);
 			default:
 				return createUnknownCommandBoundary(commandName, "Could not find command");
 			}
 		default:
 			return createUnknownCommandBoundary(commandName, "Could not find miniapp");
-		}
+		}*/
 	}
 
 	public UnknownCommandBoundary createUnknownCommandBoundary(String commandName, String errMsg) {
