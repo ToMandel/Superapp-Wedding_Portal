@@ -2,7 +2,10 @@ package superapp.miniapps;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import superapp.boundries.UnknownCommandBoundary;
+import superapp.miniapps.customers.GetCustomerServices;
 import superapp.miniapps.customers.GetSupplierFreeDates;
+import superapp.miniapps.suppliers.GetSupplierServices;
 import superapp.miniapps.suppliers.GetTypes;
 import superapp.miniapps.tables.GetAllGuestsOfUser;
 
@@ -17,6 +20,8 @@ public class CommandsInvoker {
     private GetAllGuestsOfUser getAllGuestsOfUser;
     private GetSupplierFreeDates getSupplierFreeDates;
     private GetTypes getTypes;
+    private GetCustomerServices getCustomerServices;
+    private GetSupplierServices getSupplierServices;
 
     private Map<MiniAppsCommand.MINI_APPS, List<String>> commandsInMiniApp;
 
@@ -26,7 +31,9 @@ public class CommandsInvoker {
     @Autowired
     public CommandsInvoker(GetAllGuestsOfUser getAllGuestsOfUser,
                            GetSupplierFreeDates getSupplierFreeDates,
-                           GetTypes getTypes){
+                           GetTypes getTypes,
+                           GetCustomerServices getCustomerServices,
+                           GetSupplierServices getSupplierServices){
         supplierCommands = new ArrayList<String>();
         customersCommands = new ArrayList<String>();
         tablesCommands = new ArrayList<String>();
@@ -35,6 +42,8 @@ public class CommandsInvoker {
         this.getAllGuestsOfUser = getAllGuestsOfUser;
         this.getSupplierFreeDates = getSupplierFreeDates;
         this.getTypes = getTypes;
+        this.getCustomerServices = getCustomerServices;
+        this.getSupplierServices = getSupplierServices;
 
         setMiniAppCommands();
 
@@ -42,8 +51,10 @@ public class CommandsInvoker {
 
     private void setMiniAppCommands(){
         supplierCommands.add("getTypes");
+        supplierCommands.add("getSupplierServices");
 
         customersCommands.add("getSupplierFreeDates");
+        customersCommands.add("getCustomerServices");
 
         tablesCommands.add("getAllGuestsOfUser");
 
@@ -60,6 +71,10 @@ public class CommandsInvoker {
                 return getSupplierFreeDates;
             case ("getTypes"):
                 return getTypes;
+            case("getCustomerServices"):
+                return getCustomerServices;
+            case("getSupplierServices"):
+                return getSupplierServices;
             default:
                 return null;
         }
@@ -68,5 +83,12 @@ public class CommandsInvoker {
     public Map<MiniAppsCommand.MINI_APPS, List<String>> getCommandsInMiniApp() {
         return commandsInMiniApp;
     }
+
+    public static UnknownCommandBoundary createUnknownCommandBoundary(String commandName, String errMsg) {
+		UnknownCommandBoundary boundary = new UnknownCommandBoundary();
+		boundary.setCommandName(commandName);
+		boundary.setErrorMessage(errMsg);
+		return boundary;
+	}
 
 }

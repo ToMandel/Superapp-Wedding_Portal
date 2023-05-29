@@ -3,6 +3,7 @@ package superapp.dal;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -54,5 +55,13 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 	public List<SuperAppObjectEntity> findAllByChildrenObjectAndActiveIsTrue(
 			@Param("childId") String childId,
 			Pageable pageable);
+
+	@Query("{'objectDetails.customerMail': :#{#customerMail}, 'active':true, 'type': 'service'}")
+	public List<SuperAppObjectEntity> findAllCustomerEvents (
+			@Param("customerMail") String customerMail);
+
+	@Query("{'objectDetails.supplierMail': :#{#supplierMail}, 'active':true, 'type': 'service'}")
+	public List<SuperAppObjectEntity> findAllSupplierEvents (
+			@Param("supplierMail") String supplierMail);
 
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import superapp.Converter;
 import superapp.boundries.CommandId;
 import superapp.boundries.MiniAppCommandBoundary;
-import superapp.boundries.UnknownCommandBoundary;
 import superapp.dal.MiniAppCommandCrud;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.dal.UserCrud;
@@ -197,7 +196,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 
 		MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.getMiniAppName(miniAppName.toUpperCase());
 		if (miniApp == MiniAppsCommand.MINI_APPS.UNKNOWN_MINIAPP)
-			return createUnknownCommandBoundary(commandName, "Could not find miniapp");
+			return CommandsInvoker.createUnknownCommandBoundary(commandName, "Could not find miniapp");
 		List<String> miniAppCommands = this.commandsInvoker.getCommandsInMiniApp().get(miniApp);
 		boolean found =  false;
 		for (String command : miniAppCommands){
@@ -207,7 +206,7 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 			}
 		}
 		if (!found)
-			return createUnknownCommandBoundary(commandName, "Could not find command: " + commandName + " in miniapp: " + miniAppName);
+			return CommandsInvoker.createUnknownCommandBoundary(commandName, "Could not find command: " + commandName + " in miniapp: " + miniAppName);
 		return this.commandsInvoker.createCommandClass(commandName).execute(commandBoundary);
 		/*switch (miniAppName) {
 		case ("suppliers"):
@@ -238,11 +237,11 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 		}*/
 	}
 
-	public UnknownCommandBoundary createUnknownCommandBoundary(String commandName, String errMsg) {
+	/*public UnknownCommandBoundary createUnknownCommandBoundary(String commandName, String errMsg) {
 		UnknownCommandBoundary boundary = new UnknownCommandBoundary();
 		boundary.setCommandName(commandName);
 		boundary.setErrorMessage(errMsg);
 		return boundary;
-	}
+	}*/
 
 }
