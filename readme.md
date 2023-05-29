@@ -13,9 +13,26 @@
 - tables
 
 # Instructions on creating objects
-- When creating a supplier - put in type "supplier"
-- When creating a guest - put in type "guest"
-- When creating a customer - put in type "customer"
+
+## Supplier
+
+- Put in type "supplier"
+- Insert to objectDetails a field "mail" with the supplier mail
+
+## Customer
+
+- Put in type "customer"
+- Insert to objectDetails a field "mail" with the customer mail
+
+## Guest
+
+- Put in type "guest"
+
+## Service
+
+- Put in type "service"
+- Insert to objectDetails two fields: 'customerMail' and 'supplierMail' with the mails of the supplier and the customer
+
 
 # Commands name and instructions:
 
@@ -31,6 +48,11 @@
 - getSupplierFreeDates
 
 1. In the TargetObject field enter the ObjectId of the supplier you want to see his free dates
+
+- getCustomerServices
+
+1. In the TargetObject field enter the ObjectId of the customer you want to see his orderd services
+2. In the commandAttribues, insert two fileds: customerMail and supplierMail
 
 ## Tables miniapp:
 
