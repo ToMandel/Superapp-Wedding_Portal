@@ -43,6 +43,11 @@
 1. Create an object with "supplier_manager" type and save it ObjectId
 2. Invoke command with "getTypes" value in the "command" field and the ObjectId from step 1 in TargetObject field
 
+- getCustomerServices
+
+1. In the TargetObject field enter the ObjectId of the supplier you want to see his upcoming services
+2. In the commandAttribues, insert filed supplierMail
+
 ## Customers mini app:
 
 - getSupplierFreeDates
@@ -52,7 +57,7 @@
 - getCustomerServices
 
 1. In the TargetObject field enter the ObjectId of the customer you want to see his orderd services
-2. In the commandAttribues, insert two fileds: customerMail and supplierMail
+2. In the commandAttribues, insert filed customerMail
 
 ## Tables miniapp:
 
