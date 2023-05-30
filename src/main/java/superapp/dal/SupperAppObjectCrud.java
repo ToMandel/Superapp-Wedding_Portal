@@ -64,4 +64,8 @@ public interface SupperAppObjectCrud extends ListCrudRepository<SuperAppObjectEn
 	public List<SuperAppObjectEntity> findAllSupplierEvents (
 			@Param("supplierMail") String supplierMail);
 
+	@Query("{'objectDetails.mail': :#{#mail}, 'active':true}")
+	public List<SuperAppObjectEntity> findObjectByMail (
+			@Param("mail") String mail);
+
 }

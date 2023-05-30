@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import superapp.boundries.UnknownCommandBoundary;
 import superapp.miniapps.customers.GetCustomerServices;
 import superapp.miniapps.customers.GetSupplierFreeDates;
+import superapp.miniapps.global.GetObjectByMail;
 import superapp.miniapps.suppliers.GetSupplierServices;
 import superapp.miniapps.suppliers.GetTypes;
 import superapp.miniapps.tables.GetAllGuestsOfUser;
@@ -23,6 +24,8 @@ public class CommandsInvoker {
     private GetCustomerServices getCustomerServices;
     private GetSupplierServices getSupplierServices;
 
+    private GetObjectByMail getObjectByMail;
+
     private Map<MiniAppsCommand.MINI_APPS, List<String>> commandsInMiniApp;
 
     private List<String> supplierCommands;
@@ -33,7 +36,8 @@ public class CommandsInvoker {
                            GetSupplierFreeDates getSupplierFreeDates,
                            GetTypes getTypes,
                            GetCustomerServices getCustomerServices,
-                           GetSupplierServices getSupplierServices){
+                           GetSupplierServices getSupplierServices,
+                           GetObjectByMail getObjectByMail){
         supplierCommands = new ArrayList<String>();
         customersCommands = new ArrayList<String>();
         tablesCommands = new ArrayList<String>();
@@ -44,6 +48,7 @@ public class CommandsInvoker {
         this.getTypes = getTypes;
         this.getCustomerServices = getCustomerServices;
         this.getSupplierServices = getSupplierServices;
+        this.getObjectByMail = getObjectByMail;
 
         setMiniAppCommands();
 
@@ -52,9 +57,11 @@ public class CommandsInvoker {
     private void setMiniAppCommands(){
         supplierCommands.add("getTypes");
         supplierCommands.add("getSupplierServices");
+        supplierCommands.add("getObjectByMail");
 
         customersCommands.add("getSupplierFreeDates");
         customersCommands.add("getCustomerServices");
+        customersCommands.add("getObjectByMail");
 
         tablesCommands.add("getAllGuestsOfUser");
 
@@ -75,6 +82,8 @@ public class CommandsInvoker {
                 return getCustomerServices;
             case("getSupplierServices"):
                 return getSupplierServices;
+            case("getObjectByMail"):
+                return getObjectByMail;
             default:
                 return null;
         }
