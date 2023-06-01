@@ -185,15 +185,6 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 
 
 	public Object callToFunction(MiniAppCommandBoundary commandBoundary, String commandName, String miniAppName) {
-		//MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.getMiniAppName(miniAppName.toUpperCase());
-		//Object isLegal = isLegalCommand(miniAppName, commandName);
-
-		//MiniAppsCommand.COMMANDS miniAppCommand = MiniAppsCommand.getCommandName(commandName);
-		//System.out.println(miniAppCommand);
-		//MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.MINI_APPS.valueOf(miniAppName);
-		//MiniAppsCommand.COMMANDS commandEnum = MiniAppsCommand.COMMANDS.valueOf(commandName);
-		//System.out.println(miniApp + " " + commandEnum);
-
 		MiniAppsCommand.MINI_APPS miniApp = MiniAppsCommand.getMiniAppName(miniAppName.toUpperCase());
 		if (miniApp == MiniAppsCommand.MINI_APPS.UNKNOWN_MINIAPP)
 			return CommandsInvoker.createUnknownCommandBoundary(commandName, "Could not find miniapp");
@@ -208,40 +199,5 @@ public class MiniAppCommandDB implements MiniAppCommandServiceWithPagination {
 		if (!found)
 			return CommandsInvoker.createUnknownCommandBoundary(commandName, "Could not find command: " + commandName + " in miniapp: " + miniAppName);
 		return this.commandsInvoker.createCommandClass(commandName).execute(commandBoundary);
-		/*switch (miniAppName) {
-		case ("suppliers"):
-			switch (commandName) {
-			case "getTypes":
-				return this.commandsInvoker.createCommandClass(commandName).execute(command);
-			default:
-				return createUnknownCommandBoundary(commandName, "Could not find command");
-
-			}
-		case "customers":
-			switch (commandName) {
-				case "getSupplierFreeDates":{
-					return this.commandsInvoker.createCommandClass(commandName).execute(command);
-				}
-			default:
-				return createUnknownCommandBoundary(commandName, "Could not find command");
-			}
-		case "tables":
-			switch (commandName) {
-			case "getAllGuestsOfUser":
-				return this.commandsInvoker.createCommandClass(commandName).execute(command);
-			default:
-				return createUnknownCommandBoundary(commandName, "Could not find command");
-			}
-		default:
-			return createUnknownCommandBoundary(commandName, "Could not find miniapp");
-		}*/
 	}
-
-	/*public UnknownCommandBoundary createUnknownCommandBoundary(String commandName, String errMsg) {
-		UnknownCommandBoundary boundary = new UnknownCommandBoundary();
-		boundary.setCommandName(commandName);
-		boundary.setErrorMessage(errMsg);
-		return boundary;
-	}*/
-
 }
