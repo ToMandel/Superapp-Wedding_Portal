@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import superapp.boundries.MiniAppCommandBoundary;
 import superapp.dal.SupperAppObjectCrud;
 import superapp.data.SuperAppObjectEntity;
-import superapp.logic.ForbiddenException;
 import superapp.miniapps.MiniAppsCommand;
 import superapp.objects.Supplier;
 
@@ -25,9 +24,6 @@ public class GetTypes implements MiniAppsCommand {
                 + command.getTargetObject().getObjectId().getInternalObjectId();
         SuperAppObjectEntity entity = this.objectCrud.findById(objectId).get();
         // we already checked that the entity exists
-        if (!entity.getType().equals("supplier_manager"))
-            throw new ForbiddenException(
-                    "You can not get suppliers types with objects who is not supplier_manager");
         return Supplier.getAllTypes();
     }
 }
