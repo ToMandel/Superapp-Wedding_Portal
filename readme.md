@@ -66,4 +66,12 @@
 1. The functions, assume that you created objects with type "guest" (all lower case), and entred in the createdBy field the logged in user.
 2. In the command attributes, enter a field "mail". The value of this field should be the mail of the logged in user
 
+## General Commands:
+
+- getObjectByMail
+
+1. The mini app should be suppliers/customers
+2. The command assumes that all customers and suppliers has a field named "mail" in ths objectDetalis
+3. Insert to the commandAttirbutes a field named "mail" with the mail of the object you are looking for
+
 
