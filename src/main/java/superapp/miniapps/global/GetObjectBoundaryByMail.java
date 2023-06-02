@@ -10,13 +10,19 @@ import superapp.miniapps.CommandsInvoker;
 import superapp.miniapps.MiniAppsCommand;
 
 @Component
-public class GetObjectByMail implements MiniAppsCommand {
+public class GetObjectBoundaryByMail implements MiniAppsCommand {
 
     private SupperAppObjectCrud objectCrud;
+    private Converter converter;
 
     @Autowired
     public void setObjectCrud(SupperAppObjectCrud objectCrud) {
         this.objectCrud = objectCrud;
+    }
+
+    @Autowired
+    public void setConverter(Converter converter) {
+        this.converter = converter;
     }
 
     @Override
@@ -26,8 +32,8 @@ public class GetObjectByMail implements MiniAppsCommand {
             return CommandsInvoker.createUnknownCommandBoundary(commandName, "Please enter mail of the object");
         }
         String mail = command.getCommandAttributes().get("mail").toString();
-        return this.objectCrud.findObjectByMail(mail);
-        //String objectId = this.objectCrud.findObjectByMail(mail).getObjectId();
-        //return converter.superAppObjectToBoundary(this.objectCrud.findById(objectId).get());
+        //return this.objectCrud.findObjectByMail(mail);
+        String objectId = this.objectCrud.findObjectByMail(mail).getObjectId();
+        return converter.superAppObjectToBoundary(this.objectCrud.findById(objectId).get());
     }
 }

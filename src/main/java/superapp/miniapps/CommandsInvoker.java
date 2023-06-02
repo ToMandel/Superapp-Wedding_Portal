@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import superapp.boundries.UnknownCommandBoundary;
 import superapp.miniapps.customers.GetCustomerServices;
 import superapp.miniapps.customers.GetSupplierFreeDates;
+import superapp.miniapps.global.GetObjectBoundaryByMail;
 import superapp.miniapps.global.GetObjectByMail;
 import superapp.miniapps.suppliers.GetSupplierServices;
 import superapp.miniapps.suppliers.GetTypes;
@@ -25,6 +26,7 @@ public class CommandsInvoker {
     private GetSupplierServices getSupplierServices;
 
     private GetObjectByMail getObjectByMail;
+    private GetObjectBoundaryByMail getObjectBoundaryByMail;
 
     private Map<MiniAppsCommand.MINI_APPS, List<String>> commandsInMiniApp;
 
@@ -37,7 +39,8 @@ public class CommandsInvoker {
                            GetTypes getTypes,
                            GetCustomerServices getCustomerServices,
                            GetSupplierServices getSupplierServices,
-                           GetObjectByMail getObjectByMail){
+                           GetObjectByMail getObjectByMail,
+                           GetObjectBoundaryByMail getObjectBoundaryByMail){
         supplierCommands = new ArrayList<String>();
         customersCommands = new ArrayList<String>();
         tablesCommands = new ArrayList<String>();
@@ -49,6 +52,7 @@ public class CommandsInvoker {
         this.getCustomerServices = getCustomerServices;
         this.getSupplierServices = getSupplierServices;
         this.getObjectByMail = getObjectByMail;
+        this.getObjectBoundaryByMail = getObjectBoundaryByMail;
 
         setMiniAppCommands();
 
@@ -58,13 +62,16 @@ public class CommandsInvoker {
         supplierCommands.add("getTypes");
         supplierCommands.add("getSupplierServices");
         supplierCommands.add("getObjectByMail");
+        supplierCommands.add("getObjectBoundaryByMail");
 
         customersCommands.add("getSupplierFreeDates");
         customersCommands.add("getCustomerServices");
         customersCommands.add("getObjectByMail");
+        customersCommands.add("getObjectBoundaryByMail");
 
         tablesCommands.add("getAllGuestsOfUser");
         tablesCommands.add("getObjectByMail");
+        tablesCommands.add("getObjectBoundaryByMail");
 
         
         commandsInMiniApp.put(MiniAppsCommand.MINI_APPS.SUPPLIERS, supplierCommands);
@@ -86,6 +93,8 @@ public class CommandsInvoker {
                 return getSupplierServices;
             case("getObjectByMail"):
                 return getObjectByMail;
+            case("getObjectBoundaryByMail"):
+                return getObjectBoundaryByMail;
             default:
                 return null;
         }
