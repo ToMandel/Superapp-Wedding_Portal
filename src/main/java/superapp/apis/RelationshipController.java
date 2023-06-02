@@ -25,7 +25,8 @@ public class RelationshipController {
         super();
         this.objects = objects;
     }
-
+    
+	@CrossOrigin(origins = "*")
     @RequestMapping(
             path = {"/superapp/objects/{superapp}/{internalObjectId}/children"},
             method = {RequestMethod.PUT},
@@ -42,6 +43,7 @@ public class RelationshipController {
 
     }
 
+	@CrossOrigin(origins = "*")
     @RequestMapping(
             path = {"/superapp/objects/{superapp}/{internalObjectId}/children"},
             method = {RequestMethod.GET},
@@ -59,6 +61,7 @@ public class RelationshipController {
         		.toArray(new SuperAppObjectBoundary[0]);
     }
 
+	@CrossOrigin(origins = "*")
     @RequestMapping(
             path = {"/superapp/objects/{superapp}/{internalObjectId}/parents"},
             method = {RequestMethod.GET},

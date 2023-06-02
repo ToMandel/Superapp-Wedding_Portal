@@ -64,7 +64,9 @@ public class CommandsInvoker {
         customersCommands.add("getObjectByMail");
 
         tablesCommands.add("getAllGuestsOfUser");
+        tablesCommands.add("getObjectByMail");
 
+        
         commandsInMiniApp.put(MiniAppsCommand.MINI_APPS.SUPPLIERS, supplierCommands);
         commandsInMiniApp.put(MiniAppsCommand.MINI_APPS.CUSTOMERS, customersCommands);
         commandsInMiniApp.put(MiniAppsCommand.MINI_APPS.TABLES, tablesCommands);
