@@ -43,7 +43,7 @@
 1. Create an object with "supplier_manager" type and save it ObjectId
 2. Invoke command with "getTypes" value in the "command" field and the ObjectId from step 1 in TargetObject field
 
-- getCustomerServices
+- getSupplierServices
 
 1. In the TargetObject field enter the ObjectId of the supplier you want to see his upcoming services
 2. In the commandAttribues, insert filed supplierMail
