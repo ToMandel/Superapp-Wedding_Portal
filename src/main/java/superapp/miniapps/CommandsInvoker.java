@@ -8,6 +8,7 @@ import superapp.miniapps.customers.GetSupplierFreeDates;
 import superapp.miniapps.global.GetObjectBoundaryByMail;
 import superapp.miniapps.global.GetObjectByMail;
 import superapp.miniapps.suppliers.GetSupplierServices;
+import superapp.miniapps.suppliers.GetSupplierServicesByStatusAndMail;
 import superapp.miniapps.suppliers.GetTypes;
 import superapp.miniapps.tables.GetAllGuestsOfUser;
 
@@ -27,6 +28,7 @@ public class CommandsInvoker {
 
     private GetObjectByMail getObjectByMail;
     private GetObjectBoundaryByMail getObjectBoundaryByMail;
+    private GetSupplierServicesByStatusAndMail getSupplierServicesByStatusAndMail;
 
     private Map<MiniAppsCommand.MINI_APPS, List<String>> commandsInMiniApp;
 
@@ -40,7 +42,8 @@ public class CommandsInvoker {
                            GetCustomerServices getCustomerServices,
                            GetSupplierServices getSupplierServices,
                            GetObjectByMail getObjectByMail,
-                           GetObjectBoundaryByMail getObjectBoundaryByMail){
+                           GetObjectBoundaryByMail getObjectBoundaryByMail,
+                           GetSupplierServicesByStatusAndMail getSupplierServicesByStatusAndMail){
         supplierCommands = new ArrayList<String>();
         customersCommands = new ArrayList<String>();
         tablesCommands = new ArrayList<String>();
@@ -53,6 +56,7 @@ public class CommandsInvoker {
         this.getSupplierServices = getSupplierServices;
         this.getObjectByMail = getObjectByMail;
         this.getObjectBoundaryByMail = getObjectBoundaryByMail;
+        this.getSupplierServicesByStatusAndMail = getSupplierServicesByStatusAndMail;
 
         setMiniAppCommands();
 
@@ -63,6 +67,7 @@ public class CommandsInvoker {
         supplierCommands.add("getSupplierServices");
         supplierCommands.add("getObjectByMail");
         supplierCommands.add("getObjectBoundaryByMail");
+        supplierCommands.add("getSupplierServicesByMailAndStatus");
 
         customersCommands.add("getSupplierFreeDates");
         customersCommands.add("getCustomerServices");
@@ -95,6 +100,8 @@ public class CommandsInvoker {
                 return getObjectByMail;
             case("getObjectBoundaryByMail"):
                 return getObjectBoundaryByMail;
+            case("getSupplierServicesByMailAndStatus"):
+                return getSupplierServicesByStatusAndMail;
             default:
                 return null;
         }

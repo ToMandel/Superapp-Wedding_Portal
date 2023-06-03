@@ -114,6 +114,8 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 		this.logger.trace("&&&&& inserting super app object to db started");
 		long beginCount = System.currentTimeMillis();
 
+		SuperAppObjectEntity entity = null;
+
 		UserEntity user = getUser(object.getCreatedBy().getUserId().getSuperapp(),
 				object.getCreatedBy().getUserId().getEmail());
 		if (user.getRole() == UserRole.SUPERAPP_USER) {
@@ -123,20 +125,14 @@ public class ObjectServiceDB implements ObjectServiceWithPagination {
 				object.setCreationTimestamp(new Date());
 				if (object.getObjectDetails() == null)
 					object.setObjectDetails(new HashMap<>());
-				SuperAppObjectEntity entity = this.converter.superAppObjectToEntity(object);
+				entity = this.converter.superAppObjectToEntity(object);
 				entity = this.objectCrud.save(entity);
 				return this.converter.superAppObjectToBoundary(entity);
 			}
 			finally {
 				long endCount = System.currentTimeMillis();
 				long elapsed = endCount - beginCount;
-				String json = "";
-				try {
-					json = this.jackson.writeValueAsString(object);
-				} catch (Exception e) {
-					this.logger.error(e.getMessage());
-				}
-				this.logger.debug("&&&&& inserting to db: " + json + " - ended - and took " + elapsed + "ms");
+				this.logger.debug("&&&&& inserting to db: " + entity.getObjectId().toString() + " - ended - and took " + elapsed + "ms");
 			}
 		}
 		throw new ForbiddenException("Only SUPERAPP_USER users can create new objects");
